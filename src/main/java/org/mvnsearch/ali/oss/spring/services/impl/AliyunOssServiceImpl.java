@@ -122,6 +122,10 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         if (path == null) {
             path = "";
         }
+        path = path.trim();
+        if (path.endsWith("*")) {
+            path = path.substring(0, path.length() - 1);
+        }
         return oss.listObjects(bucketName, path);
     }
 
