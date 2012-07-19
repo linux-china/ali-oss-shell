@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--file appender-->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>aliyunoss.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!--markzhi logger-->
+    <logger name="org.mvnsearch" level="INFO"/>
+    <root level="ERROR">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
