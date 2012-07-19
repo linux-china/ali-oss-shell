@@ -171,7 +171,7 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return content
      */
-    @CliCommand(value = "cd", help = "Change bucket or directory")
+    @CliCommand(value = "cd", help = "Change directory")
     public String cd(@CliOption(key = {""}, mandatory = true, help = "Change directory") final String dir) {
         if (dir == null || dir.equals("/")) {
             currentDir = "";
@@ -197,7 +197,7 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return content
      */
-    @CliCommand(value = "file", help = "Show Object Detail Information")
+    @CliCommand(value = "file", help = "Show OSS object detail information")
     public String file(@CliOption(key = {""}, mandatory = true, help = "file path") final String filePath) {
         StringBuilder buf = new StringBuilder();
         try {
