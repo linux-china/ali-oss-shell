@@ -217,7 +217,7 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * show OSS object detail information
+     * delete OSS object
      *
      * @return content
      */
@@ -225,6 +225,39 @@ public class OssOperationCommands implements CommandMarker {
     public String rm(@CliOption(key = {""}, mandatory = true, help = "OSS file path") final String filePath) {
         try {
             aliyunOssService.delete(currentBucket, filePath);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return null;
+    }
+
+    /**
+     * copy object
+     *
+     * @return content
+     */
+    @CliCommand(value = "cp", help = "Copy OSS project")
+    public String cp(@CliOption(key = {"source"}, mandatory = true, help = "Source OSS file path") final String sourceFilePath,
+                     @CliOption(key = {"dest"}, mandatory = true, help = "Destination OSS file path") final String destFilePath) {
+        try {
+            aliyunOssService.copy(currentBucket, sourceFilePath, currentBucket, destFilePath);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return null;
+    }
+
+    /**
+     * move object
+     *
+     * @return content
+     */
+    @CliCommand(value = "mv", help = "Move OSS project")
+    public String mv(@CliOption(key = {"source"}, mandatory = true, help = "Source OSS file path") final String sourceFilePath,
+                     @CliOption(key = {"dest"}, mandatory = true, help = "Destination OSS file path") final String destFilePath) {
+        try {
+            aliyunOssService.copy(currentBucket, sourceFilePath, currentBucket, destFilePath);
+            aliyunOssService.delete(currentBucket, sourceFilePath);
         } catch (Exception e) {
             return e.getMessage();
         }
