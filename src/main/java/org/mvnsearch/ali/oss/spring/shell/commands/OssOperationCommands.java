@@ -193,7 +193,7 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * switch bucket
+     * show OSS object detail information
      *
      * @return content
      */
@@ -214,6 +214,21 @@ public class OssOperationCommands implements CommandMarker {
             buf.append(e.getMessage() + StringUtils.LINE_SEPARATOR);
         }
         return buf.toString().trim();
+    }
+
+    /**
+     * show OSS object detail information
+     *
+     * @return content
+     */
+    @CliCommand(value = "rm", help = "Delete OSS object")
+    public String rm(@CliOption(key = {""}, mandatory = true, help = "OSS file path") final String filePath) {
+        try {
+            aliyunOssService.delete(currentBucket, filePath);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return null;
     }
 
     /**
