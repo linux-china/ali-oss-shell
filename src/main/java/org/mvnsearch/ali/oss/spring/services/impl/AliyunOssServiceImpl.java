@@ -148,6 +148,21 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     }
 
     /**
+     * copy object
+     *
+     * @param sourceBucketName source bucket name
+     * @param sourceFilePath   source file path
+     * @param destBucketName   dest bucket name
+     * @param destFilePath     dest file path
+     * @return new file path
+     * @throws Exception exception
+     */
+    public String copy(String sourceBucketName, String sourceFilePath, String destBucketName, String destFilePath) throws Exception {
+        oss.copyObject(sourceBucketName, sourceFilePath, destBucketName, destFilePath);
+        return "oss://" + destBucketName + "/" + destFilePath;
+    }
+
+    /**
      * get file and save into local disk
      *
      * @param bucketName     bucket name
@@ -175,7 +190,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      */
     @Override
     public void delete(String bucketName, String sourceFilePath) throws Exception {
-        oss.deleteObject(bucketName,sourceFilePath);
+        oss.deleteObject(bucketName, sourceFilePath);
     }
 
     /**

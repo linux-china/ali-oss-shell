@@ -56,6 +56,18 @@ public interface AliyunOssService {
     public String put(String bucketName, String sourceFilePath, String destFilePath) throws Exception;
 
     /**
+     * copy object
+     *
+     * @param sourceBucketName source bucket name
+     * @param sourceFilePath   source file path
+     * @param destBucketName dest bucket name
+     * @param destFilePath dest file path
+     * @return new file path
+     * @throws Exception    exception
+     */
+    public String copy(String sourceBucketName, String sourceFilePath, String destBucketName, String destFilePath) throws Exception;
+
+    /**
      * get file and save into local disk
      *
      * @param bucketName     bucket name
