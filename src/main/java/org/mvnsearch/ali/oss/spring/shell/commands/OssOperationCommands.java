@@ -55,7 +55,7 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return content
      */
-    @CliCommand(value = "config", help = "Get the file from OSS and save it to local disk")
+    @CliCommand(value = "config", help = "Config the Aliyun OSS access info")
     public String config(@CliOption(key = {"id"}, mandatory = true, help = "Aliyun Access ID") final String accessId,
                          @CliOption(key = {"key"}, mandatory = true, help = "Aliyun Access Key") final String accessKey) {
         aliyunOssService.setAccessInfo(accessId, accessKey);
