@@ -15,6 +15,7 @@ import org.springframework.shell.support.util.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -202,6 +203,10 @@ public class OssOperationCommands implements CommandMarker {
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket, filePath);
             Map<String, Object> rawMetadata = objectMetadata.getRawMetadata();
             for (Map.Entry<String, Object> entry : rawMetadata.entrySet()) {
+                buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+            }
+            Map<String, String> userMetadata = objectMetadata.getUserMetadata();
+            for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
                 buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
             }
         } catch (Exception e) {
