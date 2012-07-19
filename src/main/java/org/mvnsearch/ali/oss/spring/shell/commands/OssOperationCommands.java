@@ -123,7 +123,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "ls", help = "List buckts, directories or files")
-    public String ls(@CliOption(key = {""}, mandatory = false, help = "wild matched file name") final String filename) {
+    public String ls(@CliOption(key = {""}, mandatory = false, help = "prefix wild matched file name") final String filename) {
         if (currentBucket == null) {
             return listBuckets();
         }
