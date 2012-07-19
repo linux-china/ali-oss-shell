@@ -66,6 +66,15 @@ public interface AliyunOssService {
     public String get(String bucketName, String sourceFilePath, String destFilePath) throws Exception;
 
     /**
+     * delete object
+     *
+     * @param bucketName     bucket name
+     * @param sourceFilePath source file path
+     * @throws Exception exception
+     */
+    public void delete(String bucketName, String sourceFilePath) throws Exception;
+
+    /**
      * get oss object
      *
      * @param bucketName bucket name
