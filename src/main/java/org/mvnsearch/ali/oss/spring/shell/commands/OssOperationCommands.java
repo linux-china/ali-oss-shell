@@ -128,8 +128,9 @@ public class OssOperationCommands implements CommandMarker {
             return listBuckets();
         }
         StringBuilder buf = new StringBuilder();
+        String prefix = StringUtils.defaultIfEmpty(currentDir, "") + StringUtils.defaultIfEmpty(filename, "");
         try {
-            ObjectListing objectListing = aliyunOssService.list(currentBucket, currentDir);
+            ObjectListing objectListing = aliyunOssService.list(currentBucket, prefix);
             for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                 buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
                         StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
