@@ -14,6 +14,7 @@ OSS Object URL: oss://bucket/filepath.xxx
 * cd: 更改目录
 * mv: 移动文件
 * cp: 拷贝文件
+* rm: 删除文件
 * file: 文件详情
 * put: 上传文件
 * get: 下载文件
