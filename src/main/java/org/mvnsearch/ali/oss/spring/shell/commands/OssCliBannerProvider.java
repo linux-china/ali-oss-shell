@@ -52,6 +52,16 @@ public class OssCliBannerProvider extends DefaultBannerProvider implements Comma
     }
 
     /**
+     * display author information
+     *
+     * @return author information
+     */
+    @CliCommand(value = {"author"}, help = "Displays author information")
+    public String author() {
+        return "linux_china <linux_china@hotmail.com>";
+    }
+
+    /**
      * current version
      *
      * @return version
