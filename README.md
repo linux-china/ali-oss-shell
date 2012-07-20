@@ -47,3 +47,6 @@ OSS Object URL: oss://bucket/path/filename.ext
 * 支持命令行直接调用命令文件，直接命令调用，如 mysql -u root -p < ./xxx.sql 方式
 * 文档更新
 
+### 控制台截屏
+![OSS Console](https://github.com/linux-china/ali-oss-java-cli/wiki/assets/img/console_shot.png)
+
