@@ -4,7 +4,7 @@
 OSS Object URL: oss://bucket/path/filename.ext
 
 ### 如何使用
-执行目录解压，然后运行aliyun_oss.sh或者aliyun_oss.bat即可，当然你需要Java 1.6+的运行环境。
+执行目录解压，然后运行sh bin/ali_oss或者bin/ali_oss.bat即可，当然你需要Java 1.6+的运行环境。
 
 * 进入控制台，运行 config --id aliyunossid --key aliyunosskey
 密钥获取请访问，[http://i.aliyun.com/dashboard/instance?type=oss](http://i.aliyun.com/dashboard/instance?type=oss) ，
