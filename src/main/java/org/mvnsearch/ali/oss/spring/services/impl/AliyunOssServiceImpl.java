@@ -7,6 +7,7 @@ import com.aliyun.openservices.oss.model.ObjectListing;
 import com.aliyun.openservices.oss.model.ObjectMetadata;
 import org.apache.commons.io.IOUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
+import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.stereotype.Component;
 
@@ -159,7 +160,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      */
     public String copy(String sourceBucketName, String sourceFilePath, String destBucketName, String destFilePath) throws Exception {
         oss.copyObject(sourceBucketName, sourceFilePath, destBucketName, destFilePath);
-        return "oss://" + destBucketName + "/" + destFilePath;
+        return new OSSUri(destBucketName, destFilePath).toString();
     }
 
     /**
