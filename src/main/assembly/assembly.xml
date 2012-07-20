@@ -15,28 +15,16 @@
                 <include>README*</include>
                 <include>LICENSE*</include>
                 <include>NOTICE*</include>
-                <include>aliyun_oss.*</include>
             </includes>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
         <fileSet>
-            <directory>${project.build.directory}</directory>
+            <directory>${project.build.directory}/ali_oss</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>*.jar</include>
+                <include>*/**</include>
             </includes>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
     </fileSets>
-    <dependencySets>
-        <dependencySet>
-            <outputDirectory>/lib</outputDirectory>
-            <includes>
-                <include>*:jar</include>
-            </includes>
-            <excludes>
-                <exclude>org.mvnsearch:ali-oss-java-cli:jar</exclude>
-            </excludes>
-        </dependencySet>
-    </dependencySets>
 </assembly>
