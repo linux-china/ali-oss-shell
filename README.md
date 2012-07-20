@@ -26,3 +26,10 @@ OSS Object URL: oss://bucket/filepath.xxx
 * get: 下载文件
 
 
+### Road Map
+
+* 添加更新metadata
+* 统一使用OSS URI方式
+* 支持命令行直接调用命令文件，直接命令调用，如 mysql -u root -p < ./xxx.sql 方式
+* 文档更新
+
