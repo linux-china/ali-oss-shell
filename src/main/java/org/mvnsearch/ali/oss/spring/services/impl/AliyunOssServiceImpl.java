@@ -56,8 +56,8 @@ public class AliyunOssServiceImpl implements AliyunOssService {
             File cfgFile = new File(userHome, ".aliyunoss.cfg");
             if (cfgFile.exists()) {
                 properties.load(new FileInputStream(cfgFile));
-                this.accessId = properties.getProperty("accessId");
-                this.accessKey = properties.getProperty("accessKey");
+                this.accessId = properties.getProperty("ACCESS_ID");
+                this.accessKey = properties.getProperty("ACCESS_KEY");
                 if (accessId != null) {
                     oss = new OSSClient(endpoint, accessId, accessKey);
                 }
@@ -91,8 +91,8 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         }
         try {
             Properties properties = new Properties();
-            properties.setProperty("accessId", accessId);
-            properties.setProperty("accessKey", accessKey);
+            properties.setProperty("ACCESS_ID", accessId);
+            properties.setProperty("ACCESS_KEY", accessKey);
             File userHome = new File(System.getProperty("user.home"));
             File cfgFile = new File(userHome, ".aliyunoss.cfg");
             properties.store(new FileOutputStream(cfgFile), null);
