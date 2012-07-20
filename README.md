@@ -25,6 +25,20 @@ OSS Object URL: oss://bucket/path/filename.ext
 * put: 上传文件
 * get: 下载文件
 
+### 开发步骤
+首先git clone出代码，然后执行
+
+    mvn -DskipTests clean package，
+
+接下来执行
+
+    java -jar target/ali-oss-java-cli-1.0.0.jar
+即可进入控制台。
+打包分发：
+
+    mvn -DskipTests clean package assembly:assembly
+然后将target目录下tar.gz和zip文件提供下载即可。
+
 
 ### Road Map
 
