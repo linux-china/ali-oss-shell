@@ -1,7 +1,7 @@
 介绍
 ====================================
 阿里云弹性存储Java CLI，通过控制台方式管理OSS上的文件，如查看、上传、下载和修改属性等。
-OSS Object URL: oss://bucket/filepath.xxx
+OSS Object URL: oss://bucket/path/filename.ext
 
 ### 如何使用
 执行目录解压，然后运行aliyun_oss.sh或者aliyun_oss.bat即可，当然你需要Java 1.6+的运行环境。
