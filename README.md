@@ -6,6 +6,10 @@ OSS Object URL: oss://bucket/filepath.xxx
 ### 如何使用
 执行目录解压，然后运行aliyun_oss.sh或者aliyun_oss.bat即可，当然你需要Java 1.6+的运行环境。
 
+* 进入控制台，运行 config --id aliyunossid --key aliyunoss key
+* 使用df或者ls列出bucket
+* 使用use bucket进行bucket切换
+
 ### 命令
 常见命令列表：
 
