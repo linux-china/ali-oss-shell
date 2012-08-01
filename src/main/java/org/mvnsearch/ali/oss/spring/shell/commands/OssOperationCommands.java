@@ -4,6 +4,8 @@ import com.aliyun.openservices.oss.model.Bucket;
 import com.aliyun.openservices.oss.model.OSSObjectSummary;
 import com.aliyun.openservices.oss.model.ObjectListing;
 import com.aliyun.openservices.oss.model.ObjectMetadata;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.http.impl.cookie.DateUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.shell.support.util.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +84,8 @@ public class OssOperationCommands implements CommandMarker {
     public String create(@CliOption(key = {""}, mandatory = false, help = "prefix wild matched file name") final String bucket) {
         try {
             aliyunOssService.createBucket(bucket);
-            return "Bucket 'oss://+" + bucket + "' created";
+            this.currentBucket = bucket;
+            return "Bucket 'oss://+" + bucket + "' created and switched";
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -130,6 +134,29 @@ public class OssOperationCommands implements CommandMarker {
         } catch (Exception e) {
             return e.getMessage();
         }
+    }
+
+    /**
+     * list files
+     *
+     * @return content
+     */
+    @CliCommand(value = "sync", help = "Put the local file to OSS")
+    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "source directory on disk") final String sourceDirectory,
+                       @CliOption(key = {"dest"}, mandatory = true, help = "destination path on OSS") final String destPath) {
+        try {
+            File sourceDir = new File(sourceDirectory);
+            Collection<File> uploadedFiles = FileUtils.listFiles(sourceDir, new AbstractFileFilter() {
+                public boolean accept(File file) {
+                    return !file.getName().startsWith(".");
+                }
+            }, null);
+//            aliyunOssService.put(currentBucket, sourceFilePath, destFilePath);
+//            return "Uploaded to: oss://" + currentBucket + "/" + destFilePath;
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return null;
     }
 
     /**
