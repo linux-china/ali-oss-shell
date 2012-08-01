@@ -14,6 +14,11 @@ public class OssOperationCommandsTest extends TestCase {
      */
     private OssOperationCommands commands;
 
+    /**
+     * init object
+     *
+     * @throws Exception exception
+     */
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -27,5 +32,14 @@ public class OssOperationCommandsTest extends TestCase {
     public void testDf() {
         commands.use("faxianla_temp");
         System.out.println(commands.df());
+    }
+
+    /**
+     * test to create bucket
+     */
+    public void testCreate() {
+        String bucketName = "abc123";
+        System.out.println(commands.create(bucketName));
+        assertTrue("Failed to create bucket", commands.df().contains(bucketName));
     }
 }
