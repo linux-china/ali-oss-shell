@@ -41,6 +41,11 @@
             <version>${spring.shell.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>12.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-openservices</artifactId>
             <version>1.0.0-20120705</version>
