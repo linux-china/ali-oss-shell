@@ -29,6 +29,22 @@ public interface AliyunOssService {
     public void setAccessInfo(String accessId, String accessKey);
 
     /**
+     * create bucket
+     *
+     * @param bucket bucket name
+     * @throws Exception exception
+     */
+    public void createBucket(String bucket) throws Exception;
+
+    /**
+     * delete bucket
+     *
+     * @param bucket bucket
+     * @throws Exception exception
+     */
+    public void deleteBucket(String bucket) throws Exception;
+
+    /**
      * list buckets
      *
      * @return bucket list
@@ -60,10 +76,10 @@ public interface AliyunOssService {
      *
      * @param sourceBucketName source bucket name
      * @param sourceFilePath   source file path
-     * @param destBucketName dest bucket name
-     * @param destFilePath dest file path
+     * @param destBucketName   dest bucket name
+     * @param destFilePath     dest file path
      * @return new file path
-     * @throws Exception    exception
+     * @throws Exception exception
      */
     public String copy(String sourceBucketName, String sourceFilePath, String destBucketName, String destFilePath) throws Exception;
 

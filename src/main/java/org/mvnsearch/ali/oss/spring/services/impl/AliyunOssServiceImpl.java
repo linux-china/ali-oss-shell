@@ -102,6 +102,26 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     }
 
     /**
+     * create bucket
+     *
+     * @param bucket bucket name
+     * @throws Exception exception
+     */
+    public void createBucket(String bucket) throws Exception {
+        oss.createBucket(bucket);
+    }
+
+    /**
+     * delete bucket
+     *
+     * @param bucket bucket
+     * @throws Exception exception
+     */
+    public void deleteBucket(String bucket) throws Exception {
+        oss.deleteBucket(bucket);
+    }
+
+    /**
      * list buckets
      *
      * @return bucket list
