@@ -73,6 +73,21 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
+     * create new bucket
+     *
+     * @return new bucket
+     */
+    @CliCommand(value = "create", help = "Create a new bucket")
+    public String create(@CliOption(key = {""}, mandatory = false, help = "prefix wild matched file name") final String bucket) {
+        try {
+            aliyunOssService.createBucket(bucket);
+            return "Bucket 'oss://+" + bucket + "' created";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+
+    /**
      * list files
      *
      * @return content
