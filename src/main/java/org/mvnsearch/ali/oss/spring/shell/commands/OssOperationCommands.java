@@ -129,11 +129,33 @@ public class OssOperationCommands implements CommandMarker {
             return "File not extis: " + sourceFilePath;
         }
         try {
-            aliyunOssService.put(currentBucket, sourceFilePath, destFilePath);
-            return "Uploaded to: oss://" + currentBucket + "/" + destFilePath;
+            if (sourceFile.isDirectory()) {
+                Collection<File> files = FileUtils.listFiles(sourceFile, new AbstractFileFilter() {
+                            public boolean accept(File file) {
+                                return !file.getName().startsWith(".");
+                            }
+                        }, new AbstractFileFilter() {
+                            public boolean accept(File dir, String name) {
+                                return !name.startsWith(".");
+                            }
+                        }
+                );
+                for (File file : files) {
+                    String destPath = file.getAbsolutePath().replace(sourceFile.getAbsolutePath(), "");
+                    destPath = destFilePath + destPath.replaceAll("\\\\", "/");
+                    if (destPath.contains("//")) {
+                        destPath = destPath.replace("//", "/");
+                    }
+                    aliyunOssService.put(currentBucket, file.getAbsolutePath(), destPath);
+                }
+            } else {
+                aliyunOssService.put(currentBucket, sourceFilePath, destFilePath);
+                return "Uploaded to: oss://" + currentBucket + "/" + destFilePath;
+            }
         } catch (Exception e) {
             return e.getMessage();
         }
+        return null;
     }
 
     /**
