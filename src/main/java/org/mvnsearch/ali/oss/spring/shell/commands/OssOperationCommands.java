@@ -96,22 +96,25 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return new bucket
      */
-    @CliCommand(value = "chmod", help = "Set Current Bucket Access Control List: --, R- or RW")
-    public String chmod(@CliOption(key = {""}, mandatory = false, help = "Set bucket Access Control List") final String acl) {
+    @CliCommand(value = "chmod", help = "Set Current Bucket Access Control List: Private, R- or RW")
+    public String chmod(@CliOption(key = {""}, mandatory = false, help = "Set bucket Access Control List") String acl) {
         try {
             if (currentBucket == null) {
                 return "Please select a bucket!";
             }
-            if (acl.equals("--") || acl.equals("R-") || acl.equals("RW")) {
+            if (acl != null && acl.equalsIgnoreCase("private")) {
+                acl = "--";
+            }
+            if (acl != null && (acl.equalsIgnoreCase("--") || acl.equals("R-") || acl.equals("RW"))) {
                 aliyunOssService.setBucketACL(currentBucket, acl);
             } else {
-                return "ACL value should be '--', 'R-' or 'RW'";
+                return "ACL value should be 'Private', 'R-' or 'RW'";
             }
 
         } catch (Exception e) {
             return e.getMessage();
         }
-        return "ACL Succeed";
+        return currentBucket + "'s ACL: " + acl;
     }
 
     /**
