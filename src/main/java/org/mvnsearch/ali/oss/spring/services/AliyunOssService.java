@@ -53,6 +53,24 @@ public interface AliyunOssService {
     public List<Bucket> getBuckets() throws Exception;
 
     /**
+     * get bucket ACL
+     *
+     * @param bucket bucket name
+     * @return ACL String, such --, RW, R-
+     * @throws Exception exception
+     */
+    public String getBucketACL(String bucket) throws Exception;
+
+    /**
+     * 设置ACL
+     *
+     * @param bucket bucket
+     * @param acl    acl value, such --, R- or RW
+     * @throws Exception exception
+     */
+    public void setBucketACL(String bucket, String acl) throws Exception;
+
+    /**
      * list
      *
      * @param bucketName bucket name
