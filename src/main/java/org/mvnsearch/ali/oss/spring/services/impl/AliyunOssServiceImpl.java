@@ -1,10 +1,7 @@
 package org.mvnsearch.ali.oss.spring.services.impl;
 
 import com.aliyun.openservices.oss.OSSClient;
-import com.aliyun.openservices.oss.model.Bucket;
-import com.aliyun.openservices.oss.model.OSSObject;
-import com.aliyun.openservices.oss.model.ObjectListing;
-import com.aliyun.openservices.oss.model.ObjectMetadata;
+import com.aliyun.openservices.oss.model.*;
 import org.apache.commons.io.IOUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
@@ -65,6 +62,15 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         } catch (Exception ignore) {
 
         }
+    }
+
+    /**
+     * get oss client
+     *
+     * @return oss client
+     */
+    public OSSClient getOssClient() {
+        return oss;
     }
 
     /**
@@ -129,6 +135,47 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      */
     public List<Bucket> getBuckets() throws Exception {
         return oss.listBuckets();
+    }
+
+    /**
+     * get bucket ACL
+     *
+     * @param bucket bucket name
+     * @return ACL String, such --, RW, R-
+     * @throws Exception exception
+     */
+    public String getBucketACL(String bucket) throws Exception {
+        String aclStr = "--";
+        AccessControlList acl = oss.getBucketAcl(bucket);
+        for (Grant grant : acl.getGrants()) {
+            if (grant.getGrantee() == GroupGrantee.AllUsers) {
+                if (grant.getPermission() == Permission.Read) {
+                    aclStr = "R-";
+                }
+                if (grant.getPermission() == Permission.FullControl) {
+                    aclStr = "RW";
+                }
+            }
+        }
+        return aclStr;
+    }
+
+    /**
+     * 设置ACL
+     *
+     * @param bucket bucket
+     * @param acl    acl value, such --, R- or RW
+     * @throws Exception exception
+     */
+    @Override
+    public void setBucketACL(String bucket, String acl) throws Exception {
+        if (acl.equals("RW")) {
+            oss.setBucketAcl(bucket, CannedAccessControlList.PublicReadWrite);
+        } else if (acl.equals("R-")) {
+            oss.setBucketAcl(bucket, CannedAccessControlList.PublicRead);
+        } else {
+            oss.setBucketAcl(bucket, CannedAccessControlList.Private);
+        }
     }
 
     /**
