@@ -241,14 +241,14 @@ public class OssOperationCommands implements CommandMarker {
             buf.append("Buckets:" + StringUtils.LINE_SEPARATOR);
             List<Bucket> buckets = aliyunOssService.getBuckets();
             for (Bucket bucket : buckets) {
-                //pad
-                buf.append((bucket.getName().equals(currentBucket)) ? " => " : "    ");
                 //acl
                 buf.append(aliyunOssService.getBucketACL(bucket.getName()));
                 //create time
                 buf.append("  " + DateUtils.formatDate(bucket.getCreationDate(), "yyyy-MM-dd HH:mm:ss"));
+                //pad
+                buf.append((bucket.getName().equals(currentBucket)) ? " => " : "    ");
                 //apend url
-                buf.append(" oss://" + bucket.getName() + StringUtils.LINE_SEPARATOR);
+                buf.append("oss://" + bucket.getName() + StringUtils.LINE_SEPARATOR);
             }
         } catch (Exception e) {
             buf.append(e.getMessage());
