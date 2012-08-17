@@ -10,7 +10,6 @@ import org.apache.http.impl.cookie.DateUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.shell.support.util.StringUtils;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -156,24 +154,7 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                Collection<File> files = FileUtils.listFiles(sourceFile, new AbstractFileFilter() {
-                            public boolean accept(File file) {
-                                return !file.getName().startsWith(".");
-                            }
-                        }, new AbstractFileFilter() {
-                            public boolean accept(File dir, String name) {
-                                return !name.startsWith(".");
-                            }
-                        }
-                );
-                for (File file : files) {
-                    String destPath = file.getAbsolutePath().replace(sourceFile.getAbsolutePath(), "");
-                    destPath = destFilePath + destPath.replaceAll("\\\\", "/");
-                    if (destPath.contains("//")) {
-                        destPath = destPath.replace("//", "/");
-                    }
-                    aliyunOssService.put(currentBucket, file.getAbsolutePath(), destPath);
-                }
+                uploadDirectory(currentBucket, destFilePath, sourceFile, false);
             } else {
                 aliyunOssService.put(currentBucket, sourceFilePath, destFilePath);
                 return "Uploaded to: oss://" + currentBucket + "/" + destFilePath;
@@ -185,6 +166,48 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
+     * upload directory
+     *
+     * @param bucket       bucket
+     * @param destFilePath dest file name
+     * @param sourceDir    source directory
+     * @param synced       synced mark
+     * @throws Exception exception
+     */
+    private void uploadDirectory(String bucket, String destFilePath, File sourceDir, boolean synced) throws Exception {
+        Collection<File> files = FileUtils.listFiles(sourceDir, new AbstractFileFilter() {
+                    public boolean accept(File file) {
+                        return !file.getName().startsWith(".");
+                    }
+                }, new AbstractFileFilter() {
+                    public boolean accept(File dir, String name) {
+                        return !name.startsWith(".");
+                    }
+                }
+        );
+        for (File file : files) {
+            String destPath = file.getAbsolutePath().replace(sourceDir.getAbsolutePath(), "");
+            destPath = destFilePath + destPath.replaceAll("\\\\", "/");
+            if (destPath.contains("//")) {
+                destPath = destPath.replace("//", "/");
+            }
+            boolean overwrite = true;
+            //sync validation
+            if (synced) {
+                ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(bucket, destFilePath);
+                if (objectMetadata != null) {
+                    if (objectMetadata.getLastModified().getTime() >= file.lastModified() && file.length() == objectMetadata.getContentLength()) {
+                        overwrite = false;
+                    }
+                }
+            }
+            if (overwrite) {
+                aliyunOssService.put(bucket, file.getAbsolutePath(), destPath);
+            }
+        }
+    }
+
+    /**
      * list files
      *
      * @return content
@@ -192,15 +215,20 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "sync", help = "Put the local file to OSS")
     public String sync(@CliOption(key = {"source"}, mandatory = true, help = "source directory on disk") final String sourceDirectory,
                        @CliOption(key = {"dest"}, mandatory = true, help = "destination path on OSS") final String destPath) {
+        if (currentBucket == null) {
+            return "Please select a bucket!";
+        }
+        File sourceFile = new File(sourceDirectory);
+        if (!sourceFile.exists()) {
+            return "File not extis: " + sourceDirectory;
+        }
         try {
-            File sourceDir = new File(sourceDirectory);
-            Collection<File> uploadedFiles = FileUtils.listFiles(sourceDir, new AbstractFileFilter() {
-                public boolean accept(File file) {
-                    return !file.getName().startsWith(".");
-                }
-            }, null);
-//            aliyunOssService.put(currentBucket, sourceFilePath, destFilePath);
-//            return "Uploaded to: oss://" + currentBucket + "/" + destFilePath;
+            if (sourceFile.isDirectory()) {
+                uploadDirectory(currentBucket, destPath, sourceFile, true);
+            } else {
+                aliyunOssService.put(currentBucket, sourceDirectory, destPath);
+                return "Uploaded to: oss://" + currentBucket + "/" + destPath;
+            }
         } catch (Exception e) {
             return e.getMessage();
         }
