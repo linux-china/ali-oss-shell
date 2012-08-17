@@ -92,6 +92,29 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
+     * create new bucket
+     *
+     * @return new bucket
+     */
+    @CliCommand(value = "chmod", help = "Set Current Bucket Access Control List: --, R- or RW")
+    public String chmod(@CliOption(key = {""}, mandatory = false, help = "Set bucket Access Control List") final String acl) {
+        try {
+            if (currentBucket == null) {
+                return "Please select a bucket!";
+            }
+            if (acl.equals("--") || acl.equals("R-") || acl.equals("RW")) {
+                aliyunOssService.setBucketACL(currentBucket, acl);
+            } else {
+                return "ACL value should be '--', 'R-' or 'RW'";
+            }
+
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return "ACL Succeed";
+    }
+
+    /**
      * list files
      *
      * @return content
