@@ -122,8 +122,8 @@ public class OssOperationCommands implements CommandMarker {
                 return "ACL value should be 'Private', 'R-' or 'RW'";
             }
             aliyunOssService.createBucket(bucket);
-            aliyunOssService.setBucketACL(currentBucket, acl);
-            this.currentBucket = bucket;
+            aliyunOssService.setBucketACL(bucket, acl);
+            use(bucket);
             return "Bucket 'oss://" + bucket + "' created and switched";
         } catch (Exception e) {
             log.error("create", e);
@@ -195,6 +195,7 @@ public class OssOperationCommands implements CommandMarker {
         }
         File destFile = new File(destFilePath);
         if (!destFile.getParentFile().exists()) {
+            //noinspection ResultOfMethodCallIgnored
             destFile.getParentFile().mkdirs();
         }
         try {
