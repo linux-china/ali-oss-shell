@@ -44,7 +44,7 @@ public class ConfigServiceImpl implements ConfigService {
      */
     @Override
     public boolean available() {
-        return properties.containsKey("ACCESS_ID") && properties.contains("ACCESS_KEY");
+        return properties.containsKey("ACCESS_ID") && properties.containsKey("ACCESS_KEY");
     }
 
     /**
