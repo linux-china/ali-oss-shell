@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.http.impl.cookie.DateUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
+import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
@@ -15,6 +16,7 @@ import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.shell.support.util.StringUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +39,10 @@ public class OssOperationCommands implements CommandMarker {
      */
     private String currentDir = null;
     /**
+     * config service
+     */
+    private ConfigService configService;
+    /**
      * aliyun oss service
      */
     private AliyunOssService aliyunOssService;
@@ -52,6 +58,24 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
+     * inject config service
+     *
+     * @param configService config service
+     */
+    @Autowired
+    public void setConfigService(ConfigService configService) {
+        this.configService = configService;
+    }
+
+    /**
+     * init method: load current bucket
+     */
+    @PostConstruct
+    public void init() {
+        this.currentBucket = configService.getProperty("BUCKET");
+    }
+
+    /**
      * list files
      *
      * @return content
@@ -59,7 +83,8 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "config", help = "Config the Aliyun OSS access info")
     public String config(@CliOption(key = {"id"}, mandatory = true, help = "Aliyun Access ID") final String accessId,
                          @CliOption(key = {"key"}, mandatory = true, help = "Aliyun Access Key") final String accessKey) {
-        aliyunOssService.setAccessInfo(accessId, accessKey);
+        configService.setAccessInfo(accessId, accessKey);
+        aliyunOssService.refreshToken();
         return "Access info saved!";
     }
 
@@ -203,7 +228,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             if (overwrite) {
                 aliyunOssService.put(bucket, file.getAbsolutePath(), destPath);
-                System.out.print("Uploaded: oss://" + bucket + "/" + destFilePath);
+                System.out.println("Uploaded: oss://" + bucket + "/" + destFilePath);
             }
         }
     }
@@ -311,6 +336,7 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "use", help = "Switch bucket")
     public String use(@CliOption(key = {""}, mandatory = true, help = "bucket name") final String bucketName) {
         this.currentBucket = bucketName;
+        configService.setProperty("BUCKET", bucketName);
         return "Switched to " + bucketName;
     }
 
