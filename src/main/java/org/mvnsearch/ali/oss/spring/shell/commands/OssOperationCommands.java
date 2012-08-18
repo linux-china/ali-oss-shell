@@ -345,11 +345,22 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "rm", help = "Delete OSS object")
     public String rm(@CliOption(key = {""}, mandatory = true, help = "OSS file path") final String filePath) {
         try {
-            aliyunOssService.delete(currentBucket, filePath);
+            if (filePath.endsWith("*")) {
+                ObjectListing list = aliyunOssService.list(currentBucket, filePath.replace("*", ""));
+                int size = list.getObjectSummaries().size();
+                for (OSSObjectSummary objectSummary : list.getObjectSummaries()) {
+                    aliyunOssService.delete(currentBucket, objectSummary.getKey());
+                }
+                if (size > 1) {
+                    return size + " files deleted!";
+                }
+            } else {
+                aliyunOssService.delete(currentBucket, filePath);
+            }
         } catch (Exception e) {
             return e.getMessage();
         }
-        return null;
+        return filePath + " deleted!";
     }
 
     /**
