@@ -1,5 +1,7 @@
 package org.mvnsearch.ali.oss.spring.services;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * config service
  *
@@ -36,5 +38,5 @@ public interface ConfigService {
      * @param key   key
      * @param value value
      */
-    void setProperty(String key, String value);
+    void setProperty(String key, @Nullable String value);
 }
