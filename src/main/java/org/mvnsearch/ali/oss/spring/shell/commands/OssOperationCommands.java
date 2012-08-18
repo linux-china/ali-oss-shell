@@ -446,9 +446,9 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "set", help = "Set object metadata")
-    public String set(@CliOption(key = {"file"}, mandatory = true, help = "OSS file path") final String filePath,
-                      @CliOption(key = {"key"}, mandatory = true, help = "Metadata key") final String key,
-                      @CliOption(key = {"value"}, mandatory = true, help = "Metadata value") final String value) {
+    public String set(@CliOption(key = {"key"}, mandatory = true, help = "OSS file path") final String key,
+                      @CliOption(key = {"value"}, mandatory = true, help = "Metadata key") final String value,
+                      @CliOption(key = {""}, mandatory = true, help = "Metadata value") final String filePath) {
         try {
             aliyunOssService.setObjectMetadata(currentBucket, filePath, key, value);
         } catch (Exception e) {
