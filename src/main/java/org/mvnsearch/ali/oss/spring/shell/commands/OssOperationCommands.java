@@ -112,7 +112,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return new bucket
      */
     @CliCommand(value = "create", help = "Create a new bucket")
-    public String create(@CliOption(key = {"acl"}, mandatory = false, help = "Bucket ACL, such Private, R- or RW") String acl,
+    public String create(@CliOption(key = {"acl"}, mandatory = false, help = "Bucket ACL, such as: Private, R- or RW") String acl,
                          @CliOption(key = {""}, mandatory = true, help = "prefix wild matched file name") final String bucket) {
         try {
             if (acl == null || acl.isEmpty() || acl.equalsIgnoreCase("private")) {
