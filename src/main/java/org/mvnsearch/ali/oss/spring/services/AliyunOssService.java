@@ -27,6 +27,14 @@ public interface AliyunOssService {
     public void createBucket(String bucket) throws Exception;
 
     /**
+     * drop bucket
+     *
+     * @param bucket bucket
+     * @throws Exception exception
+     */
+    public void dropBucket(String bucket) throws Exception;
+
+    /**
      * delete bucket
      *
      * @param bucket bucket

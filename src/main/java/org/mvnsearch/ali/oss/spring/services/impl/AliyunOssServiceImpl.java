@@ -88,6 +88,16 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     }
 
     /**
+     * drop bucket
+     *
+     * @param bucket bucket
+     * @throws Exception exception
+     */
+    public void dropBucket(String bucket) throws Exception {
+        oss.deleteBucket(bucket);
+    }
+
+    /**
      * delete bucket
      *
      * @param bucket bucket
