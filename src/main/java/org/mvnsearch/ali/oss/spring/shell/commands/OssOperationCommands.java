@@ -124,7 +124,7 @@ public class OssOperationCommands implements CommandMarker {
             aliyunOssService.createBucket(bucket);
             aliyunOssService.setBucketACL(currentBucket, acl);
             this.currentBucket = bucket;
-            return "Bucket 'oss://+" + bucket + "' created and switched";
+            return "Bucket 'oss://" + bucket + "' created and switched";
         } catch (Exception e) {
             log.error("create", e);
             return e.getMessage();
