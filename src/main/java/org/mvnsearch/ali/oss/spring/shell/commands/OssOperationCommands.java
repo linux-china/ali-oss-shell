@@ -223,7 +223,8 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                uploadDirectory(currentBucket, destFilePath, sourceFile, false);
+                int count = uploadDirectory(currentBucket, destFilePath, sourceFile, false);
+                return count + " files uploaded";
             } else {
                 aliyunOssService.put(currentBucket, sourceFilePath, destFilePath);
                 return "Uploaded to: oss://" + currentBucket + "/" + destFilePath;
@@ -232,7 +233,6 @@ public class OssOperationCommands implements CommandMarker {
             log.error("upt", e);
             return e.getMessage();
         }
-        return null;
     }
 
     /**
@@ -244,7 +244,7 @@ public class OssOperationCommands implements CommandMarker {
      * @param synced       synced mark
      * @throws Exception exception
      */
-    private void uploadDirectory(String bucket, String destFilePath, File sourceDir, boolean synced) throws Exception {
+    private int uploadDirectory(String bucket, String destFilePath, File sourceDir, boolean synced) throws Exception {
         Collection<File> files = FileUtils.listFiles(sourceDir, new AbstractFileFilter() {
                     public boolean accept(File file) {
                         return !file.getName().startsWith(".");
@@ -255,6 +255,7 @@ public class OssOperationCommands implements CommandMarker {
                     }
                 }
         );
+        int count = files.size();
         for (File file : files) {
             String destPath = file.getAbsolutePath().replace(sourceDir.getAbsolutePath(), "");
             destPath = destFilePath + destPath.replaceAll("\\\\", "/");
@@ -264,7 +265,7 @@ public class OssOperationCommands implements CommandMarker {
             boolean overwrite = true;
             //sync validation
             if (synced) {
-                ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(bucket, destFilePath);
+                ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(bucket, destPath);
                 if (objectMetadata != null) {
                     if (objectMetadata.getLastModified().getTime() >= file.lastModified() && file.length() == objectMetadata.getContentLength()) {
                         overwrite = false;
@@ -274,8 +275,12 @@ public class OssOperationCommands implements CommandMarker {
             if (overwrite) {
                 aliyunOssService.put(bucket, file.getAbsolutePath(), destPath);
                 System.out.println("Uploaded: oss://" + bucket + "/" + destPath);
+            } else {
+                System.out.println("Skipped:  oss://" + bucket + "/" + destPath);
+                count = count - 1;
             }
         }
+        return count;
     }
 
     /**
@@ -295,7 +300,8 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                uploadDirectory(currentBucket, destPath, sourceFile, true);
+                int count = uploadDirectory(currentBucket, destPath, sourceFile, true);
+                return count + " files uploaded";
             } else {
                 aliyunOssService.put(currentBucket, sourceDirectory, destPath);
                 return "Uploaded to: oss://" + currentBucket + "/" + destPath;
@@ -304,7 +310,6 @@ public class OssOperationCommands implements CommandMarker {
             log.error("sync", e);
             return e.getMessage();
         }
-        return null;
     }
 
     /**
