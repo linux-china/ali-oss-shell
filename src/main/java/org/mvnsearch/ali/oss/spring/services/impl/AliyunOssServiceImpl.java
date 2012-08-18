@@ -141,7 +141,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     public void setBucketACL(String bucket, String acl) throws Exception {
         if (acl.equals("RW")) {
             oss.setBucketAcl(bucket, CannedAccessControlList.PublicReadWrite);
-        } else if (acl.equals("R-")) {
+        } else if (acl.equals("R-") || acl.equals("R")) {
             oss.setBucketAcl(bucket, CannedAccessControlList.PublicRead);
         } else {
             oss.setBucketAcl(bucket, CannedAccessControlList.Private);
