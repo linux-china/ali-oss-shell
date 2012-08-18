@@ -10,6 +10,8 @@ import org.apache.http.impl.cookie.DateUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
@@ -32,6 +34,10 @@ import java.util.Map;
 @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
 @Component
 public class OssOperationCommands implements CommandMarker {
+    /**
+     * log
+     */
+    private Logger log = LoggerFactory.getLogger(OssOperationCommands.class);
     /**
      * current bucket
      */
@@ -106,12 +112,21 @@ public class OssOperationCommands implements CommandMarker {
      * @return new bucket
      */
     @CliCommand(value = "create", help = "Create a new bucket")
-    public String create(@CliOption(key = {""}, mandatory = false, help = "prefix wild matched file name") final String bucket) {
+    public String create(@CliOption(key = {"acl"}, mandatory = false, help = "Bucket ACL, such Private, R- or RW") String acl,
+                         @CliOption(key = {""}, mandatory = true, help = "prefix wild matched file name") final String bucket) {
         try {
+            if (acl == null || acl.isEmpty() || acl.equalsIgnoreCase("private")) {
+                acl = "--";
+            }
+            if (!(acl.equalsIgnoreCase("--") || acl.equals("R-") || acl.equals("RW"))) {
+                return "ACL value should be 'Private', 'R-' or 'RW'";
+            }
             aliyunOssService.createBucket(bucket);
+            aliyunOssService.setBucketACL(currentBucket, acl);
             this.currentBucket = bucket;
             return "Bucket 'oss://+" + bucket + "' created and switched";
         } catch (Exception e) {
+            log.error("create", e);
             return e.getMessage();
         }
     }
@@ -122,7 +137,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return new bucket
      */
     @CliCommand(value = "chmod", help = "Set Current Bucket Access Control List: Private, R- or RW")
-    public String chmod(@CliOption(key = {""}, mandatory = false, help = "Set bucket Access Control List") String acl) {
+    public String chmod(@CliOption(key = {""}, mandatory = true, help = "Set bucket Access Control List") String acl) {
         try {
             if (currentBucket == null) {
                 return "Please select a bucket!";
@@ -135,8 +150,8 @@ public class OssOperationCommands implements CommandMarker {
             } else {
                 return "ACL value should be 'Private', 'R-' or 'RW'";
             }
-
         } catch (Exception e) {
+            log.error("chmod", e);
             return e.getMessage();
         }
         return currentBucket + "'s ACL: " + acl;
@@ -160,6 +175,7 @@ public class OssOperationCommands implements CommandMarker {
         try {
             return "Saved to " + aliyunOssService.get(currentBucket, sourceFilePath, destFilePath);
         } catch (Exception e) {
+            log.error("get", e);
             return e.getMessage();
         }
     }
@@ -187,6 +203,7 @@ public class OssOperationCommands implements CommandMarker {
                 return "Uploaded to: oss://" + currentBucket + "/" + destFilePath;
             }
         } catch (Exception e) {
+            log.error("upt", e);
             return e.getMessage();
         }
         return null;
@@ -258,6 +275,7 @@ public class OssOperationCommands implements CommandMarker {
                 return "Uploaded to: oss://" + currentBucket + "/" + destPath;
             }
         } catch (Exception e) {
+            log.error("sync", e);
             return e.getMessage();
         }
         return null;
@@ -284,6 +302,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             buf.append(objectListing.getObjectSummaries().size() + " files found");
         } catch (Exception e) {
+            log.error("ls", e);
             buf.append(e.getMessage());
         }
         return buf.toString().trim();
@@ -310,7 +329,8 @@ public class OssOperationCommands implements CommandMarker {
                 buf.append("oss://" + bucket.getName() + StringUtils.LINE_SEPARATOR);
             }
         } catch (Exception e) {
-            buf.append(e.getMessage());
+            log.error("listbuckets", e);
+            return e.getMessage();
         }
         return buf.toString().trim();
     }
@@ -367,7 +387,8 @@ public class OssOperationCommands implements CommandMarker {
                 }
             }
         } catch (Exception e) {
-            buf.append(e.getMessage() + StringUtils.LINE_SEPARATOR);
+            log.error("file", e);
+            return e.getMessage();
         }
         return buf.toString().trim();
     }
@@ -393,6 +414,7 @@ public class OssOperationCommands implements CommandMarker {
                 aliyunOssService.delete(currentBucket, filePath);
             }
         } catch (Exception e) {
+            log.error("rm", e);
             return e.getMessage();
         }
         return filePath + " deleted!";
@@ -417,6 +439,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             aliyunOssService.copy(sourceUri.getBucket(), sourceUri.getFilePath(), destUri.getBucket(), destUri.getFilePath());
         } catch (Exception e) {
+            log.error("cp", e);
             return e.getMessage();
         }
         return null;
@@ -442,6 +465,7 @@ public class OssOperationCommands implements CommandMarker {
             aliyunOssService.copy(sourceUri.getBucket(), sourceUri.getFilePath(), destUri.getBucket(), destUri.getFilePath());
             aliyunOssService.delete(sourceUri.getBucket(), sourceUri.getFilePath());
         } catch (Exception e) {
+            log.error("mv", e);
             return e.getMessage();
         }
         return null;
@@ -459,6 +483,7 @@ public class OssOperationCommands implements CommandMarker {
         try {
             aliyunOssService.setObjectMetadata(currentBucket, filePath, key, value);
         } catch (Exception e) {
+            log.error("set", e);
             return e.getMessage();
         }
         return file(filePath);
