@@ -1,6 +1,7 @@
 package org.mvnsearch.ali.oss.spring.shell.commands;
 
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
+import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -19,18 +20,18 @@ import org.springframework.stereotype.Component;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class OssCliBannerProvider extends DefaultBannerProvider implements CommandMarker {
     /**
-     * aliyun oss service
+     * config service
      */
-    private AliyunOssService aliyunOssService;
+    private ConfigService configService;
 
     /**
-     * inject aliyun oss service
+     * inject config service
      *
-     * @param aliyunOssService aliyun oss service
+     * @param configService config service
      */
     @Autowired
-    public void setAliyunOssService(AliyunOssService aliyunOssService) {
-        this.aliyunOssService = aliyunOssService;
+    public void setConfigService(ConfigService configService) {
+        this.configService = configService;
     }
 
     /**
@@ -76,7 +77,7 @@ public class OssCliBannerProvider extends DefaultBannerProvider implements Comma
      * @return welcome message
      */
     public String getWelcomeMessage() {
-        if (aliyunOssService.available()) {
+        if (configService.available()) {
             return "Welcome to Aliyun OSS Java CLI";
         } else {
             return "Please use config command to set access info!";
