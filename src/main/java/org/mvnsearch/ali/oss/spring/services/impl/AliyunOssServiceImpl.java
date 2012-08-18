@@ -3,6 +3,7 @@ package org.mvnsearch.ali.oss.spring.services.impl;
 import com.aliyun.openservices.oss.OSSClient;
 import com.aliyun.openservices.oss.model.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.impl.cookie.DateUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
@@ -16,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -198,6 +200,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         return new OSSUri(destBucketName, destFilePath).toString();
     }
 
+
     /**
      * get file and save into local disk
      *
@@ -250,9 +253,21 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      * @param value      value
      */
     public void setObjectMetadata(String bucketName, String filePath, String key, String value) throws Exception {
-        OSSObject ossObject = oss.getObject(bucketName, filePath);
-        ObjectMetadata objectMetadata = ossObject.getObjectMetadata();
-        objectMetadata.getRawMetadata().put(key, value);
-        oss.putObject(bucketName, filePath, ossObject.getObjectContent(), objectMetadata);
+        ObjectMetadata objectMetadata = oss.getObjectMetadata(bucketName, filePath);
+        CopyObjectRequest copyObjectRequest = new CopyObjectRequest(bucketName, filePath, bucketName, filePath);
+        if (key.equalsIgnoreCase("Cache-Control")) {
+            objectMetadata.setCacheControl(value);
+        } else if (key.equals("Content-Type")) {
+            objectMetadata.setContentType(value);
+        } else if (key.equalsIgnoreCase("Expires")) {
+            objectMetadata.setExpirationTime(DateUtils.parseDate(value, new String[]{"yyyy-MM-dd HH:mm:ss"}));
+        } else {
+            if (objectMetadata.getUserMetadata() == null || objectMetadata.getUserMetadata().isEmpty()) {
+                objectMetadata.setUserMetadata(new HashMap<String, String>());
+            }
+            objectMetadata.getUserMetadata().put(key, value);
+        }
+        copyObjectRequest.setNewObjectMetadata(objectMetadata);
+        oss.copyObject(copyObjectRequest);
     }
 }
