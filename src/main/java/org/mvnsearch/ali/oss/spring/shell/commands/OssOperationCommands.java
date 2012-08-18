@@ -9,6 +9,7 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.http.impl.cookie.DateUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
+import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
@@ -399,7 +400,15 @@ public class OssOperationCommands implements CommandMarker {
     public String cp(@CliOption(key = {"source"}, mandatory = true, help = "Source OSS file path") final String sourceFilePath,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Destination OSS file path") final String destFilePath) {
         try {
-            aliyunOssService.copy(currentBucket, sourceFilePath, currentBucket, destFilePath);
+            OSSUri sourceUri = new OSSUri(currentBucket, sourceFilePath);
+            OSSUri destUri = new OSSUri(currentBucket, destFilePath);
+            if (sourceFilePath.startsWith("oss://")) {
+                sourceUri = new OSSUri(sourceFilePath);
+            }
+            if (destFilePath.startsWith("oss://")) {
+                destUri = new OSSUri(destFilePath);
+            }
+            aliyunOssService.copy(sourceUri.getBucket(), sourceUri.getFilePath(), destUri.getBucket(), destUri.getFilePath());
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -415,8 +424,16 @@ public class OssOperationCommands implements CommandMarker {
     public String mv(@CliOption(key = {"source"}, mandatory = true, help = "Source OSS file path") final String sourceFilePath,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Destination OSS file path") final String destFilePath) {
         try {
-            aliyunOssService.copy(currentBucket, sourceFilePath, currentBucket, destFilePath);
-            aliyunOssService.delete(currentBucket, sourceFilePath);
+            OSSUri sourceUri = new OSSUri(currentBucket, sourceFilePath);
+            OSSUri destUri = new OSSUri(currentBucket, destFilePath);
+            if (sourceFilePath.startsWith("oss://")) {
+                sourceUri = new OSSUri(sourceFilePath);
+            }
+            if (destFilePath.startsWith("oss://")) {
+                destUri = new OSSUri(destFilePath);
+            }
+            aliyunOssService.copy(sourceUri.getBucket(), sourceUri.getFilePath(), destUri.getBucket(), destUri.getFilePath());
+            aliyunOssService.delete(sourceUri.getBucket(), sourceUri.getFilePath());
         } catch (Exception e) {
             return e.getMessage();
         }
