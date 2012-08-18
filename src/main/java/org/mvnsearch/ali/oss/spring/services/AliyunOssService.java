@@ -14,19 +14,9 @@ import java.util.List;
  */
 public interface AliyunOssService {
     /**
-     * available info
-     *
-     * @return available infor
+     * refresh token
      */
-    public boolean available();
-
-    /**
-     * set access info
-     *
-     * @param accessId  access id
-     * @param accessKey access key
-     */
-    public void setAccessInfo(String accessId, String accessKey);
+    public void refreshToken();
 
     /**
      * create bucket

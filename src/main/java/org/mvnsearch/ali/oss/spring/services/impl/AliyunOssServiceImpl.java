@@ -4,10 +4,14 @@ import com.aliyun.openservices.oss.OSSClient;
 import com.aliyun.openservices.oss.model.*;
 import org.apache.commons.io.IOUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
+import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,40 +31,38 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      */
     private String endpoint = "http://storage.aliyun.com";
     /**
-     * access ID
+     * config service
      */
-    private String accessId;
-    /**
-     * access key
-     */
-    private String accessKey;
+    private ConfigService configService;
     /**
      * oss client
      */
     private OSSClient oss;
+
     /**
      * mime types
      */
     private static ConfigurableMimeFileTypeMap mimeTypes = new ConfigurableMimeFileTypeMap();
 
     /**
-     * construct method
+     * inject config service
+     *
+     * @param configService config service
      */
-    public AliyunOssServiceImpl() {
-        try {
-            Properties properties = new Properties();
-            File userHome = new File(System.getProperty("user.home"));
-            File cfgFile = new File(userHome, ".aliyunoss.cfg");
-            if (cfgFile.exists()) {
-                properties.load(new FileInputStream(cfgFile));
-                this.accessId = properties.getProperty("ACCESS_ID");
-                this.accessKey = properties.getProperty("ACCESS_KEY");
-                if (accessId != null) {
-                    oss = new OSSClient(endpoint, accessId, accessKey);
-                }
-            }
-        } catch (Exception ignore) {
+    @Autowired
+    public void setConfigService(ConfigService configService) {
+        this.configService = configService;
+    }
 
+    /**
+     * refresh token
+     */
+    @PostConstruct
+    public void refreshToken() {
+        String accessId = configService.getProperty("ACCESS_ID");
+        String accessKey = configService.getProperty("ACCESS_KEY");
+        if (accessId != null) {
+            oss = new OSSClient(endpoint, accessId, accessKey);
         }
     }
 
@@ -71,40 +73,6 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      */
     public OSSClient getOssClient() {
         return oss;
-    }
-
-    /**
-     * available info
-     *
-     * @return available infor
-     */
-    @Override
-    public boolean available() {
-        return accessId != null && accessKey != null;
-    }
-
-    /**
-     * set access info
-     *
-     * @param accessId  access id
-     * @param accessKey access key
-     */
-    public void setAccessInfo(String accessId, String accessKey) {
-        this.accessId = accessId;
-        this.accessKey = accessKey;
-        if (accessId != null) {
-            oss = new OSSClient(endpoint, accessId, accessKey);
-        }
-        try {
-            Properties properties = new Properties();
-            properties.setProperty("ACCESS_ID", accessId);
-            properties.setProperty("ACCESS_KEY", accessKey);
-            File userHome = new File(System.getProperty("user.home"));
-            File cfgFile = new File(userHome, ".aliyunoss.cfg");
-            properties.store(new FileOutputStream(cfgFile), null);
-        } catch (Exception ignore) {
-
-        }
     }
 
     /**
