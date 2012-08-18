@@ -1,5 +1,6 @@
 package org.mvnsearch.ali.oss.spring.services.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.springframework.stereotype.Component;
 
@@ -65,10 +66,14 @@ public class ConfigServiceImpl implements ConfigService {
      * @param value value
      */
     @Override
-    public void setProperty(String key, String value) {
+    public void setProperty(String key, @Nullable String value) {
         try {
             File cfgFile = new File(new File(System.getProperty("user.home")), ".aliyunoss.cfg");
-            properties.setProperty(key, value);
+            if (value == null) {
+                properties.remove(key);
+            } else {
+                properties.setProperty(key, value);
+            }
             properties.store(new FileOutputStream(cfgFile), null);
         } catch (Exception e) {
 
