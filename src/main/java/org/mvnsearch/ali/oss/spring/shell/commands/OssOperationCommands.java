@@ -301,7 +301,7 @@ public class OssOperationCommands implements CommandMarker {
         try {
             if (sourceFile.isDirectory()) {
                 int count = uploadDirectory(currentBucket, destPath, sourceFile, true);
-                return count + " files uploaded";
+                return count + " files uploaded!";
             } else {
                 aliyunOssService.put(currentBucket, sourceDirectory, destPath);
                 return "Uploaded to: oss://" + currentBucket + "/" + destPath;
