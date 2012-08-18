@@ -359,7 +359,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             Map<String, String> userMetadata = objectMetadata.getUserMetadata();
             if (userMetadata != null && !userMetadata.isEmpty()) {
-                buf.append("============= User Metadata ==============" + StringUtils.LINE_SEPARATOR);
+                buf.append("================ User Metadata ========================" + StringUtils.LINE_SEPARATOR);
                 for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
                     buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
                 }
