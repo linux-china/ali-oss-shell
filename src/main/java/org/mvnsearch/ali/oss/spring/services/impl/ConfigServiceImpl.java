@@ -2,6 +2,8 @@ package org.mvnsearch.ali.oss.spring.services.impl;
 
 import org.jetbrains.annotations.Nullable;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +19,10 @@ import java.util.Properties;
  */
 @Component("configService")
 public class ConfigServiceImpl implements ConfigService {
+    /**
+     * log
+     */
+    private Logger log = LoggerFactory.getLogger(ConfigServiceImpl.class);
     /**
      * global properties
      */
@@ -75,7 +81,7 @@ public class ConfigServiceImpl implements ConfigService {
                 properties.setProperty(key, value);
             }
             properties.store(new FileOutputStream(cfgFile), null);
-        } catch (Exception e) {
+        } catch (Exception ignore) {
 
         }
     }
