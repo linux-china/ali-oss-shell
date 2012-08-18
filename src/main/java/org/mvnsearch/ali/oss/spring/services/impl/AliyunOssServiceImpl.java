@@ -260,7 +260,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         } else if (key.equals("Content-Type")) {
             objectMetadata.setContentType(value);
         } else if (key.equalsIgnoreCase("Expires")) {
-            objectMetadata.setExpirationTime(DateUtils.parseDate(value, new String[]{"yyyy-MM-dd HH:mm:ss"}));
+            objectMetadata.setExpirationTime(DateUtils.parseDate(value, new String[]{"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"}));
         } else {
             if (objectMetadata.getUserMetadata() == null || objectMetadata.getUserMetadata().isEmpty()) {
                 objectMetadata.setUserMetadata(new HashMap<String, String>());
