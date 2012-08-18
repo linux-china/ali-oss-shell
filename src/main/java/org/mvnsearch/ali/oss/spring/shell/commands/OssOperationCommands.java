@@ -229,7 +229,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             if (overwrite) {
                 aliyunOssService.put(bucket, file.getAbsolutePath(), destPath);
-                System.out.println("Uploaded: oss://" + bucket + "/" + destFilePath);
+                System.out.println("Uploaded: oss://" + bucket + "/" + destPath);
             }
         }
     }
