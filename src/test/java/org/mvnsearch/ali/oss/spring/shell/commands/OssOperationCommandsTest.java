@@ -39,7 +39,7 @@ public class OssOperationCommandsTest extends TestCase {
      */
     public void testCreate() {
         String bucketName = "abc123";
-        System.out.println(commands.create(bucketName));
+        System.out.println(commands.create(bucketName,"R-"));
         assertTrue("Failed to create bucket", commands.df().contains(bucketName));
     }
 }
