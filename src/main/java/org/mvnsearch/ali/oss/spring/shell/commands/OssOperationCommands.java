@@ -132,6 +132,31 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
+     * drop bucket
+     *
+     * @param bucket bucket
+     * @return result
+     */
+    @CliCommand(value = "drop", help = "Drop bucket")
+    public String drop(@CliOption(key = {""}, mandatory = true, help = "Bucket name") String bucket) {
+        try {
+            ObjectListing listing = aliyunOssService.list(bucket, "");
+            if (!listing.getObjectSummaries().isEmpty()) {
+                return "Bucket is not empty, and you can't delete it!";
+            }
+            aliyunOssService.dropBucket(bucket);
+            if (bucket.equals(currentBucket)) {
+                currentBucket = null;
+                configService.setProperty("BUCKET", null);
+            }
+            return bucket + " bucket dropped!";
+        } catch (Exception e) {
+            log.error("drop", e);
+            return e.getMessage();
+        }
+    }
+
+    /**
      * create new bucket
      *
      * @return new bucket
