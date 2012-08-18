@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -352,8 +353,9 @@ public class OssOperationCommands implements CommandMarker {
         try {
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket, filePath);
             Map<String, Object> rawMetadata = objectMetadata.getRawMetadata();
+            List<String> reservedKeys = Arrays.asList("Connection", "Server", "x-oss-request-id");
             for (Map.Entry<String, Object> entry : rawMetadata.entrySet()) {
-                if (!entry.getKey().equalsIgnoreCase("x-oss-request-id")) {
+                if (!reservedKeys.contains(entry.getKey())) {
                     buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
                 }
             }
