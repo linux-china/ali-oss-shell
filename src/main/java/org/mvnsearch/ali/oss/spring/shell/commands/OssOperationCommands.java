@@ -353,11 +353,16 @@ public class OssOperationCommands implements CommandMarker {
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket, filePath);
             Map<String, Object> rawMetadata = objectMetadata.getRawMetadata();
             for (Map.Entry<String, Object> entry : rawMetadata.entrySet()) {
-                buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+                if (!entry.getKey().equalsIgnoreCase("x-oss-request-id")) {
+                    buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+                }
             }
             Map<String, String> userMetadata = objectMetadata.getUserMetadata();
-            for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
-                buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+            if (userMetadata != null && !userMetadata.isEmpty()) {
+                buf.append("============= User Metadata ==============" + StringUtils.LINE_SEPARATOR);
+                for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
+                    buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+                }
             }
         } catch (Exception e) {
             buf.append(e.getMessage() + StringUtils.LINE_SEPARATOR);
