@@ -225,12 +225,11 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     /**
      * delete object
      *
-     * @param bucketName     bucket name
-     * @param sourceFilePath source file path
+     * @param objectUri bucket uri
      * @throws Exception exception
      */
-    public void delete(String bucketName, String sourceFilePath) throws Exception {
-        oss.deleteObject(bucketName, sourceFilePath);
+    public void delete(OSSUri objectUri) throws Exception {
+        oss.deleteObject(objectUri.getBucket(), objectUri.getFilePath());
     }
 
     /**
