@@ -43,6 +43,10 @@ public class OssOperationCommands implements CommandMarker {
      */
     private String currentBucket = null;
     /**
+     * local repository
+     */
+    private File localRepository;
+    /**
      * current directory
      */
     private String currentDir = null;
@@ -81,6 +85,10 @@ public class OssOperationCommands implements CommandMarker {
     @PostConstruct
     public void init() {
         this.currentBucket = configService.getProperty("BUCKET");
+        String repository = configService.getRepository();
+        if (repository != null && !repository.isEmpty()) {
+            localRepository = new File(repository);
+        }
     }
 
     /**
