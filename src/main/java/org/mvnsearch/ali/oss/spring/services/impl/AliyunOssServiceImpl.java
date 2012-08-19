@@ -13,14 +13,11 @@ import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * aliyun OSS service implementation
@@ -182,7 +179,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      * put local file to OSS
      *
      * @param sourceFilePath source file path on local disk
-     * @param destObject   dest object
+     * @param destObject     dest object
      * @return oss file path
      */
     public String put(String sourceFilePath, OSSUri destObject) throws Exception {
@@ -197,16 +194,14 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     /**
      * copy object
      *
-     * @param sourceBucketName source bucket name
-     * @param sourceFilePath   source file path
-     * @param destBucketName   dest bucket name
-     * @param destFilePath     dest file path
+     * @param sourceObjectUri source object uri
+     * @param destObjectUri   dest object uri
      * @return new file path
      * @throws Exception exception
      */
-    public String copy(String sourceBucketName, String sourceFilePath, String destBucketName, String destFilePath) throws Exception {
-        oss.copyObject(sourceBucketName, sourceFilePath, destBucketName, destFilePath);
-        return new OSSUri(destBucketName, destFilePath).toString();
+    public String copy(OSSUri sourceObjectUri, OSSUri destObjectUri) throws Exception {
+        oss.copyObject(sourceObjectUri.getBucket(), sourceObjectUri.getFilePath(), destObjectUri.getBucket(), destObjectUri.getFilePath());
+        return destObjectUri.toString();
     }
 
 
