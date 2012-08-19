@@ -100,12 +100,11 @@ public interface AliyunOssService {
     /**
      * get file and save into local disk
      *
-     * @param bucketName     bucket name
-     * @param sourceFilePath source file path
-     * @param destFilePath   dest file path
+     * @param objectUri    object uri
+     * @param destFilePath dest file path
      * @return local file path
      */
-    public String get(String bucketName, String sourceFilePath, String destFilePath) throws Exception;
+    public String get(OSSUri objectUri, String destFilePath) throws Exception;
 
     /**
      * delete object
