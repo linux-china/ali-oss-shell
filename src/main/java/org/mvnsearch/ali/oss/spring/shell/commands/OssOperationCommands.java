@@ -282,11 +282,8 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "put", help = "Put the local file to OSS")
-    public String put(@CliOption(key = {"source"}, mandatory = true, help = "source file path on disk") final String sourceFilePath,
-                      @CliOption(key = {""}, mandatory = true, help = "destination file path on OSS") final String destFilePath) {
-        if (currentBucket == null) {
-            return "Please select a bucket!";
-        }
+    public String put(@CliOption(key = {"source"}, mandatory = true, help = "source file path on disk") String sourceFilePath,
+                      @CliOption(key = {""}, mandatory = true, help = "destination file path on OSS") String destFilePath) {
         File sourceFile = new File(sourceFilePath);
         if (!sourceFile.exists()) {
             return "File not extis: " + sourceFilePath;
@@ -296,6 +293,9 @@ public class OssOperationCommands implements CommandMarker {
                 int count = uploadDirectory(currentBucket.getBucket(), destFilePath, sourceFile, false);
                 return count + " files uploaded";
             } else {
+                if (destFilePath.endsWith("/")) {
+                    destFilePath = destFilePath + sourceFile.getName();
+                }
                 aliyunOssService.put(sourceFilePath, currentBucket.getChildObjectUri(destFilePath));
                 return "Uploaded to: oss://" + currentBucket.getBucket() + "/" + destFilePath;
             }
