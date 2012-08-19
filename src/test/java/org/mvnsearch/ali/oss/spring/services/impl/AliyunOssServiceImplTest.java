@@ -66,7 +66,7 @@ public class AliyunOssServiceImplTest extends TestCase {
      * @throws Exception exception
      */
     public void testGetObjectMetadata() throws Exception {
-        ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(bucketName, "demo.jpg");
+        ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(new OSSUri(bucketName, "demo.jpg"));
         printMetaData(objectMetadata);
     }
 
@@ -94,8 +94,8 @@ public class AliyunOssServiceImplTest extends TestCase {
     public void testPutObject() throws Exception {
         String destFile = "demo.jpg";
         String sourceFile = "/Users/linux_china/demo.jpg";
-        aliyunOssService.put(sourceFile, new OSSUri(bucketName,destFile));
-        ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(bucketName, destFile);
+        aliyunOssService.put(sourceFile, new OSSUri(bucketName, destFile));
+        ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(new OSSUri(bucketName, destFile));
         printMetaData(objectMetadata);
     }
 }
