@@ -90,9 +90,20 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "config", help = "Config the Aliyun OSS access info")
     public String config(@CliOption(key = {"id"}, mandatory = true, help = "Aliyun Access ID") final String accessId,
-                         @CliOption(key = {"key"}, mandatory = true, help = "Aliyun Access Key") final String accessKey) {
-        configService.setAccessInfo(accessId, accessKey);
-        aliyunOssService.refreshToken();
+                         @CliOption(key = {"key"}, mandatory = true, help = "Aliyun Access Key") final String accessKey,
+                         @CliOption(key = {"repository"}, mandatory = true, help = "Aliyun Access Key") final String reposity) {
+        try {
+            configService.setAccessInfo(accessId, accessKey);
+            aliyunOssService.refreshToken();
+            //local repository
+            File temp = new File(reposity);
+            if (!temp.exists()) {
+                FileUtils.forceMkdir(temp);
+            }
+        } catch (Exception e) {
+            log.error("config", e);
+            return e.getMessage();
+        }
         return "Access info saved!";
     }
 
