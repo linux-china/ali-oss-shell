@@ -303,7 +303,7 @@ public class OssOperationCommands implements CommandMarker {
                 int count = uploadDirectory(currentBucket.getBucket(), destFilePath, sourceFile, false);
                 return count + " files uploaded";
             } else {
-                aliyunOssService.put(currentBucket.getBucket(), sourceFilePath, destFilePath);
+                aliyunOssService.put(sourceFilePath, currentBucket.getChildObjectUri(destFilePath));
                 return "Uploaded to: oss://" + currentBucket.getBucket() + "/" + destFilePath;
             }
         } catch (Exception e) {
@@ -340,6 +340,7 @@ public class OssOperationCommands implements CommandMarker {
                 destPath = destPath.replace("//", "/");
             }
             boolean overwrite = true;
+            OSSUri objectUri = new OSSUri(bucket, destPath);
             //sync validation
             if (synced) {
                 ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(bucket, destPath);
@@ -350,10 +351,10 @@ public class OssOperationCommands implements CommandMarker {
                 }
             }
             if (overwrite) {
-                aliyunOssService.put(bucket, file.getAbsolutePath(), destPath);
-                System.out.println("Uploaded: oss://" + bucket + "/" + destPath);
+                aliyunOssService.put(file.getAbsolutePath(), objectUri);
+                System.out.println("Uploaded: " + objectUri);
             } else {
-                System.out.println("Skipped:  oss://" + bucket + "/" + destPath);
+                System.out.println("Skipped:  o" + objectUri);
                 count = count - 1;
             }
         }
@@ -380,8 +381,9 @@ public class OssOperationCommands implements CommandMarker {
                 int count = uploadDirectory(currentBucket.getBucket(), destPath, sourceFile, true);
                 return count + " files uploaded!";
             } else {
-                aliyunOssService.put(currentBucket.getBucket(), sourceDirectory, destPath);
-                return "Uploaded to: oss://" + currentBucket + "/" + destPath;
+                OSSUri objectUri = currentBucket.getChildObjectUri(destPath);
+                aliyunOssService.put(sourceDirectory, objectUri);
+                return "Uploaded " + objectUri;
             }
         } catch (Exception e) {
             log.error("sync", e);
