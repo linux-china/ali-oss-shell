@@ -296,8 +296,9 @@ public class OssOperationCommands implements CommandMarker {
                 if (destFilePath.endsWith("/")) {
                     destFilePath = destFilePath + sourceFile.getName();
                 }
-                aliyunOssService.put(sourceFilePath, currentBucket.getChildObjectUri(destFilePath));
-                return "Uploaded to: oss://" + currentBucket.getBucket() + "/" + destFilePath;
+                OSSUri destObjectUri = currentBucket.getChildObjectUri(destFilePath);
+                aliyunOssService.put(sourceFilePath, destObjectUri);
+                return "Uploaded to: " + destObjectUri;
             }
         } catch (Exception e) {
             log.error("upt", e);
