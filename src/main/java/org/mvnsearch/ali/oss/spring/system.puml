@@ -1,0 +1,14 @@
+@startuml
+
+interface ConfigService
+interface AliyunOssService
+class OSSUri
+class OssOperationCommands
+
+OssOperationCommands -- ConfigService
+OssOperationCommands -- AliyunOssService
+OssOperationCommands -- OSSUri
+AliyunOssService --> ConfigService
+AliyunOssService --> OSSUri
+
+@enduml
