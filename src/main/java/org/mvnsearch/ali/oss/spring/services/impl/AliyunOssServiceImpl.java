@@ -4,6 +4,7 @@ import com.aliyun.openservices.oss.OSSClient;
 import com.aliyun.openservices.oss.model.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.cookie.DateUtils;
+import org.jetbrains.annotations.Nullable;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
@@ -237,7 +238,6 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      * @param sourceFilePath source file path
      * @throws Exception exception
      */
-    @Override
     public void delete(String bucketName, String sourceFilePath) throws Exception {
         oss.deleteObject(bucketName, sourceFilePath);
     }
@@ -249,9 +249,22 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      * @param filePath   file path
      * @return oss object
      */
-    @Override
+    @Nullable
     public ObjectMetadata getObjectMetadata(String bucketName, String filePath) throws Exception {
         return oss.getObjectMetadata(bucketName, filePath);
+    }
+
+    /**
+     * get OSS object
+     *
+     * @param bucketName bucket name
+     * @param filePath   file path
+     * @return OSS object
+     * @throws Exception exception
+     */
+    @Nullable
+    public OSSObject getOssObject(String bucketName, String filePath) throws Exception {
+        return oss.getObject(bucketName, filePath);
     }
 
     /**
