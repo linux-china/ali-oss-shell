@@ -136,10 +136,9 @@ public interface AliyunOssService {
     /**
      * set object meta data
      *
-     * @param bucketName bucket name
-     * @param filePath   file path
-     * @param key        key
-     * @param value      value
+     * @param objectUri object uri
+     * @param key       key
+     * @param value     value
      */
-    public void setObjectMetadata(String bucketName, String filePath, String key, String value) throws Exception;
+    public void setObjectMetadata(OSSUri objectUri, String key, String value) throws Exception;
 }
