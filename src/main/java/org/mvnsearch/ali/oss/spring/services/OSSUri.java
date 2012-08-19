@@ -155,12 +155,15 @@ public class OSSUri {
     }
 
     /**
-     * get child object url
+     * get child object url, if file path starts with os://, new OssUri will be created
      *
      * @param filePath file path
      * @return object oss uri
      */
     public OSSUri getChildObjectUri(String filePath) {
+        if (filePath != null && filePath.startsWith("oss://")) {
+            return new OSSUri(filePath);
+        }
         return new OSSUri(this.bucket, filePath);
     }
 }
