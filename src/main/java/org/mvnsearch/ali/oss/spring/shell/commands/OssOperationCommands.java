@@ -519,13 +519,13 @@ public class OssOperationCommands implements CommandMarker {
                 ObjectListing list = aliyunOssService.list(currentBucket.getBucket(), filePath.replace("*", ""));
                 int size = list.getObjectSummaries().size();
                 for (OSSObjectSummary objectSummary : list.getObjectSummaries()) {
-                    aliyunOssService.delete(currentBucket.getBucket(), objectSummary.getKey());
+                    aliyunOssService.delete(currentBucket.getChildObjectUri(objectSummary.getKey()));
                 }
                 if (size > 1) {
                     return size + " files deleted!";
                 }
             } else {
-                aliyunOssService.delete(currentBucket.getBucket(), filePath);
+                aliyunOssService.delete(currentBucket.getChildObjectUri(filePath));
             }
         } catch (Exception e) {
             log.error("rm", e);
@@ -577,7 +577,7 @@ public class OssOperationCommands implements CommandMarker {
                 destUri = new OSSUri(destFilePath);
             }
             aliyunOssService.copy(sourceUri, destUri);
-            aliyunOssService.delete(sourceUri.getBucket(), sourceUri.getFilePath());
+            aliyunOssService.delete(sourceUri);
         } catch (Exception e) {
             log.error("mv", e);
             return e.getMessage();
