@@ -439,7 +439,7 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * list files
+     * change directory
      *
      * @return content
      */
@@ -573,7 +573,7 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * switch bucket
+     * set object meta data
      *
      * @return content
      */
