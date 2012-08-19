@@ -1,10 +1,8 @@
 package org.mvnsearch.ali.oss.spring.shell.commands;
 
-import com.aliyun.openservices.oss.model.Bucket;
-import com.aliyun.openservices.oss.model.OSSObjectSummary;
-import com.aliyun.openservices.oss.model.ObjectListing;
-import com.aliyun.openservices.oss.model.ObjectMetadata;
+import com.aliyun.openservices.oss.model.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.http.impl.cookie.DateUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
@@ -20,7 +18,9 @@ import org.springframework.shell.support.util.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.awt.*;
 import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -194,7 +194,7 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * list files
+     * download file
      *
      * @return content
      */
@@ -215,6 +215,62 @@ public class OssOperationCommands implements CommandMarker {
             log.error("get", e);
             return e.getMessage();
         }
+    }
+
+    /**
+     * display object content
+     *
+     * @return content
+     */
+    @CliCommand(value = "more", help = "Display OSS file content")
+    public String more(@CliOption(key = {""}, mandatory = true, help = "destination file path on disk") final String sourceFilePath) {
+        try {
+            OSSUri sourceUri = new OSSUri(currentBucket, sourceFilePath);
+            if (sourceFilePath.contains("oss://")) {
+                sourceUri = new OSSUri(sourceFilePath);
+            }
+            OSSObject ossObject = aliyunOssService.getOssObject(sourceUri.getBucket(), sourceUri.getFilePath());
+            if (ossObject != null) {
+                System.out.println(IOUtils.toString(ossObject.getObjectContent()));
+            } else {
+                return "Object NOT Found!";
+            }
+        } catch (Exception e) {
+            log.error("more", e);
+            return e.getMessage();
+        }
+        return null;
+    }
+
+    /**
+     * open OSS object in browser
+     *
+     * @return content
+     */
+    @CliCommand(value = "open", help = "Open OSS object in Browser")
+    public String open(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or path") final String sourceFilePath) {
+        try {
+            OSSUri sourceUri = new OSSUri(currentBucket, sourceFilePath);
+            if (sourceFilePath.contains("oss://")) {
+                sourceUri = new OSSUri(sourceFilePath);
+            }
+            //判断是否支持打开浏览器
+            if (Desktop.isDesktopSupported()) {
+                OSSObject ossObject = aliyunOssService.getOssObject(sourceUri.getBucket(), sourceUri.getFilePath());
+                if (ossObject != null) {
+                    Desktop desktop = Desktop.getDesktop();
+                    desktop.browse(new URI(sourceUri.getHttpUrl()));
+                } else {
+                    return "Object NOT Found!";
+                }
+            } else {
+                return "Luanch Brower not support, please copy url to visit: " + sourceUri.getBucket();
+            }
+        } catch (Exception e) {
+            log.error("open", e);
+            return e.getMessage();
+        }
+        return null;
     }
 
     /**
