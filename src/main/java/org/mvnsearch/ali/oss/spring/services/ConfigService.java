@@ -25,6 +25,20 @@ public interface ConfigService {
     public void setAccessInfo(String accessId, String accessKey);
 
     /**
+     * set local file repository
+     *
+     * @param repository repository
+     */
+    public void setRepository(String repository);
+
+    /**
+     * get local repository
+     *
+     * @return local repository
+     */
+    public String getRepository();
+
+    /**
      * get configuration
      *
      * @param key key

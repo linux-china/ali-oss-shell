@@ -103,4 +103,22 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
+    /**
+     * set local file repository
+     *
+     * @param repository repository
+     */
+    public void setRepository(String repository) {
+        setProperty("REPOSITORY", repository);
+    }
+
+    /**
+     * get local repository
+     *
+     * @return local repository
+     */
+    @Override
+    public String getRepository() {
+        return getProperty("REPOSITORY");
+    }
 }
