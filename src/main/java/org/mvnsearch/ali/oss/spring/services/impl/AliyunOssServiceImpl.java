@@ -2,6 +2,7 @@ package org.mvnsearch.ali.oss.spring.services.impl;
 
 import com.aliyun.openservices.oss.OSSClient;
 import com.aliyun.openservices.oss.model.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.cookie.DateUtils;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -215,6 +217,13 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     public String get(OSSUri objectUri, String destFilePath) throws Exception {
         OSSObject ossObject = oss.getObject(objectUri.getBucket(), objectUri.getFilePath());
         if (ossObject != null) {
+            File destFile = new File(destFilePath);
+            if (destFile.isDirectory()) {
+                destFile = new File(destFile, objectUri.getFileName());
+            }
+            if (!destFile.getParentFile().exists()) {
+                FileUtils.forceMkdir(destFile.getParentFile());
+            }
             FileOutputStream fos = new FileOutputStream(destFilePath);
             IOUtils.copy(ossObject.getObjectContent(), fos);
             fos.close();
