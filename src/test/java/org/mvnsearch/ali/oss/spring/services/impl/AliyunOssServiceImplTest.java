@@ -1,12 +1,12 @@
 package org.mvnsearch.ali.oss.spring.services.impl;
 
-import com.aliyun.openservices.oss.model.Bucket;
-import com.aliyun.openservices.oss.model.OSSObjectSummary;
-import com.aliyun.openservices.oss.model.ObjectListing;
-import com.aliyun.openservices.oss.model.ObjectMetadata;
+import com.aliyun.openservices.oss.OSSClient;
+import com.aliyun.openservices.oss.model.*;
 import junit.framework.TestCase;
+import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.springframework.shell.support.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +94,7 @@ public class AliyunOssServiceImplTest extends TestCase {
     public void testPutObject() throws Exception {
         String destFile = "demo.jpg";
         String sourceFile = "/Users/linux_china/demo.jpg";
-        aliyunOssService.put(bucketName, sourceFile, destFile);
+        aliyunOssService.put(sourceFile, new OSSUri(bucketName,destFile));
         ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(bucketName, destFile);
         printMetaData(objectMetadata);
     }
