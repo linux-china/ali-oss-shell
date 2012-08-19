@@ -283,7 +283,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "put", help = "Put the local file to OSS")
     public String put(@CliOption(key = {"source"}, mandatory = true, help = "source file path on disk") final String sourceFilePath,
-                      @CliOption(key = {"dest"}, mandatory = true, help = "destination file path on OSS") final String destFilePath) {
+                      @CliOption(key = {""}, mandatory = true, help = "destination file path on OSS") final String destFilePath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
         }
