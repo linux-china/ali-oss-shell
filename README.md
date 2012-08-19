@@ -25,6 +25,7 @@
 AliyunOssService负责和OSS进行交互，如获取OSS Object信息，上传文件等。
 由于OSS主要包含Bucket和Object，所以我们介入OSSUri类来标识Object，以后相关的操作都是基于object uri完成的。
 整体类图如下：
+
 ![系统类图](https://github.com/linux-china/ali-oss-java-cli/wiki/assets/img/ali-oss-java-cli-class-diagram.png)
 ### Road Map
 
