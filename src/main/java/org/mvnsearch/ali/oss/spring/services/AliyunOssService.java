@@ -117,23 +117,21 @@ public interface AliyunOssService {
     /**
      * get oss object
      *
-     * @param bucketName bucket name
-     * @param filePath   file path
+     * @param objectUri object uri
      * @return oss object
      */
     @Nullable
-    public ObjectMetadata getObjectMetadata(String bucketName, String filePath) throws Exception;
+    public ObjectMetadata getObjectMetadata(OSSUri objectUri) throws Exception;
 
     /**
      * get OSS object
      *
-     * @param bucketName bucket name
-     * @param filePath   file path
+     * @param objectUri object uri
      * @return OSS object
      * @throws Exception exception
      */
     @Nullable
-    public OSSObject getOssObject(String bucketName, String filePath) throws Exception;
+    public OSSObject getOssObject(OSSUri objectUri) throws Exception;
 
     /**
      * set object meta data

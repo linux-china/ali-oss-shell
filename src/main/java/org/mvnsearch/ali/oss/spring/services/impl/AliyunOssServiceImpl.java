@@ -235,26 +235,24 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     /**
      * get oss object
      *
-     * @param bucketName bucket name
-     * @param filePath   file path
+     * @param objectUri object uri
      * @return oss object
      */
     @Nullable
-    public ObjectMetadata getObjectMetadata(String bucketName, String filePath) throws Exception {
-        return oss.getObjectMetadata(bucketName, filePath);
+    public ObjectMetadata getObjectMetadata(OSSUri objectUri) throws Exception {
+        return oss.getObjectMetadata(objectUri.getBucket(), objectUri.getFilePath());
     }
 
     /**
      * get OSS object
      *
-     * @param bucketName bucket name
-     * @param filePath   file path
+     * @param objectUri object uri
      * @return OSS object
      * @throws Exception exception
      */
     @Nullable
-    public OSSObject getOssObject(String bucketName, String filePath) throws Exception {
-        return oss.getObject(bucketName, filePath);
+    public OSSObject getOssObject(OSSUri objectUri) throws Exception {
+        return oss.getObject(objectUri.getBucket(), objectUri.getFilePath());
     }
 
     /**
