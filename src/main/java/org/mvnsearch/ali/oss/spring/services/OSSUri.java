@@ -78,6 +78,37 @@ public class OSSUri {
     }
 
     /**
+     * get file path
+     *
+     * @return file path, if absent, empty string will be returned
+     */
+    @NotNull
+    public String getPath() {
+        if (filePath == null || filePath.isEmpty() || !filePath.contains("/")) {
+            return "";
+        } else {
+            return filePath.substring(0, filePath.lastIndexOf("/"));
+        }
+    }
+
+    /**
+     * get file name
+     *
+     * @return file name
+     */
+    @Nullable
+    public String getFileName() {
+        if (isDirectory()) {
+            return null;
+        }
+        if (filePath.contains("/")) {
+            return filePath.substring(filePath.lastIndexOf("/") + 1);
+        } else {
+            return filePath;
+        }
+    }
+
+    /**
      * 判断是否为目录
      *
      * @return 目录标识
