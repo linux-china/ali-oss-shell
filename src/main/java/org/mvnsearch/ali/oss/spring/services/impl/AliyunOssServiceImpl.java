@@ -258,14 +258,14 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     /**
      * set object meta data
      *
-     * @param bucketName bucket name
-     * @param filePath   file path
-     * @param key        key
-     * @param value      value
+     * @param objectUri object uri
+     * @param key       key
+     * @param value     value
      */
-    public void setObjectMetadata(String bucketName, String filePath, String key, String value) throws Exception {
-        ObjectMetadata objectMetadata = oss.getObjectMetadata(bucketName, filePath);
-        CopyObjectRequest copyObjectRequest = new CopyObjectRequest(bucketName, filePath, bucketName, filePath);
+    public void setObjectMetadata(OSSUri objectUri, String key, String value) throws Exception {
+        ObjectMetadata objectMetadata = oss.getObjectMetadata(objectUri.getBucket(), objectUri.getFilePath());
+        CopyObjectRequest copyObjectRequest = new CopyObjectRequest(objectUri.getBucket(), objectUri.getFilePath(),
+                objectUri.getBucket(), objectUri.getFilePath());
         if (key.equalsIgnoreCase("Cache-Control")) {
             objectMetadata.setCacheControl(value);
         } else if (key.equals("Content-Type")) {
