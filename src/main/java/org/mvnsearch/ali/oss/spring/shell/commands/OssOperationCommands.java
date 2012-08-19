@@ -41,7 +41,7 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * current bucket
      */
-    private String currentBucket = null;
+    private OSSUri currentBucket = null;
     /**
      * local repository
      */
@@ -84,7 +84,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @PostConstruct
     public void init() {
-        this.currentBucket = configService.getProperty("BUCKET");
+        this.currentBucket = new OSSUri(configService.getProperty("BUCKET"), null);
         String repository = configService.getRepository();
         if (repository != null && !repository.isEmpty()) {
             localRepository = new File(repository);
@@ -166,7 +166,7 @@ public class OssOperationCommands implements CommandMarker {
                 return "Bucket is not empty, and you can't delete it!";
             }
             aliyunOssService.dropBucket(bucket);
-            if (bucket.equals(currentBucket)) {
+            if (bucket.equals(currentBucket.getBucket())) {
                 currentBucket = null;
                 configService.setProperty("BUCKET", null);
             }
@@ -192,7 +192,7 @@ public class OssOperationCommands implements CommandMarker {
                 acl = "--";
             }
             if (acl != null && (acl.equalsIgnoreCase("--") || acl.equals("R-") || acl.equals("RW"))) {
-                aliyunOssService.setBucketACL(currentBucket, acl);
+                aliyunOssService.setBucketACL(currentBucket.getBucket(), acl);
             } else {
                 return "ACL value should be 'Private', 'R-' or 'RW'";
             }
@@ -220,7 +220,7 @@ public class OssOperationCommands implements CommandMarker {
             destFile.getParentFile().mkdirs();
         }
         try {
-            return "Saved to " + aliyunOssService.get(currentBucket, sourceFilePath, destFilePath);
+            return "Saved to " + aliyunOssService.get(currentBucket.getBucket(), sourceFilePath, destFilePath);
         } catch (Exception e) {
             log.error("get", e);
             return e.getMessage();
@@ -235,7 +235,7 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "more", help = "Display OSS file content")
     public String more(@CliOption(key = {""}, mandatory = true, help = "destination file path on disk") final String sourceFilePath) {
         try {
-            OSSUri sourceUri = new OSSUri(currentBucket, sourceFilePath);
+            OSSUri sourceUri = new OSSUri(currentBucket.getBucket(), sourceFilePath);
             if (sourceFilePath.contains("oss://")) {
                 sourceUri = new OSSUri(sourceFilePath);
             }
@@ -260,7 +260,7 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "open", help = "Open OSS object in Browser")
     public String open(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or path") final String sourceFilePath) {
         try {
-            OSSUri sourceUri = new OSSUri(currentBucket, sourceFilePath);
+            OSSUri sourceUri = new OSSUri(currentBucket.getBucket(), sourceFilePath);
             if (sourceFilePath.contains("oss://")) {
                 sourceUri = new OSSUri(sourceFilePath);
             }
@@ -300,11 +300,11 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                int count = uploadDirectory(currentBucket, destFilePath, sourceFile, false);
+                int count = uploadDirectory(currentBucket.getBucket(), destFilePath, sourceFile, false);
                 return count + " files uploaded";
             } else {
-                aliyunOssService.put(currentBucket, sourceFilePath, destFilePath);
-                return "Uploaded to: oss://" + currentBucket + "/" + destFilePath;
+                aliyunOssService.put(currentBucket.getBucket(), sourceFilePath, destFilePath);
+                return "Uploaded to: oss://" + currentBucket.getBucket() + "/" + destFilePath;
             }
         } catch (Exception e) {
             log.error("upt", e);
@@ -377,10 +377,10 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                int count = uploadDirectory(currentBucket, destPath, sourceFile, true);
+                int count = uploadDirectory(currentBucket.getBucket(), destPath, sourceFile, true);
                 return count + " files uploaded!";
             } else {
-                aliyunOssService.put(currentBucket, sourceDirectory, destPath);
+                aliyunOssService.put(currentBucket.getBucket(), sourceDirectory, destPath);
                 return "Uploaded to: oss://" + currentBucket + "/" + destPath;
             }
         } catch (Exception e) {
@@ -402,7 +402,7 @@ public class OssOperationCommands implements CommandMarker {
         StringBuilder buf = new StringBuilder();
         String prefix = StringUtils.defaultIfEmpty(currentDir, "") + StringUtils.defaultIfEmpty(filename, "");
         try {
-            ObjectListing objectListing = aliyunOssService.list(currentBucket, prefix);
+            ObjectListing objectListing = aliyunOssService.list(currentBucket.getBucket(), prefix);
             for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                 buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
                         StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
@@ -432,7 +432,7 @@ public class OssOperationCommands implements CommandMarker {
                 //create time
                 buf.append("  " + DateUtils.formatDate(bucket.getCreationDate(), "yyyy-MM-dd HH:mm:ss"));
                 //pad
-                buf.append((bucket.getName().equals(currentBucket)) ? " => " : "    ");
+                buf.append((bucket.getName().equals(currentBucket.getBucket())) ? " => " : "    ");
                 //apend url
                 buf.append("oss://" + bucket.getName() + StringUtils.LINE_SEPARATOR);
             }
@@ -465,7 +465,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "use", help = "Switch bucket")
     public String use(@CliOption(key = {""}, mandatory = true, help = "bucket name") final String bucketName) {
-        this.currentBucket = bucketName;
+        this.currentBucket = new OSSUri(bucketName, null);
         configService.setProperty("BUCKET", bucketName);
         return "Switched to " + bucketName;
     }
@@ -479,20 +479,24 @@ public class OssOperationCommands implements CommandMarker {
     public String file(@CliOption(key = {""}, mandatory = true, help = "file path") final String filePath) {
         StringBuilder buf = new StringBuilder();
         try {
-            ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket, filePath);
-            Map<String, Object> rawMetadata = objectMetadata.getRawMetadata();
-            List<String> reservedKeys = Arrays.asList("Connection", "Server", "x-oss-request-id");
-            for (Map.Entry<String, Object> entry : rawMetadata.entrySet()) {
-                if (!reservedKeys.contains(entry.getKey())) {
-                    buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+            ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket.getBucket(), filePath);
+            if (objectMetadata != null) {
+                Map<String, Object> rawMetadata = objectMetadata.getRawMetadata();
+                List<String> reservedKeys = Arrays.asList("Connection", "Server", "x-oss-request-id");
+                for (Map.Entry<String, Object> entry : rawMetadata.entrySet()) {
+                    if (!reservedKeys.contains(entry.getKey())) {
+                        buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+                    }
                 }
-            }
-            Map<String, String> userMetadata = objectMetadata.getUserMetadata();
-            if (userMetadata != null && !userMetadata.isEmpty()) {
-                buf.append("================ User Metadata ========================" + StringUtils.LINE_SEPARATOR);
-                for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
-                    buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+                Map<String, String> userMetadata = objectMetadata.getUserMetadata();
+                if (userMetadata != null && !userMetadata.isEmpty()) {
+                    buf.append("================ User Metadata ========================" + StringUtils.LINE_SEPARATOR);
+                    for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
+                        buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+                    }
                 }
+            } else {
+                return "Object Not Found!";
             }
         } catch (Exception e) {
             log.error("file", e);
@@ -510,16 +514,16 @@ public class OssOperationCommands implements CommandMarker {
     public String rm(@CliOption(key = {""}, mandatory = true, help = "OSS file path") final String filePath) {
         try {
             if (filePath.endsWith("*")) {
-                ObjectListing list = aliyunOssService.list(currentBucket, filePath.replace("*", ""));
+                ObjectListing list = aliyunOssService.list(currentBucket.getBucket(), filePath.replace("*", ""));
                 int size = list.getObjectSummaries().size();
                 for (OSSObjectSummary objectSummary : list.getObjectSummaries()) {
-                    aliyunOssService.delete(currentBucket, objectSummary.getKey());
+                    aliyunOssService.delete(currentBucket.getBucket(), objectSummary.getKey());
                 }
                 if (size > 1) {
                     return size + " files deleted!";
                 }
             } else {
-                aliyunOssService.delete(currentBucket, filePath);
+                aliyunOssService.delete(currentBucket.getBucket(), filePath);
             }
         } catch (Exception e) {
             log.error("rm", e);
@@ -537,8 +541,8 @@ public class OssOperationCommands implements CommandMarker {
     public String cp(@CliOption(key = {"source"}, mandatory = true, help = "Source OSS file path") final String sourceFilePath,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Destination OSS file path") final String destFilePath) {
         try {
-            OSSUri sourceUri = new OSSUri(currentBucket, sourceFilePath);
-            OSSUri destUri = new OSSUri(currentBucket, destFilePath);
+            OSSUri sourceUri = new OSSUri(currentBucket.getBucket(), sourceFilePath);
+            OSSUri destUri = new OSSUri(currentBucket.getBucket(), destFilePath);
             if (sourceFilePath.startsWith("oss://")) {
                 sourceUri = new OSSUri(sourceFilePath);
             }
@@ -562,8 +566,8 @@ public class OssOperationCommands implements CommandMarker {
     public String mv(@CliOption(key = {"source"}, mandatory = true, help = "Source OSS file path") final String sourceFilePath,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Destination OSS file path") final String destFilePath) {
         try {
-            OSSUri sourceUri = new OSSUri(currentBucket, sourceFilePath);
-            OSSUri destUri = new OSSUri(currentBucket, destFilePath);
+            OSSUri sourceUri = new OSSUri(currentBucket.getBucket(), sourceFilePath);
+            OSSUri destUri = new OSSUri(currentBucket.getBucket(), destFilePath);
             if (sourceFilePath.startsWith("oss://")) {
                 sourceUri = new OSSUri(sourceFilePath);
             }
@@ -589,7 +593,7 @@ public class OssOperationCommands implements CommandMarker {
                       @CliOption(key = {"value"}, mandatory = true, help = "Metadata key") final String value,
                       @CliOption(key = {""}, mandatory = true, help = "Metadata value") final String filePath) {
         try {
-            aliyunOssService.setObjectMetadata(currentBucket, filePath, key, value);
+            aliyunOssService.setObjectMetadata(currentBucket.getBucket(), filePath, key, value);
         } catch (Exception e) {
             log.error("set", e);
             return e.getMessage();
