@@ -214,12 +214,11 @@ public class OssOperationCommands implements CommandMarker {
         if (currentBucket == null) {
             return "Please select a bucket!";
         }
-        File destFile = new File(destFilePath);
-        if (!destFile.getParentFile().exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            destFile.getParentFile().mkdirs();
-        }
         try {
+            File destFile = new File(destFilePath);
+            if (!destFile.getParentFile().exists()) {
+                FileUtils.forceMkdir(destFile.getParentFile());
+            }
             return "Saved to " + aliyunOssService.get(currentBucket.getChildObjectUri(sourceFilePath), destFilePath);
         } catch (Exception e) {
             log.error("get", e);
@@ -235,10 +234,7 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "more", help = "Display OSS file content")
     public String more(@CliOption(key = {""}, mandatory = true, help = "destination file path on disk") final String sourceFilePath) {
         try {
-            OSSUri sourceUri = new OSSUri(currentBucket.getBucket(), sourceFilePath);
-            if (sourceFilePath.contains("oss://")) {
-                sourceUri = new OSSUri(sourceFilePath);
-            }
+            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
             OSSObject ossObject = aliyunOssService.getOssObject(sourceUri.getBucket(), sourceUri.getFilePath());
             if (ossObject != null) {
                 System.out.println(IOUtils.toString(ossObject.getObjectContent()));
@@ -260,10 +256,7 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "open", help = "Open OSS object in Browser")
     public String open(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or path") final String sourceFilePath) {
         try {
-            OSSUri sourceUri = new OSSUri(currentBucket.getBucket(), sourceFilePath);
-            if (sourceFilePath.contains("oss://")) {
-                sourceUri = new OSSUri(sourceFilePath);
-            }
+            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
             //判断是否支持打开浏览器
             if (Desktop.isDesktopSupported()) {
                 OSSObject ossObject = aliyunOssService.getOssObject(sourceUri.getBucket(), sourceUri.getFilePath());
@@ -570,12 +563,6 @@ public class OssOperationCommands implements CommandMarker {
         try {
             OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
             OSSUri destUri = currentBucket.getChildObjectUri(destFilePath);
-            if (sourceFilePath.startsWith("oss://")) {
-                sourceUri = new OSSUri(sourceFilePath);
-            }
-            if (destFilePath.startsWith("oss://")) {
-                destUri = new OSSUri(destFilePath);
-            }
             aliyunOssService.copy(sourceUri, destUri);
             aliyunOssService.delete(sourceUri);
         } catch (Exception e) {
