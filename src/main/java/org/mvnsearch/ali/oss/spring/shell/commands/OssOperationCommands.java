@@ -543,15 +543,15 @@ public class OssOperationCommands implements CommandMarker {
     public String cp(@CliOption(key = {"source"}, mandatory = true, help = "Source OSS file path") final String sourceFilePath,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Destination OSS file path") final String destFilePath) {
         try {
-            OSSUri sourceUri = new OSSUri(currentBucket.getBucket(), sourceFilePath);
-            OSSUri destUri = new OSSUri(currentBucket.getBucket(), destFilePath);
+            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
+            OSSUri destUri = currentBucket.getChildObjectUri(destFilePath);
             if (sourceFilePath.startsWith("oss://")) {
                 sourceUri = new OSSUri(sourceFilePath);
             }
             if (destFilePath.startsWith("oss://")) {
                 destUri = new OSSUri(destFilePath);
             }
-            aliyunOssService.copy(sourceUri.getBucket(), sourceUri.getFilePath(), destUri.getBucket(), destUri.getFilePath());
+            aliyunOssService.copy(sourceUri, destUri);
         } catch (Exception e) {
             log.error("cp", e);
             return e.getMessage();
@@ -568,15 +568,15 @@ public class OssOperationCommands implements CommandMarker {
     public String mv(@CliOption(key = {"source"}, mandatory = true, help = "Source OSS file path") final String sourceFilePath,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Destination OSS file path") final String destFilePath) {
         try {
-            OSSUri sourceUri = new OSSUri(currentBucket.getBucket(), sourceFilePath);
-            OSSUri destUri = new OSSUri(currentBucket.getBucket(), destFilePath);
+            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
+            OSSUri destUri = currentBucket.getChildObjectUri(destFilePath);
             if (sourceFilePath.startsWith("oss://")) {
                 sourceUri = new OSSUri(sourceFilePath);
             }
             if (destFilePath.startsWith("oss://")) {
                 destUri = new OSSUri(destFilePath);
             }
-            aliyunOssService.copy(sourceUri.getBucket(), sourceUri.getFilePath(), destUri.getBucket(), destUri.getFilePath());
+            aliyunOssService.copy(sourceUri, destUri);
             aliyunOssService.delete(sourceUri.getBucket(), sourceUri.getFilePath());
         } catch (Exception e) {
             log.error("mv", e);
