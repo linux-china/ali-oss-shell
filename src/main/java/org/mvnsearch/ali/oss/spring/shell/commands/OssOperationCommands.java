@@ -209,17 +209,17 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "get", help = "Get the file from OSS and save it to local disk")
-    public String get(@CliOption(key = {"source"}, mandatory = true, help = "source file path on OSS") final String sourceFilePath,
-                      @CliOption(key = {"dest"}, mandatory = true, help = "destination file path on disk") final String destFilePath) {
+    public String get(@CliOption(key = {"dest"}, mandatory = false, help = "destination file path on disk") String destFilePath,
+                      @CliOption(key = {""}, mandatory = true, help = "source file path on OSS") String sourceFilePath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
         }
         try {
-            File destFile = new File(destFilePath);
-            if (!destFile.getParentFile().exists()) {
-                FileUtils.forceMkdir(destFile.getParentFile());
+            OSSUri objectUri = currentBucket.getChildObjectUri(sourceFilePath);
+            if (destFilePath == null || destFilePath.isEmpty()) {
+                destFilePath = objectUri.getPathInRepository(localRepository).getAbsolutePath();
             }
-            return "Saved to " + aliyunOssService.get(currentBucket.getChildObjectUri(sourceFilePath), destFilePath);
+            return "Saved to " + aliyunOssService.get(objectUri, destFilePath);
         } catch (Exception e) {
             log.error("get", e);
             return e.getMessage();
