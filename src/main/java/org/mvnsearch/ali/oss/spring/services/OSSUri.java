@@ -153,4 +153,14 @@ public class OSSUri {
     public String getHttpUrl() {
         return toString().replaceAll("oss://", "http://storage.aliyun.com/");
     }
+
+    /**
+     * get child object url
+     *
+     * @param filePath file path
+     * @return object oss uri
+     */
+    public OSSUri getChildObjectUri(String filePath) {
+        return new OSSUri(this.bucket, filePath);
+    }
 }
