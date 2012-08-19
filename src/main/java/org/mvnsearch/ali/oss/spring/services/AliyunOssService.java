@@ -79,14 +79,13 @@ public interface AliyunOssService {
     public ObjectListing list(String bucketName, String path) throws Exception;
 
     /**
-     * put file to OSS
+     * put local file to OSS
      *
-     * @param bucketName     bucket name
-     * @param sourceFilePath source file path
-     * @param destFilePath   dest file path
+     * @param sourceFilePath source file path on local disk
+     * @param destObject     dest object
      * @return oss file path
      */
-    public String put(String bucketName, String sourceFilePath, String destFilePath) throws Exception;
+    public String put(String sourceFilePath, OSSUri destObject) throws Exception;
 
     /**
      * copy object

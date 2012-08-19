@@ -179,21 +179,19 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     }
 
     /**
-     * put file to OSS
+     * put local file to OSS
      *
-     * @param bucketName     bucket name
-     * @param sourceFilePath source file path
-     * @param destFilePath   dest file path
+     * @param sourceFilePath source file path on local disk
+     * @param destObject   dest object
      * @return oss file path
      */
-    @Override
-    public String put(String bucketName, String sourceFilePath, String destFilePath) throws Exception {
+    public String put(String sourceFilePath, OSSUri destObject) throws Exception {
         byte[] content = IOUtils.toByteArray(new FileInputStream(sourceFilePath));
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(mimeTypes.getContentType(sourceFilePath));
         objectMetadata.setContentLength(content.length);
-        oss.putObject(bucketName, destFilePath, new ByteArrayInputStream(content), objectMetadata);
-        return destFilePath;
+        oss.putObject(destObject.getBucket(), destObject.getFilePath(), new ByteArrayInputStream(content), objectMetadata);
+        return destObject.toString();
     }
 
     /**
