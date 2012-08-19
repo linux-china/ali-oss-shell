@@ -355,7 +355,7 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * list files
+     * sync directory
      *
      * @return content
      */
