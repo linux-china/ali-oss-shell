@@ -108,6 +108,7 @@ public class OssOperationCommands implements CommandMarker {
             if (!temp.exists()) {
                 FileUtils.forceMkdir(temp);
             }
+            localRepository = temp;
             configService.setRepository(reposity);
         } catch (Exception e) {
             log.error("config", e);
