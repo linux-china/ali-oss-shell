@@ -220,7 +220,7 @@ public class OssOperationCommands implements CommandMarker {
             destFile.getParentFile().mkdirs();
         }
         try {
-            return "Saved to " + aliyunOssService.get(currentBucket.getBucket(), sourceFilePath, destFilePath);
+            return "Saved to " + aliyunOssService.get(currentBucket.getChildObjectUri(sourceFilePath), destFilePath);
         } catch (Exception e) {
             log.error("get", e);
             return e.getMessage();
