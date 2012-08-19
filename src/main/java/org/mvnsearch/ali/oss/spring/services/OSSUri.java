@@ -86,4 +86,13 @@ public class OSSUri {
             return PROTOCOL + bucket;
         }
     }
+
+    /**
+     * 获取HTTP URL
+     *
+     * @return http url
+     */
+    public String getHttpUrl() {
+        return toString().replaceAll("oss://", "http://storage.aliyun.com/");
+    }
 }
