@@ -27,11 +27,11 @@ AliyunOssService负责和OSS进行交互，如获取OSS Object信息，上传文
 整体类图如下：
 
 ![系统类图](https://github.com/linux-china/ali-oss-java-cli/wiki/assets/img/ali-oss-java-cli-class-diagram.png)
+
 ### Road Map
 
-* 添加更新metadata
-* 统一使用OSS URI方式
 * 支持命令行直接调用命令文件，直接命令调用，如 mysql -u root -p < ./xxx.sql 方式
+* i18n支持
 * 文档更新
 
 ### 控制台截屏
