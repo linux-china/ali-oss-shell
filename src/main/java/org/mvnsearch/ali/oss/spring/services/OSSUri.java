@@ -3,6 +3,8 @@ package org.mvnsearch.ali.oss.spring.services;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+
 /**
  * OSS URI, format as oss://bucket/path/file.txt
  *
@@ -165,5 +167,15 @@ public class OSSUri {
             return new OSSUri(filePath);
         }
         return new OSSUri(this.bucket, filePath);
+    }
+
+    /**
+     * get path in repository
+     *
+     * @param repository repository directory
+     * @return absolute path
+     */
+    public File getPathInRepository(File repository) {
+        return new File(repository, bucket + "/" + filePath);
     }
 }
