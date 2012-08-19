@@ -43,18 +43,24 @@ public class OSSUri {
     /**
      * construct method
      *
-     * @param uri oss uri
+     * @param uri oss uri，目前支持oss://和http://两种方式
      */
     public OSSUri(String uri) {
-        if (uri.startsWith("oss://")) {
-            String temp = uri.replace(PROTOCOL, "");
-            String[] parts = temp.split("/", 2);
-            if (parts.length > 0) {
-                this.bucket = parts[0];
-            }
-            if (parts.length > 1) {
-                this.filePath = parts[1];
-            }
+        String relativePath = uri;
+        if (uri.startsWith(PROTOCOL)) {
+            relativePath = uri.replace(PROTOCOL, "");
+        } else if (uri.startsWith("http://storage.aliyun.com/")) {
+            relativePath = uri.replace("http://storage.aliyun.com/", "");
+        }
+        if (relativePath.startsWith("/")) {
+            relativePath = relativePath.substring(1);
+        }
+        String[] parts = relativePath.split("/", 2);
+        if (parts.length > 0) {
+            this.bucket = parts[0];
+        }
+        if (parts.length > 1) {
+            this.filePath = parts[1];
         }
     }
 
