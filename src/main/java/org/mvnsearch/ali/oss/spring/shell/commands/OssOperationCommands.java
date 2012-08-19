@@ -235,7 +235,7 @@ public class OssOperationCommands implements CommandMarker {
     public String more(@CliOption(key = {""}, mandatory = true, help = "destination file path on disk") final String sourceFilePath) {
         try {
             OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
-            OSSObject ossObject = aliyunOssService.getOssObject(sourceUri.getBucket(), sourceUri.getFilePath());
+            OSSObject ossObject = aliyunOssService.getOssObject(sourceUri);
             if (ossObject != null) {
                 System.out.println(IOUtils.toString(ossObject.getObjectContent()));
             } else {
@@ -259,8 +259,8 @@ public class OssOperationCommands implements CommandMarker {
             OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
             //判断是否支持打开浏览器
             if (Desktop.isDesktopSupported()) {
-                OSSObject ossObject = aliyunOssService.getOssObject(sourceUri.getBucket(), sourceUri.getFilePath());
-                if (ossObject != null) {
+                ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(sourceUri);
+                if (objectMetadata != null) {
                     Desktop desktop = Desktop.getDesktop();
                     desktop.browse(new URI(sourceUri.getHttpUrl()));
                 } else {
@@ -336,7 +336,7 @@ public class OssOperationCommands implements CommandMarker {
             OSSUri objectUri = new OSSUri(bucket, destPath);
             //sync validation
             if (synced) {
-                ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(bucket, destPath);
+                ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
                 if (objectMetadata != null) {
                     if (objectMetadata.getLastModified().getTime() >= file.lastModified() && file.length() == objectMetadata.getContentLength()) {
                         overwrite = false;
@@ -474,7 +474,7 @@ public class OssOperationCommands implements CommandMarker {
     public String file(@CliOption(key = {""}, mandatory = true, help = "file path") final String filePath) {
         StringBuilder buf = new StringBuilder();
         try {
-            ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket.getBucket(), filePath);
+            ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket.getChildObjectUri(filePath));
             if (objectMetadata != null) {
                 Map<String, Object> rawMetadata = objectMetadata.getRawMetadata();
                 List<String> reservedKeys = Arrays.asList("Connection", "Server", "x-oss-request-id");
