@@ -1,5 +1,8 @@
 package org.mvnsearch.ali.oss.spring.services;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * OSS URI, format as oss://bucket/path/file.txt
  *
@@ -59,7 +62,7 @@ public class OSSUri {
         return bucket;
     }
 
-    public void setBucket(String bucket) {
+    public void setBucket(@NotNull String bucket) {
         this.bucket = bucket;
     }
 
@@ -67,11 +70,29 @@ public class OSSUri {
         return filePath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-        if (filePath != null && filePath.startsWith("/")) {
-            this.filePath = filePath.substring(1, filePath.length());
+    public void setFilePath(@Nullable String filePath) {
+        this.filePath = filePath == null ? "" : filePath;
+        if (this.filePath.startsWith("/")) {
+            this.filePath = this.filePath.substring(1, this.filePath.length());
         }
+    }
+
+    /**
+     * 判断是否为目录
+     *
+     * @return 目录标识
+     */
+    public boolean isDirectory() {
+        return filePath == null || filePath.isEmpty() || filePath.endsWith("/");
+    }
+
+    /**
+     * 是否是合法的URI
+     *
+     * @return 合法标识
+     */
+    public boolean isValid() {
+        return bucket != null;
     }
 
     /**
