@@ -1,6 +1,7 @@
 package org.mvnsearch.ali.oss.spring.services;
 
 import com.aliyun.openservices.oss.model.Bucket;
+import com.aliyun.openservices.oss.model.OSSObject;
 import com.aliyun.openservices.oss.model.ObjectListing;
 import com.aliyun.openservices.oss.model.ObjectMetadata;
 import org.jetbrains.annotations.Nullable;
@@ -125,7 +126,19 @@ public interface AliyunOssService {
      * @param filePath   file path
      * @return oss object
      */
+    @Nullable
     public ObjectMetadata getObjectMetadata(String bucketName, String filePath) throws Exception;
+
+    /**
+     * get OSS object
+     *
+     * @param bucketName bucket name
+     * @param filePath   file path
+     * @return OSS object
+     * @throws Exception exception
+     */
+    @Nullable
+    public OSSObject getOssObject(String bucketName, String filePath) throws Exception;
 
     /**
      * set object meta data
