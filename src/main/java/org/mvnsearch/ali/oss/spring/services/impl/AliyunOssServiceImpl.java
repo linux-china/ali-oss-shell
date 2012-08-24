@@ -186,13 +186,13 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      * @throws Exception exception
      */
     public ObjectListing listChildren(String bucketName, String path) throws Exception {
-        if (path == null) {
+        if (path == null || path.equals("/")) {
             path = "";
         }
-        path = path.trim();
-        if (!path.endsWith("/")) {
+        if (!path.isEmpty() && !path.endsWith("/")) {
             path = path + "/";
         }
+        path = path.trim();
         ListObjectsRequest request = new ListObjectsRequest();
         request.setBucketName(bucketName);
         request.setPrefix(path);
