@@ -398,13 +398,24 @@ public class OssOperationCommands implements CommandMarker {
         StringBuilder buf = new StringBuilder();
         String prefix = StringUtils.defaultIfEmpty(currentDir, "") + StringUtils.defaultIfEmpty(filename, "");
         try {
-            ObjectListing objectListing = aliyunOssService.list(currentBucket.getBucket(), prefix);
-            for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
-                        StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
-                        objectSummary.getKey() + StringUtils.LINE_SEPARATOR);
+            ObjectListing objectListing =aliyunOssService.list(currentBucket.getBucket(), prefix);
+           /* if (prefix.equals("")) {
+                objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), prefix);
+            } else {
+                objectListing = aliyunOssService.list(currentBucket.getBucket(), prefix);
+            }*/
+            if (!objectListing.getObjectSummaries().isEmpty()) {
+                for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+                    buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
+                            StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
+                            objectSummary.getKey() + StringUtils.LINE_SEPARATOR);
+                }
+                buf.append(objectListing.getObjectSummaries().size() + " files found");
+            } else {
+                for (String commonPrefix : objectListing.getCommonPrefixes()) {
+                    buf.append(commonPrefix);
+                }
             }
-            buf.append(objectListing.getObjectSummaries().size() + " files found");
         } catch (Exception e) {
             log.error("ls", e);
             buf.append(e.getMessage());
