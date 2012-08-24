@@ -21,10 +21,8 @@ import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.io.File;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Aliyun OSS operation commands
@@ -514,6 +512,24 @@ public class OssOperationCommands implements CommandMarker {
             return e.getMessage();
         }
         return buf.toString().trim();
+    }
+
+    /**
+     * share object to generate signed url, expired one hour
+     *
+     * @return content
+     */
+    @CliCommand(value = "share", help = "Generate signed url for private object.")
+    public String share(@CliOption(key = {""}, mandatory = true, help = "object uri or path") final String filePath) {
+        OSSUri destObject = currentBucket.getChildObjectUri(filePath);
+        try {
+            aliyunOssService.getOssClient().generatePresignedUrl(destObject.getBucket(), destObject.getFilePath(),
+                    new Date(System.currentTimeMillis() + 1000 * 60 * 60));
+        } catch (Exception e) {
+            log.error("share", e);
+            return e.getMessage();
+        }
+        return null;
     }
 
     /**
