@@ -32,6 +32,8 @@ AliyunOssService负责和OSS进行交互，如获取OSS Object信息，上传文
 
 * 支持命令行直接调用命令文件，直接命令调用，如 mysql -u root -p < ./xxx.sql 方式
 * i18n支持
+* 分片上传
+* 支持虚拟目录
 * 文档更新
 
 ### 控制台截屏
