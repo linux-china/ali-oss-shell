@@ -70,13 +70,23 @@ public interface AliyunOssService {
     public void setBucketACL(String bucket, String acl) throws Exception;
 
     /**
-     * list
+     * list children recursly
      *
      * @param bucketName bucket name
      * @param path       path
      * @return object metadata list
      */
     public ObjectListing list(String bucketName, String path) throws Exception;
+
+    /**
+     * list children only
+     *
+     * @param bucketName bucket name
+     * @param path       path
+     * @return object listing
+     * @throws Exception exception
+     */
+    public ObjectListing listChildren(String bucketName, String path) throws Exception;
 
     /**
      * put local file to OSS

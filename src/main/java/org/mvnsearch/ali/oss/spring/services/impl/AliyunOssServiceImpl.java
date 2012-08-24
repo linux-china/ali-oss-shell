@@ -178,6 +178,29 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     }
 
     /**
+     * list children only
+     *
+     * @param bucketName bucket name
+     * @param path       path
+     * @return object listing
+     * @throws Exception exception
+     */
+    public ObjectListing listChildren(String bucketName, String path) throws Exception {
+        if (path == null) {
+            path = "";
+        }
+        path = path.trim();
+        if (!path.endsWith("/")) {
+            path = path + "/";
+        }
+        ListObjectsRequest request = new ListObjectsRequest();
+        request.setBucketName(bucketName);
+        request.setPrefix(path);
+        request.setDelimiter("/");
+        return oss.listObjects(request);
+    }
+
+    /**
      * put local file to OSS
      *
      * @param sourceFilePath source file path on local disk
