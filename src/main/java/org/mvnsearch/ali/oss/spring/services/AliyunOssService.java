@@ -1,5 +1,6 @@
 package org.mvnsearch.ali.oss.spring.services;
 
+import com.aliyun.openservices.oss.OSSClient;
 import com.aliyun.openservices.oss.model.Bucket;
 import com.aliyun.openservices.oss.model.OSSObject;
 import com.aliyun.openservices.oss.model.ObjectListing;
@@ -18,6 +19,13 @@ public interface AliyunOssService {
      * refresh token
      */
     public void refreshToken();
+
+    /**
+     * get OSS client
+     *
+     * @return oss client
+     */
+    public OSSClient getOssClient();
 
     /**
      * create bucket
