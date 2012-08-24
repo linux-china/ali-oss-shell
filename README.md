@@ -36,6 +36,7 @@ AliyunOssService负责和OSS进行交互，如获取OSS Object信息，上传文
 * 支持虚拟目录
 * 同步bucket
 * 图片裁剪支持（ImageMagick)
+* 统计支持：dump bucket下的所有object的基本信息，然后进行Lucene索引，支持自定义查询。
 * 文档更新
 
 ### Issues
