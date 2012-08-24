@@ -361,10 +361,14 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "sync", help = "Put the local file to OSS")
-    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "source directory on disk") final String sourceDirectory,
-                       @CliOption(key = {"dest"}, mandatory = true, help = "destination path on OSS") final String destPath) {
+    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "source directory on disk") String sourceDirectory,
+                       @CliOption(key = {"dest"}, mandatory = true, help = "destination path on OSS") String destPath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
+        }
+        //bucket判断，如果是普通字符串，则为bucket名称
+        if (sourceDirectory != null && !sourceDirectory.contains("/") && !sourceDirectory.contains("\\")) {
+            sourceDirectory = new File(localRepository, sourceDirectory).getAbsolutePath();
         }
         File sourceFile = new File(sourceDirectory);
         if (!sourceFile.exists()) {
@@ -398,7 +402,7 @@ public class OssOperationCommands implements CommandMarker {
         StringBuilder buf = new StringBuilder();
         String prefix = StringUtils.defaultIfEmpty(currentDir, "") + StringUtils.defaultIfEmpty(filename, "");
         try {
-            ObjectListing objectListing =aliyunOssService.list(currentBucket.getBucket(), prefix);
+            ObjectListing objectListing = aliyunOssService.list(currentBucket.getBucket(), prefix);
            /* if (prefix.equals("")) {
                 objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), prefix);
             } else {
