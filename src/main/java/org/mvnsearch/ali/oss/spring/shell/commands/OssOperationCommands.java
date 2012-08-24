@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -523,13 +524,13 @@ public class OssOperationCommands implements CommandMarker {
     public String share(@CliOption(key = {""}, mandatory = true, help = "object uri or path") final String filePath) {
         OSSUri destObject = currentBucket.getChildObjectUri(filePath);
         try {
-            aliyunOssService.getOssClient().generatePresignedUrl(destObject.getBucket(), destObject.getFilePath(),
+            URL url = aliyunOssService.getOssClient().generatePresignedUrl(destObject.getBucket(), destObject.getFilePath(),
                     new Date(System.currentTimeMillis() + 1000 * 60 * 60));
+            return url.toString();
         } catch (Exception e) {
             log.error("share", e);
             return e.getMessage();
         }
-        return null;
     }
 
     /**
