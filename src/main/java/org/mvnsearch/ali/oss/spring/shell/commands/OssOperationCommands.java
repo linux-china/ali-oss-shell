@@ -141,7 +141,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             aliyunOssService.createBucket(bucket);
             aliyunOssService.setBucketACL(bucket, acl);
-            return MessageFormat.format("Bucket '{0}' has been created!", bucket);
+            return MessageFormat.format("Bucket ''{0}'' has been created!", bucket);
         } catch (Exception e) {
             log.error("create", e);
             return wrappedAsRed(e.getMessage());
@@ -159,7 +159,7 @@ public class OssOperationCommands implements CommandMarker {
         try {
             Bucket bucket = aliyunOssService.getBucket(bucketName);
             if (bucket != null) {
-                return wrappedAsRed(MessageFormat.format("Bucket '{0}' not found!", bucketName));
+                return wrappedAsRed(MessageFormat.format("Bucket ''{0}'' not found!", bucketName));
             }
             ObjectListing listing = aliyunOssService.list(bucketName, "");
             if (!listing.getObjectSummaries().isEmpty()) {
@@ -170,7 +170,7 @@ public class OssOperationCommands implements CommandMarker {
                 currentBucket = null;
                 configService.setProperty("BUCKET", null);
             }
-            return MessageFormat.format("Bucket '{0}' has been dropped!", bucketName);
+            return MessageFormat.format("Bucket ''{0}'' has been dropped!", bucketName);
         } catch (Exception e) {
             log.error("drop", e);
             return wrappedAsRed(e.getMessage());
@@ -294,7 +294,7 @@ public class OssOperationCommands implements CommandMarker {
                       @CliOption(key = {""}, mandatory = false, help = "Destination OSS object uri, key or path") String destFilePath) {
         File sourceFile = new File(sourceFilePath);
         if (!sourceFile.exists()) {
-            return wrappedAsRed(MessageFormat.format("The file '{0}' not exits. ", sourceFilePath));
+            return wrappedAsRed(MessageFormat.format("The file ''{0}'' not exits. ", sourceFile.getAbsolutePath()));
         }
         try {
             if (sourceFile.isDirectory()) {
@@ -306,7 +306,7 @@ public class OssOperationCommands implements CommandMarker {
                 }
                 OSSUri destObjectUri = currentBucket.getChildObjectUri(destFilePath);
                 ObjectMetadata metadata = aliyunOssService.put(sourceFilePath, destObjectUri);
-                return MessageFormat.format("File '{0}' stored as {1} ({2} bytes)",
+                return MessageFormat.format("File ''{0}'' stored as {1} ({2} bytes)",
                         sourceFile.getAbsolutePath(), destObjectUri.toString(), metadata.getContentLength());
             }
         } catch (Exception e) {
@@ -382,7 +382,7 @@ public class OssOperationCommands implements CommandMarker {
         }
         File sourceFile = new File(sourceDirectory);
         if (!sourceFile.exists()) {
-            return wrappedAsRed(MessageFormat.format("File '{0}' not exits: ", sourceDirectory));
+            return wrappedAsRed(MessageFormat.format("File ''{0}'' not exits: ", sourceDirectory));
         }
         try {
             if (sourceFile.isDirectory()) {
@@ -614,7 +614,7 @@ public class OssOperationCommands implements CommandMarker {
             OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
             OSSUri destUri = currentBucket.getChildObjectUri(destFilePath);
             aliyunOssService.copy(sourceUri, destUri);
-            return MessageFormat.format("'{0}' has been copied to '{1}'", sourceUri.toString(), destUri.toString());
+            return MessageFormat.format("''{0}'' has been copied to ''{1}''", sourceUri.toString(), destUri.toString());
         } catch (Exception e) {
             log.error("cp", e);
             return wrappedAsRed(e.getMessage());
@@ -634,7 +634,7 @@ public class OssOperationCommands implements CommandMarker {
             OSSUri destUri = currentBucket.getChildObjectUri(destFilePath);
             aliyunOssService.copy(sourceUri, destUri);
             aliyunOssService.delete(sourceUri);
-            return MessageFormat.format("'{0}' has been moved to '{1}'", sourceUri.toString(), destUri.toString());
+            return MessageFormat.format("''{0}'' has been moved to ''{1}''", sourceUri.toString(), destUri.toString());
         } catch (Exception e) {
             log.error("mv", e);
             return e.getMessage();
