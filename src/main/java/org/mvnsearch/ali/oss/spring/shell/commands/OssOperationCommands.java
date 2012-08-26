@@ -455,16 +455,11 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "cd", help = "Change directory")
-    public String cd(@CliOption(key = {""}, mandatory = false, help = "Change directory") final String dir) {
-        String currentDir = dir;
-        if (StringUtils.isBlank(dir) || dir.equals("/")) {
-            currentDir = "";
-        } else {
-            currentDir = dir;
-            if (!currentDir.endsWith("/")) {
-                currentDir = currentDir + "/";
-            }
+    public String cd(@CliOption(key = {""}, mandatory = false, help = "Change directory")  String dir) {
+        if (dir != null && !dir.endsWith("/")) {
+            dir = dir + "/";
         }
+        String currentDir = currentBucket.getChildObjectUri(dir).getFilePath();
         currentBucket.setFilePath(currentDir);
         return currentBucket.toString();
     }
