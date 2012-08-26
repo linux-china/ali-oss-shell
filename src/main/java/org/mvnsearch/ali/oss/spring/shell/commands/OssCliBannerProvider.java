@@ -45,7 +45,7 @@ public class OssCliBannerProvider extends DefaultBannerProvider implements Comma
         StringBuilder buf = new StringBuilder();
         buf.append("=======================================" + StringUtils.LINE_SEPARATOR);
         buf.append("*                                     *" + StringUtils.LINE_SEPARATOR);
-        buf.append("*      Aliyun OSS Java CLI            *" + StringUtils.LINE_SEPARATOR);
+        buf.append("*      Aliyun OSS Console             *" + StringUtils.LINE_SEPARATOR);
         buf.append("*                                     *" + StringUtils.LINE_SEPARATOR);
         buf.append("=======================================" + StringUtils.LINE_SEPARATOR);
         buf.append("Version:" + this.getVersion());
