@@ -174,7 +174,11 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         if (path.endsWith("*")) {
             path = path.substring(0, path.length() - 1);
         }
-        return oss.listObjects(bucketName, path);
+        ListObjectsRequest request = new ListObjectsRequest();
+        request.setBucketName(bucketName);
+        request.setPrefix(path);
+        request.setMaxKeys(MAX_OBJECTS);
+        return oss.listObjects(request);
     }
 
     /**
@@ -197,6 +201,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         request.setBucketName(bucketName);
         request.setPrefix(path);
         request.setDelimiter("/");
+        request.setMaxKeys(MAX_OBJECTS);
         return oss.listObjects(request);
     }
 
