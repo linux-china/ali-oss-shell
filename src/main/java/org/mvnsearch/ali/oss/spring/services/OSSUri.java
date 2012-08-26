@@ -2,6 +2,7 @@ package org.mvnsearch.ali.oss.spring.services;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.shell.support.util.StringUtils;
 
 import java.io.File;
 
@@ -159,14 +160,21 @@ public class OSSUri {
     /**
      * get child object url, if file path starts with os://, new OssUri will be created
      *
-     * @param filePath file path
+     * @param childFilePath child file path
      * @return object oss uri
      */
-    public OSSUri getChildObjectUri(String filePath) {
-        if (filePath != null && filePath.startsWith("oss://")) {
-            return new OSSUri(filePath);
+    public OSSUri getChildObjectUri(String childFilePath) {
+        if (childFilePath != null && childFilePath.startsWith("oss://")) {
+            return new OSSUri(childFilePath);
         }
-        return new OSSUri(this.bucket, filePath);
+        //考虑使用相对路径
+        String tempFilePath = childFilePath;
+        if (this.filePath != null) {
+            if (childFilePath == null || !childFilePath.startsWith(filePath)) {
+                tempFilePath = filePath + StringUtils.defaultIfEmpty(childFilePath, "");
+            }
+        }
+        return new OSSUri(this.bucket, tempFilePath);
     }
 
     /**
