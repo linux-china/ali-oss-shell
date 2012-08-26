@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,10 @@ import java.util.List;
  */
 @Component("aliyunOssService")
 public class AliyunOssServiceImpl implements AliyunOssService {
+    /**
+     * log
+     */
+    private Logger log = LoggerFactory.getLogger(AliyunOssServiceImpl.class);
     /**
      * end point
      */
@@ -295,7 +301,12 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      */
     @Nullable
     public ObjectMetadata getObjectMetadata(OSSUri objectUri) throws Exception {
-        return oss.getObjectMetadata(objectUri.getBucket(), objectUri.getFilePath());
+        try {
+            return oss.getObjectMetadata(objectUri.getBucket(), objectUri.getFilePath());
+        } catch (Exception e) {
+            log.error("ObjectMetadata:" + objectUri.toString(), e);
+            return null;
+        }
     }
 
     /**
