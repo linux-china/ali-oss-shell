@@ -291,7 +291,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "put", help = "Upload the local file or directory to OSS")
     public String put(@CliOption(key = {"source"}, mandatory = true, help = "Local file or directory path") String sourceFilePath,
-                      @CliOption(key = {""}, mandatory = true, help = "Destination OSS object uri, key or path") String destFilePath) {
+                      @CliOption(key = {""}, mandatory = false, help = "Destination OSS object uri, key or path") String destFilePath) {
         File sourceFile = new File(sourceFilePath);
         if (!sourceFile.exists()) {
             return wrappedAsRed(MessageFormat.format("The file '{0}' not exits. ", sourceFilePath));
@@ -369,9 +369,9 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return message
      */
-    @CliCommand(value = "sync", help = "Sync the local directory with OSS")
-    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "Local fiel directory") String sourceDirectory,
-                       @CliOption(key = {""}, mandatory = true, help = "OSS object path") String objectPath) {
+    @CliCommand(value = "sync", help = "Sync the local bucket or directory with OSS")
+    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "Bucket name or local directorys") String sourceDirectory,
+                       @CliOption(key = {""}, mandatory = false, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
         }
@@ -413,12 +413,12 @@ public class OssOperationCommands implements CommandMarker {
         StringBuilder buf = new StringBuilder();
         OSSUri dirObject = currentBucket.getChildObjectUri(filename);
         try {
-            ObjectListing objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
-           /* if (dirObject.getFilePath().equals("")) {
-                objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
-            } else {
+            ObjectListing objectListing;
+            if (dirObject.getFilePath().endsWith("*")) {
                 objectListing = aliyunOssService.list(currentBucket.getBucket(), dirObject.getFilePath());
-            }*/
+            } else {
+                objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
+            }
             for (String commonPrefix : objectListing.getCommonPrefixes()) {
                 buf.append(StringUtils.repeat("-", 29) + " " + commonPrefix + StringUtils.LINE_SEPARATOR);
             }
