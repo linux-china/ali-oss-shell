@@ -402,11 +402,11 @@ public class OssOperationCommands implements CommandMarker {
         String prefix = StringUtils.defaultIfEmpty(currentDir, "") + StringUtils.defaultIfEmpty(filename, "");
         try {
             ObjectListing objectListing = aliyunOssService.list(currentBucket.getBucket(), prefix);
-           /* if (prefix.equals("")) {
+            if (prefix.equals("")) {
                 objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), prefix);
             } else {
                 objectListing = aliyunOssService.list(currentBucket.getBucket(), prefix);
-            }*/
+            }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                     buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
@@ -416,7 +416,7 @@ public class OssOperationCommands implements CommandMarker {
                 buf.append(objectListing.getObjectSummaries().size() + " files found");
             } else {
                 for (String commonPrefix : objectListing.getCommonPrefixes()) {
-                    buf.append(commonPrefix);
+                    buf.append(commonPrefix + StringUtils.LINE_SEPARATOR);
                 }
             }
         } catch (Exception e) {
