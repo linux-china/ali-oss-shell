@@ -118,7 +118,7 @@ public interface AliyunOssService {
      * @param destObject     dest object
      * @return oss file path
      */
-    public String put(String sourceFilePath, OSSUri destObject) throws Exception;
+    public ObjectMetadata put(String sourceFilePath, OSSUri destObject) throws Exception;
 
     /**
      * copy object

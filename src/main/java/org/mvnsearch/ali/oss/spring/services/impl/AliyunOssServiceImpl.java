@@ -230,13 +230,13 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      * @param destObject     dest object
      * @return oss file path
      */
-    public String put(String sourceFilePath, OSSUri destObject) throws Exception {
+    public ObjectMetadata put(String sourceFilePath, OSSUri destObject) throws Exception {
         byte[] content = IOUtils.toByteArray(new FileInputStream(sourceFilePath));
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(mimeTypes.getContentType(sourceFilePath));
         objectMetadata.setContentLength(content.length);
         oss.putObject(destObject.getBucket(), destObject.getFilePath(), new ByteArrayInputStream(content), objectMetadata);
-        return destObject.toString();
+        return objectMetadata;
     }
 
     /**
