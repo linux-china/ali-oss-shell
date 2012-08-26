@@ -19,6 +19,7 @@ public interface AliyunOssService {
      * max object count for listing
      */
     public Integer MAX_OBJECTS = 500;
+
     /**
      * refresh token
      */
@@ -62,6 +63,16 @@ public interface AliyunOssService {
      * @throws Exception exception
      */
     public List<Bucket> getBuckets() throws Exception;
+
+    /**
+     * get bucket by name
+     *
+     * @param name name
+     * @return bucket object
+     * @throws Exception exception
+     */
+    @Nullable
+    public Bucket getBucket(String name) throws Exception;
 
     /**
      * get bucket ACL

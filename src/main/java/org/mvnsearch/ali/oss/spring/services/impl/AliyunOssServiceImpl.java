@@ -118,6 +118,24 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     }
 
     /**
+     * get bucket by name
+     *
+     * @param name name
+     * @return bucket object
+     * @throws Exception exception
+     */
+    @Nullable
+    public Bucket getBucket(String name) throws Exception {
+        List<Bucket> buckets = oss.listBuckets();
+        for (Bucket bucket : buckets) {
+            if (bucket.getName().equals(name)) {
+                return bucket;
+            }
+        }
+        return null;
+    }
+
+    /**
      * get bucket ACL
      *
      * @param bucket bucket name
