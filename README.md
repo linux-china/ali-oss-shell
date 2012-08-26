@@ -1,10 +1,10 @@
 介绍
 ====================================
-阿里云弹性存储Java CLI Console，通过控制台方式管理OSS上的文件，如查看、上传、下载和修改属性等。
+阿里云弹性存储终端控制台，通过控制台方式管理OSS上的文件，如查看、上传、下载和修改属性等。
 
 
-### Java CLI Console手册
-关于Aliyun Java CLI Console的手册，请访问： https://github.com/linux-china/ali-oss-java-cli/wiki
+### OSS Console手册
+关于OSS Console的手册，请访问： https://github.com/linux-china/ali-oss-java-cli/wiki
 
 ### 开发步骤
 首先git clone出代码，然后执行
@@ -30,7 +30,6 @@ AliyunOssService负责和OSS进行交互，如获取OSS Object信息，上传文
 
 ### Road Map
 
-* 支持命令行直接调用命令文件，直接命令调用，如 mysql -u root -p < ./xxx.sql 方式
 * i18n支持
 * 分片上传
 * 支持虚拟目录
