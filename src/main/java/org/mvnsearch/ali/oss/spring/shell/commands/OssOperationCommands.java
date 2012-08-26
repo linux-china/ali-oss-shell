@@ -397,11 +397,14 @@ public class OssOperationCommands implements CommandMarker {
         StringBuilder buf = new StringBuilder();
         OSSUri dirObject = currentBucket.getChildObjectUri(filename);
         try {
-            ObjectListing objectListing;
-            if (dirObject.getFilePath().equals("")) {
+            ObjectListing objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
+           /* if (dirObject.getFilePath().equals("")) {
                 objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
             } else {
                 objectListing = aliyunOssService.list(currentBucket.getBucket(), dirObject.getFilePath());
+            }*/
+            for (String commonPrefix : objectListing.getCommonPrefixes()) {
+                buf.append(StringUtils.padLeft(commonPrefix, 30, '-') + StringUtils.LINE_SEPARATOR);
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
@@ -410,10 +413,6 @@ public class OssOperationCommands implements CommandMarker {
                             objectSummary.getKey() + StringUtils.LINE_SEPARATOR);
                 }
                 buf.append(objectListing.getObjectSummaries().size() + " files found");
-            } else {
-                for (String commonPrefix : objectListing.getCommonPrefixes()) {
-                    buf.append(commonPrefix + StringUtils.LINE_SEPARATOR);
-                }
             }
         } catch (Exception e) {
             log.error("ls", e);
@@ -455,7 +454,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "cd", help = "Change directory")
-    public String cd(@CliOption(key = {""}, mandatory = false, help = "Change directory")  String dir) {
+    public String cd(@CliOption(key = {""}, mandatory = false, help = "Change directory") String dir) {
         if (dir != null && !dir.endsWith("/")) {
             dir = dir + "/";
         }
