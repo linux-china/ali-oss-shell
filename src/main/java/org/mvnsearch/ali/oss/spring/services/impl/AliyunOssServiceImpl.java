@@ -262,8 +262,8 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      */
     public String get(OSSUri objectUri, String destFilePath) throws Exception {
         OSSObject ossObject = oss.getObject(objectUri.getBucket(), objectUri.getFilePath());
+        File destFile = new File(destFilePath);
         if (ossObject != null) {
-            File destFile = new File(destFilePath);
             if (destFile.isDirectory()) {
                 destFile = new File(destFile, objectUri.getFileName());
             }
@@ -274,7 +274,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
             IOUtils.copy(ossObject.getObjectContent(), fos);
             fos.close();
         }
-        return destFilePath;
+        return destFile.getAbsolutePath();
     }
 
     /**
