@@ -30,17 +30,12 @@ AliyunOssService负责和OSS进行交互，如获取OSS Object信息，上传文
 
 ### Road Map
 
-* i18n支持
 * 分片上传
-* 支持虚拟目录
-* 同步bucket
 * 统计支持：dump bucket下的所有object的基本信息，然后进行Lucene索引，支持自定义查询。
-* 文档更新
 
 ### Issues
 
 * List Objects能够显示匹配的object总数
-* 私有情况下的分享，生成URL
 
 ### 控制台截屏
 ![OSS Console](https://github.com/linux-china/ali-oss-java-cli/wiki/assets/img/console_shot.png)
