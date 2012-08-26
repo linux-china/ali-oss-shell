@@ -16,6 +16,10 @@ import java.util.List;
  */
 public interface AliyunOssService {
     /**
+     * max object count for listing
+     */
+    public Integer MAX_OBJECTS = 200;
+    /**
      * refresh token
      */
     public void refreshToken();
