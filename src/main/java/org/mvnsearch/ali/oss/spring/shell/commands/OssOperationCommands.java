@@ -22,6 +22,7 @@ import java.awt.*;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
@@ -140,7 +141,7 @@ public class OssOperationCommands implements CommandMarker {
             aliyunOssService.createBucket(bucket);
             aliyunOssService.setBucketACL(bucket, acl);
             use(bucket);
-            return "Bucket 'oss://" + bucket + "' has been created and switched";
+            return MessageFormat.format("Bucket '{0}' has been created and switched!", bucket);
         } catch (Exception e) {
             log.error("create", e);
             return e.getMessage();
@@ -150,22 +151,26 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * drop bucket
      *
-     * @param bucket bucket
+     * @param bucketName bucket
      * @return result
      */
     @CliCommand(value = "drop", help = "Drop bucket")
-    public String drop(@CliOption(key = {""}, mandatory = true, help = "Bucket name") String bucket) {
+    public String drop(@CliOption(key = {""}, mandatory = true, help = "Bucket name") String bucketName) {
         try {
-            ObjectListing listing = aliyunOssService.list(bucket, "");
-            if (!listing.getObjectSummaries().isEmpty()) {
-                return "Bucket is not empty, and you can't delete it!";
+            Bucket bucket = aliyunOssService.getBucket(bucketName);
+            if (bucket != null) {
+                return MessageFormat.format("Bucket '{0}' not found!");
             }
-            aliyunOssService.dropBucket(bucket);
-            if (bucket.equals(currentBucket.getBucket())) {
+            ObjectListing listing = aliyunOssService.list(bucketName, "");
+            if (!listing.getObjectSummaries().isEmpty()) {
+                return "The bucket is not empty, and you can't delete it!";
+            }
+            aliyunOssService.dropBucket(bucketName);
+            if (bucketName.equals(currentBucket.getBucket())) {
                 currentBucket = null;
                 configService.setProperty("BUCKET", null);
             }
-            return bucket + " bucket dropped!";
+            return MessageFormat.format("Bucket '{0}' has been dropped!");
         } catch (Exception e) {
             log.error("drop", e);
             return e.getMessage();
@@ -173,12 +178,12 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * create new bucket
+     * Change current bucket's Access Control Lists
      *
-     * @return new bucket
+     * @return result
      */
-    @CliCommand(value = "chmod", help = "Set Current Bucket Access Control List: Private, R- or RW")
-    public String chmod(@CliOption(key = {""}, mandatory = true, help = "Set bucket Access Control List") String acl) {
+    @CliCommand(value = "chmod", help = "Change current bucket's Access Control Lists")
+    public String chmod(@CliOption(key = {""}, mandatory = true, help = "Access Control List: Private, R- or RW") String acl) {
         try {
             if (currentBucket == null) {
                 return "Please select a bucket!";
@@ -189,23 +194,23 @@ public class OssOperationCommands implements CommandMarker {
             if (acl != null && (acl.equalsIgnoreCase("--") || acl.equals("R-") || acl.equals("RW"))) {
                 aliyunOssService.setBucketACL(currentBucket.getBucket(), acl);
             } else {
-                return "ACL value should be 'Private', 'R-' or 'RW'";
+                return "ACL value should be 'Private', 'R-' or 'RW'.";
             }
+            return MessageFormat.format("{0} {1}", acl, currentBucket.toString());
         } catch (Exception e) {
             log.error("chmod", e);
             return e.getMessage();
         }
-        return currentBucket + "'s ACL: " + acl;
     }
 
     /**
-     * download file
+     * download oss object
      *
-     * @return content
+     * @return local file path
      */
-    @CliCommand(value = "get", help = "Get the file from OSS and save it to local disk")
-    public String get(@CliOption(key = {"dest"}, mandatory = false, help = "destination file path on disk") String destFilePath,
-                      @CliOption(key = {""}, mandatory = true, help = "source file path on OSS") String sourceFilePath) {
+    @CliCommand(value = "get", help = "Retrieve OSS object and save it to local file system")
+    public String get(@CliOption(key = {"dest"}, mandatory = false, help = "Local absolute file path") String destFilePath,
+                      @CliOption(key = {""}, mandatory = true, help = "OSS object path") String sourceFilePath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
         }
@@ -214,7 +219,12 @@ public class OssOperationCommands implements CommandMarker {
             if (destFilePath == null || destFilePath.isEmpty()) {
                 destFilePath = objectUri.getPathInRepository(localRepository).getAbsolutePath();
             }
-            return "Saved to " + aliyunOssService.get(objectUri, destFilePath);
+            ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
+            if (objectMetadata == null) {
+                return "The object not found!";
+            }
+            String localFilePath = aliyunOssService.get(objectUri, destFilePath);
+            return MessageFormat.format("Object {0} saved to {1} ({3} bytes)", objectUri.toString(), localFilePath, objectMetadata.getContentLength());
         } catch (Exception e) {
             log.error("get", e);
             return e.getMessage();
