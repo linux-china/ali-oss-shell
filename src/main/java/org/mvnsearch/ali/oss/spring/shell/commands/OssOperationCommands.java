@@ -46,10 +46,6 @@ public class OssOperationCommands implements CommandMarker {
      */
     private File localRepository;
     /**
-     * current directory
-     */
-    private String currentDir = null;
-    /**
      * config service
      */
     private ConfigService configService;
@@ -399,13 +395,13 @@ public class OssOperationCommands implements CommandMarker {
             return listBuckets();
         }
         StringBuilder buf = new StringBuilder();
-        String prefix = StringUtils.defaultIfEmpty(currentDir, "") + StringUtils.defaultIfEmpty(filename, "");
+        OSSUri dirObject = currentBucket.getChildObjectUri(filename);
         try {
             ObjectListing objectListing;
-            if (prefix.equals("")) {
-                objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), prefix);
+            if (dirObject.getFilePath().equals("")) {
+                objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
             } else {
-                objectListing = aliyunOssService.list(currentBucket.getBucket(), prefix);
+                objectListing = aliyunOssService.list(currentBucket.getBucket(), dirObject.getFilePath());
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
@@ -460,6 +456,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "cd", help = "Change directory")
     public String cd(@CliOption(key = {""}, mandatory = false, help = "Change directory") final String dir) {
+        String currentDir = dir;
         if (StringUtils.isBlank(dir) || dir.equals("/")) {
             currentDir = "";
         } else {
@@ -468,7 +465,8 @@ public class OssOperationCommands implements CommandMarker {
                 currentDir = currentDir + "/";
             }
         }
-        return currentBucket.getChildObjectUri(currentDir).toString();
+        currentBucket.setFilePath(currentDir);
+        return currentBucket.toString();
     }
 
     /**
