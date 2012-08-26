@@ -404,7 +404,7 @@ public class OssOperationCommands implements CommandMarker {
                 objectListing = aliyunOssService.list(currentBucket.getBucket(), dirObject.getFilePath());
             }*/
             for (String commonPrefix : objectListing.getCommonPrefixes()) {
-                buf.append(StringUtils.repeat("-", 30) + " " + commonPrefix + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.repeat("-", 29) + " " + commonPrefix + StringUtils.LINE_SEPARATOR);
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
@@ -472,8 +472,8 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return content
      */
-    @CliCommand(value = "path", help = "Display currrent directory information")
-    public String path() {
+    @CliCommand(value = "pwd", help = "Display currrent directory information")
+    public String pwd() {
         if (currentBucket == null) {
             return "You have not select a bucket!";
         }
