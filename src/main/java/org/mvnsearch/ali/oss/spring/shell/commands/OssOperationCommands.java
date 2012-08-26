@@ -131,7 +131,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "create", help = "Create a bucket")
     public String create(@CliOption(key = {"acl"}, mandatory = false, help = "Bucket's acl, such as: Private, R- or RW") String acl,
-                         @CliOption(key = {""}, mandatory = true, help = "Bucket name: [a-z][a-z0-9\\-_]{5,15}") final String bucket) {
+                         @CliOption(key = {""}, mandatory = true, help = "Bucket name: pattern as [a-z][a-z0-9\\-_]{5,15}") final String bucket) {
         try {
             if (acl == null || acl.isEmpty() || acl.equalsIgnoreCase("private")) {
                 acl = "--";
@@ -141,8 +141,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             aliyunOssService.createBucket(bucket);
             aliyunOssService.setBucketACL(bucket, acl);
-            use(bucket);
-            return MessageFormat.format("Bucket '{0}' has been created and switched!", bucket);
+            return MessageFormat.format("Bucket '{0}' has been created!", bucket);
         } catch (Exception e) {
             log.error("create", e);
             return wrappedAsRed(e.getMessage());
@@ -207,25 +206,27 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * download oss object
      *
-     * @return local file path
+     * @param localFilePath dest local file path
+     * @param objectKey     object key
+     * @return message
      */
     @CliCommand(value = "get", help = "Retrieve OSS object and save it to local file system")
-    public String get(@CliOption(key = {"dest"}, mandatory = false, help = "Local absolute file path") String destFilePath,
-                      @CliOption(key = {""}, mandatory = true, help = "OSS object path") String sourceFilePath) {
+    public String get(@CliOption(key = {"dest"}, mandatory = false, help = "Local file path") String localFilePath,
+                      @CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") String objectKey) {
         if (currentBucket == null) {
             return wrappedAsYellow("Please select a bucket!");
         }
         try {
-            OSSUri objectUri = currentBucket.getChildObjectUri(sourceFilePath);
-            if (destFilePath == null || destFilePath.isEmpty()) {
-                destFilePath = objectUri.getPathInRepository(localRepository).getAbsolutePath();
+            OSSUri objectUri = currentBucket.getChildObjectUri(objectKey);
+            if (localFilePath == null || localFilePath.isEmpty()) {
+                localFilePath = objectUri.getPathInRepository(localRepository).getAbsolutePath();
             }
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
             if (objectMetadata == null) {
                 return wrappedAsRed("The object not found!");
             }
-            String localFilePath = aliyunOssService.get(objectUri, destFilePath);
-            return MessageFormat.format("Object {0} saved to {1} ({3} bytes)", objectUri.toString(), localFilePath, objectMetadata.getContentLength());
+            String destFilePath = aliyunOssService.get(objectUri, localFilePath);
+            return MessageFormat.format("Object {0} saved to {1} ({3} bytes)", objectUri.toString(), destFilePath, objectMetadata.getContentLength());
         } catch (Exception e) {
             log.error("get", e);
             return e.getMessage();
@@ -235,10 +236,10 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * display object content
      *
-     * @return content
+     * @return message
      */
     @CliCommand(value = "cat", help = "concatenate and print OSS object's content")
-    public String cat(@CliOption(key = {""}, mandatory = true, help = "OSS object path") final String sourceFilePath) {
+    public String cat(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") final String sourceFilePath) {
         try {
             OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
             OSSObject ossObject = aliyunOssService.getOssObject(sourceUri);
@@ -257,12 +258,13 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * open OSS object in browser
      *
-     * @return content
+     * @param objectKey object key or uri
+     * @return message
      */
     @CliCommand(value = "open", help = "Open OSS object in browser")
-    public String open(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or path") final String sourceFilePath) {
+    public String open(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") final String objectKey) {
         try {
-            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
+            OSSUri sourceUri = currentBucket.getChildObjectUri(objectKey);
             //判断是否支持打开浏览器
             if (Desktop.isDesktopSupported()) {
                 ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(sourceUri);
@@ -285,11 +287,11 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * Upload file or director to OSS
      *
-     * @return content
+     * @return message
      */
     @CliCommand(value = "put", help = "Upload the local file or directory to OSS")
     public String put(@CliOption(key = {"source"}, mandatory = true, help = "Local file or directory path") String sourceFilePath,
-                      @CliOption(key = {""}, mandatory = true, help = "Destination object path on OSS") String destFilePath) {
+                      @CliOption(key = {""}, mandatory = true, help = "Destination OSS object uri, key or path") String destFilePath) {
         File sourceFile = new File(sourceFilePath);
         if (!sourceFile.exists()) {
             return wrappedAsRed(MessageFormat.format("The file '{0}' not exits. ", sourceFilePath));
@@ -355,7 +357,7 @@ public class OssOperationCommands implements CommandMarker {
                 aliyunOssService.put(file.getAbsolutePath(), objectUri);
                 System.out.println("Uploaded: " + objectUri);
             } else {
-                System.out.println("Skipped:  o" + objectUri);
+                System.out.println("Skipped: " + objectUri);
                 count = count - 1;
             }
         }
@@ -367,9 +369,9 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return content
      */
-    @CliCommand(value = "sync", help = "Put the local file to OSS")
-    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "source directory on disk") String sourceDirectory,
-                       @CliOption(key = {"dest"}, mandatory = true, help = "destination path on OSS") String destPath) {
+    @CliCommand(value = "sync", help = "Sync the local directory with OSS")
+    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "Local fiel directory") String sourceDirectory,
+                       @CliOption(key = {"dest"}, mandatory = true, help = "OSS object path") String destPath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
         }
@@ -403,7 +405,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "ls", help = "List object or virtual directory in Bucket")
-    public String ls(@CliOption(key = {""}, mandatory = false, help = "Object key or pattern: support suffix wild match") final String filename) {
+    public String ls(@CliOption(key = {""}, mandatory = false, help = "Object key or path: support suffix wild match") final String filename) {
         if (currentBucket == null) {
             return listBuckets();
         }
@@ -425,7 +427,7 @@ public class OssOperationCommands implements CommandMarker {
                             StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
                             objectSummary.getKey() + StringUtils.LINE_SEPARATOR);
                 }
-                buf.append(objectListing.getObjectSummaries().size() + " files found");
+                buf.append(objectListing.getObjectSummaries().size() + " objects found");
             }
             return buf.toString().trim();
         } catch (Exception e) {
@@ -467,7 +469,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "cd", help = "Change virtual directory on OSS")
-    public String cd(@CliOption(key = {""}, mandatory = false, help = "Virtual directory name on OSS") String dir) {
+    public String cd(@CliOption(key = {""}, mandatory = false, help = "Oss virtual directory name") String dir) {
         if (dir == null || dir.isEmpty() || dir.equals("/")) {
             currentBucket.setFilePath("");
         } else {
@@ -520,7 +522,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "file", help = "Get OSS object detail information")
-    public String file(@CliOption(key = {""}, mandatory = true, help = "Oss object key") final String filePath) {
+    public String file(@CliOption(key = {""}, mandatory = true, help = "Oss object uri or key") final String filePath) {
         StringBuilder buf = new StringBuilder();
         try {
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket.getChildObjectUri(filePath));
@@ -555,7 +557,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "share", help = "Generate signed url for OSS object.")
-    public String share(@CliOption(key = {""}, mandatory = true, help = "Object uri or path") final String filePath) {
+    public String share(@CliOption(key = {""}, mandatory = true, help = "Object uri or key") final String filePath) {
         OSSUri destObject = currentBucket.getChildObjectUri(filePath);
         try {
             URL url = aliyunOssService.getOssClient().generatePresignedUrl(destObject.getBucket(), destObject.getFilePath(),
@@ -586,7 +588,7 @@ public class OssOperationCommands implements CommandMarker {
                 if (size > 1) {
                     return size + " objects deleted!";
                 } else {
-                    return "1 object deleted";
+                    return "1 object deleted!";
                 }
             } else {
                 OSSUri destObject = currentBucket.getChildObjectUri(filePath);
