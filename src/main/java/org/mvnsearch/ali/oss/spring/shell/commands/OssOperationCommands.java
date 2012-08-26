@@ -87,14 +87,14 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * list files
+     * config command to save aliyun OSS information
      *
-     * @return content
+     * @return result
      */
-    @CliCommand(value = "config", help = "Config the Aliyun OSS access info")
+    @CliCommand(value = "config", help = "Config the Aliyun OSS access settings")
     public String config(@CliOption(key = {"id"}, mandatory = true, help = "Aliyun Access ID") final String accessId,
                          @CliOption(key = {"key"}, mandatory = true, help = "Aliyun Access Key") final String accessKey,
-                         @CliOption(key = {"repository"}, mandatory = true, help = "Aliyun Access Key") final String reposity) {
+                         @CliOption(key = {"repository"}, mandatory = true, help = "local repository directory") final String reposity) {
         try {
             configService.setAccessInfo(accessId, accessKey);
             aliyunOssService.refreshToken();
@@ -113,34 +113,34 @@ public class OssOperationCommands implements CommandMarker {
     }
 
     /**
-     * list buckets
+     * list all your buckets
      *
      * @return bucket list
      */
-    @CliCommand(value = "df", help = "Display buckets")
+    @CliCommand(value = "df", help = "List all your buckets")
     public String df() {
         return listBuckets();
     }
 
     /**
-     * create new bucket
+     * create a bucket
      *
      * @return new bucket
      */
-    @CliCommand(value = "create", help = "Create a new bucket")
-    public String create(@CliOption(key = {"acl"}, mandatory = false, help = "Bucket ACL, such as: Private, R- or RW") String acl,
-                         @CliOption(key = {""}, mandatory = true, help = "prefix wild matched file name") final String bucket) {
+    @CliCommand(value = "create", help = "Create a bucket")
+    public String create(@CliOption(key = {"acl"}, mandatory = false, help = "Bucket's acl, such as: Private, R- or RW") String acl,
+                         @CliOption(key = {""}, mandatory = true, help = "Bucket name: [a-z][a-z0-9\\-_]{5,15}") final String bucket) {
         try {
             if (acl == null || acl.isEmpty() || acl.equalsIgnoreCase("private")) {
                 acl = "--";
             }
             if (!(acl.equalsIgnoreCase("--") || acl.equals("R-") || acl.equals("RW"))) {
-                return "ACL value should be 'Private', 'R-' or 'RW'";
+                return "ACL's value should be 'Private', 'R-' or 'RW'";
             }
             aliyunOssService.createBucket(bucket);
             aliyunOssService.setBucketACL(bucket, acl);
             use(bucket);
-            return "Bucket 'oss://" + bucket + "' created and switched";
+            return "Bucket 'oss://" + bucket + "' has been created and switched";
         } catch (Exception e) {
             log.error("create", e);
             return e.getMessage();
