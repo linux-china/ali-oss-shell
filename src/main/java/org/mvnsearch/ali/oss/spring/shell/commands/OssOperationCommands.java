@@ -401,7 +401,7 @@ public class OssOperationCommands implements CommandMarker {
         StringBuilder buf = new StringBuilder();
         String prefix = StringUtils.defaultIfEmpty(currentDir, "") + StringUtils.defaultIfEmpty(filename, "");
         try {
-            ObjectListing objectListing = aliyunOssService.list(currentBucket.getBucket(), prefix);
+            ObjectListing objectListing;
             if (prefix.equals("")) {
                 objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), prefix);
             } else {
@@ -459,13 +459,16 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "cd", help = "Change directory")
-    public String cd(@CliOption(key = {""}, mandatory = true, help = "Change directory") final String dir) {
-        if (dir == null || dir.equals("/")) {
+    public String cd(@CliOption(key = {""}, mandatory = false, help = "Change directory") final String dir) {
+        if (StringUtils.isBlank(dir) || dir.equals("/")) {
             currentDir = "";
         } else {
-            currentDir = dir + "/";
+            currentDir = dir;
+            if (!currentDir.endsWith("/")) {
+                currentDir = currentDir + "/";
+            }
         }
-        return null;
+        return currentBucket.getChildObjectUri(currentDir).toString();
     }
 
     /**
