@@ -303,8 +303,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     public ObjectMetadata getObjectMetadata(OSSUri objectUri) throws Exception {
         try {
             return oss.getObjectMetadata(objectUri.getBucket(), objectUri.getFilePath());
-        } catch (Exception e) {
-            log.error("ObjectMetadata:" + objectUri.toString(), e);
+        } catch (Exception ignore) {
             return null;
         }
     }
