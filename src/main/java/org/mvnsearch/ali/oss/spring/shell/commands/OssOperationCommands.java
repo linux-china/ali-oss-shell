@@ -298,7 +298,7 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                int count = uploadDirectory(currentBucket.getBucket(), destFilePath, sourceFile, false);
+                int count = uploadDirectory(currentBucket.getBucket(), StringUtils.defaultIfEmpty(destFilePath, ""), sourceFile, false);
                 return count + " files uploaded";
             } else {
                 if (destFilePath.endsWith("/")) {
@@ -367,17 +367,18 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * sync directory
      *
-     * @return content
+     * @return message
      */
     @CliCommand(value = "sync", help = "Sync the local directory with OSS")
     public String sync(@CliOption(key = {"source"}, mandatory = true, help = "Local fiel directory") String sourceDirectory,
-                       @CliOption(key = {"dest"}, mandatory = true, help = "OSS object path") String destPath) {
+                       @CliOption(key = {""}, mandatory = true, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
         }
         //bucket判断，如果是普通字符串，则为bucket名称
         if (sourceDirectory != null && !sourceDirectory.contains("/") && !sourceDirectory.contains("\\")) {
             sourceDirectory = new File(localRepository, sourceDirectory).getAbsolutePath();
+            objectPath = "";
         }
         File sourceFile = new File(sourceDirectory);
         if (!sourceFile.exists()) {
@@ -385,10 +386,10 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                int count = uploadDirectory(currentBucket.getBucket(), destPath, sourceFile, true);
+                int count = uploadDirectory(currentBucket.getBucket(), StringUtils.defaultIfEmpty(objectPath, ""), sourceFile, true);
                 return count + " files uploaded!";
             } else {
-                OSSUri objectUri = currentBucket.getChildObjectUri(destPath);
+                OSSUri objectUri = currentBucket.getChildObjectUri(objectPath);
                 ObjectMetadata metadata = aliyunOssService.put(sourceDirectory, objectUri);
                 return MessageFormat.format("File '{0}' stored as {1} ({2} bytes)",
                         sourceFile.getAbsolutePath(), objectUri.toString(), metadata.getContentLength());
