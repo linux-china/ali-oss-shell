@@ -404,7 +404,7 @@ public class OssOperationCommands implements CommandMarker {
                 objectListing = aliyunOssService.list(currentBucket.getBucket(), dirObject.getFilePath());
             }*/
             for (String commonPrefix : objectListing.getCommonPrefixes()) {
-                buf.append(StringUtils.padLeft(commonPrefix, 30, '-') + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.repeat("-", 30) + " " + commonPrefix + StringUtils.LINE_SEPARATOR);
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
@@ -455,11 +455,28 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "cd", help = "Change directory")
     public String cd(@CliOption(key = {""}, mandatory = false, help = "Change directory") String dir) {
-        if (dir != null && !dir.endsWith("/")) {
-            dir = dir + "/";
+        if (dir == null || dir.isEmpty() || dir.equals("/")) {
+            currentBucket.setFilePath("");
+        } else {
+            if (!dir.endsWith("/")) {
+                dir = dir + "/";
+            }
+            String currentDir = currentBucket.getChildObjectUri(dir).getFilePath();
+            currentBucket.setFilePath(currentDir);
         }
-        String currentDir = currentBucket.getChildObjectUri(dir).getFilePath();
-        currentBucket.setFilePath(currentDir);
+        return currentBucket.toString();
+    }
+
+    /**
+     * display current information
+     *
+     * @return content
+     */
+    @CliCommand(value = "path", help = "Display currrent directory information")
+    public String path() {
+        if (currentBucket == null) {
+            return "You have not select a bucket!";
+        }
         return currentBucket.toString();
     }
 
