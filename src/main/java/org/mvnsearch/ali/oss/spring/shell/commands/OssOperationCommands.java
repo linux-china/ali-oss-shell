@@ -9,6 +9,7 @@ import org.fusesource.jansi.Ansi;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
+import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +86,17 @@ public class OssOperationCommands implements CommandMarker {
         String repository = configService.getRepository();
         if (repository != null && !repository.isEmpty()) {
             localRepository = new File(repository);
+        }
+        //bucket常量注入，用于提示
+        if (configService.available()) {
+            try {
+                List<Bucket> buckets = aliyunOssService.getBuckets();
+                for (Bucket bucket : buckets) {
+                    BucketEnum.addBucketName(bucket.getName());
+                }
+            } catch (Exception ignore) {
+
+            }
         }
     }
 
@@ -681,4 +693,12 @@ public class OssOperationCommands implements CommandMarker {
     private String wrappedAsYellow(String text) {
         return Ansi.ansi().fg(Ansi.Color.YELLOW).a(text).toString();
     }
+
+    @CliCommand(value = "enum", help = "Print a simple hello world message from an enumerated value")
+    public String eenum(
+            @CliOption(key = {"message"}, mandatory = true, help = "The hello world message") final BucketEnum bucket) {
+
+        return "Hello.  Your special enumerated message is " + bucket;
+    }
+
 }
