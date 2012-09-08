@@ -108,17 +108,16 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "config", help = "Config the Aliyun OSS access settings")
     public String config(@CliOption(key = {"id"}, mandatory = true, help = "Aliyun Access ID") final String accessId,
                          @CliOption(key = {"key"}, mandatory = true, help = "Aliyun Access Key") final String accessKey,
-                         @CliOption(key = {"repository"}, mandatory = true, help = "local repository directory") final String reposity) {
+                         @CliOption(key = {"repository"}, mandatory = true, help = "local repository directory") final File reposity) {
         try {
             configService.setAccessInfo(accessId, accessKey);
             aliyunOssService.refreshToken();
             //local repository
-            File temp = new File(reposity);
-            if (!temp.exists()) {
-                FileUtils.forceMkdir(temp);
+            if (!reposity.exists()) {
+                FileUtils.forceMkdir(reposity);
             }
-            localRepository = temp;
-            configService.setRepository(reposity);
+            localRepository = reposity;
+            configService.setRepository(reposity.getAbsolutePath());
         } catch (Exception e) {
             log.error("config", e);
             return wrappedAsRed(e.getMessage());
@@ -696,7 +695,7 @@ public class OssOperationCommands implements CommandMarker {
 
     @CliCommand(value = "enum", help = "Print a simple hello world message from an enumerated value")
     public String eenum(
-            @CliOption(key = {"message"}, mandatory = true, help = "The hello world message") final BucketEnum bucket) {
+            @CliOption(key = {"file"}, mandatory = true, help = "The hello world message") final File bucket) {
 
         return "Hello.  Your special enumerated message is " + bucket;
     }
