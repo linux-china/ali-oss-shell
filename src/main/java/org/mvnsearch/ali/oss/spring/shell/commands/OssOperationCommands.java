@@ -480,6 +480,7 @@ public class OssOperationCommands implements CommandMarker {
             String currentDir = currentBucket.getChildObjectUri(dir).getFilePath();
             currentBucket.setFilePath(currentDir);
         }
+        OssCliPromptProvider.prompt = currentBucket.toString();
         return currentBucket.toString();
     }
 
@@ -510,6 +511,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             this.currentBucket = new OSSUri(bucketName, null);
             configService.setProperty("BUCKET", bucketName);
+            OssCliPromptProvider.prompt = currentBucket.toString();
             return "Switched to " + currentBucket.toString();
         } catch (Exception e) {
             log.error("use", e);
