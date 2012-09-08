@@ -222,21 +222,18 @@ public class OssOperationCommands implements CommandMarker {
      * @return message
      */
     @CliCommand(value = "get", help = "Retrieve OSS object and save it to local file system")
-    public String get(@CliOption(key = {"dest"}, mandatory = false, help = "Local file path") String localFilePath,
+    public String get(@CliOption(key = {"dest"}, mandatory = false, help = "Local file path") File localFilePath,
                       @CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") String objectKey) {
         if (currentBucket == null) {
             return wrappedAsYellow("Please select a bucket!");
         }
         try {
             OSSUri objectUri = currentBucket.getChildObjectUri(objectKey);
-            if (localFilePath == null || localFilePath.isEmpty()) {
-                localFilePath = objectUri.getPathInRepository(localRepository).getAbsolutePath();
-            }
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
             if (objectMetadata == null) {
                 return wrappedAsRed("The object not found!");
             }
-            String destFilePath = aliyunOssService.get(objectUri, localFilePath);
+            String destFilePath = aliyunOssService.get(objectUri, localFilePath.getAbsolutePath());
             return MessageFormat.format("Object {0} saved to {1} ({3} bytes)", objectUri.toString(), destFilePath, objectMetadata.getContentLength());
         } catch (Exception e) {
             log.error("get", e);
@@ -301,9 +298,8 @@ public class OssOperationCommands implements CommandMarker {
      * @return message
      */
     @CliCommand(value = "put", help = "Upload the local file or directory to OSS")
-    public String put(@CliOption(key = {"source"}, mandatory = true, help = "Local file or directory path") String sourceFilePath,
+    public String put(@CliOption(key = {"source"}, mandatory = true, help = "Local file or directory path") File sourceFile,
                       @CliOption(key = {""}, mandatory = false, help = "Destination OSS object uri, key or path") String destFilePath) {
-        File sourceFile = new File(sourceFilePath);
         if (!sourceFile.exists()) {
             return wrappedAsRed(MessageFormat.format("The file ''{0}'' not exits. ", sourceFile.getAbsolutePath()));
         }
@@ -316,7 +312,7 @@ public class OssOperationCommands implements CommandMarker {
                     destFilePath = destFilePath + sourceFile.getName();
                 }
                 OSSUri destObjectUri = currentBucket.getChildObjectUri(destFilePath);
-                ObjectMetadata metadata = aliyunOssService.put(sourceFilePath, destObjectUri);
+                ObjectMetadata metadata = aliyunOssService.put(sourceFile.getAbsolutePath(), destObjectUri);
                 return MessageFormat.format("File ''{0}'' stored as {1} ({2} bytes)",
                         sourceFile.getAbsolutePath(), destObjectUri.toString(), metadata.getContentLength());
             }
@@ -381,19 +377,13 @@ public class OssOperationCommands implements CommandMarker {
      * @return message
      */
     @CliCommand(value = "sync", help = "Sync the local bucket or directory with OSS")
-    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "Bucket name or local directorys") String sourceDirectory,
+    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "Bucket name or local directorys") File sourceFile,
                        @CliOption(key = {""}, mandatory = false, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
         }
-        //bucket判断，如果是普通字符串，则为bucket名称
-        if (sourceDirectory != null && !sourceDirectory.contains("/") && !sourceDirectory.contains("\\")) {
-            sourceDirectory = new File(localRepository, sourceDirectory).getAbsolutePath();
-            objectPath = "";
-        }
-        File sourceFile = new File(sourceDirectory);
         if (!sourceFile.exists()) {
-            return wrappedAsRed(MessageFormat.format("File ''{0}'' not exits: ", sourceDirectory));
+            return wrappedAsRed(MessageFormat.format("File ''{0}'' not exits: ", sourceFile.getAbsolutePath()));
         }
         try {
             if (sourceFile.isDirectory()) {
@@ -401,7 +391,7 @@ public class OssOperationCommands implements CommandMarker {
                 return count + " files uploaded!";
             } else {
                 OSSUri objectUri = currentBucket.getChildObjectUri(objectPath);
-                ObjectMetadata metadata = aliyunOssService.put(sourceDirectory, objectUri);
+                ObjectMetadata metadata = aliyunOssService.put(sourceFile.getAbsolutePath(), objectUri);
                 return MessageFormat.format("File '{0}' stored as {1} ({2} bytes)",
                         sourceFile.getAbsolutePath(), objectUri.toString(), metadata.getContentLength());
             }
