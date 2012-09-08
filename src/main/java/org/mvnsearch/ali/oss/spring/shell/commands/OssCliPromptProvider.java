@@ -44,7 +44,7 @@ public class OssCliPromptProvider extends DefaultPromptProvider implements Initi
     public void afterPropertiesSet() throws Exception {
         String currentBucket = configService.getProperty("BUCKET");
         if (currentBucket != null) {
-            prompt = "oss://" + currentBucket + ">";
+            prompt = "oss://" + currentBucket;
         }
     }
 
@@ -55,7 +55,7 @@ public class OssCliPromptProvider extends DefaultPromptProvider implements Initi
      */
     @Override
     public String getPrompt() {
-        return prompt;
+        return "[" + prompt + "]$";
     }
 
     /**
