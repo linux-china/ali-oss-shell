@@ -28,6 +28,13 @@ AliyunOssService负责和OSS进行交互，如获取OSS Object信息，上传文
 
 ![系统类图](https://github.com/linux-china/ali-oss-java-cli/wiki/assets/img/ali-oss-java-cli-class-diagram.png)
 
+### How to debug App
+OSS Console运行在terminal中，当然你也可以在IDEA中直接以debug方式运行程序，但是一些功能会缺失，如颜色显示，自动提示等，这个时候需在terminal中运行，但是我们也需要调试程序，
+所以我们我们要以debug状态启动App，然后在IDEA中以Remote Debug方式连接到JVM上进行调试。运行参数如下
+
+    java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -jar target/ali-oss-java-cli-1.0.0.jar
+接下来就是在IDEA中创建一个Remote Debug运行项即可。
+
 ### Road Map
 
 * 分片上传
