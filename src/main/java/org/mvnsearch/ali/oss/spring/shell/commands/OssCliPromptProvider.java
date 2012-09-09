@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.shell.plugin.support.DefaultPromptProvider;
+import org.springframework.shell.support.util.OsUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -53,7 +54,7 @@ public class OssCliPromptProvider extends DefaultPromptProvider implements Initi
             prompt = "oss://" + currentBucket;
         }
         //if Windows OS, adjust symbo to '>'
-        if (File.separator.equals("\\")) {
+        if ((OsUtils.isWindows())) {
             symbol = ">";
         }
     }
