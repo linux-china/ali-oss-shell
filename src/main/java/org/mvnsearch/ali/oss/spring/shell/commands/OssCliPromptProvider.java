@@ -8,6 +8,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.shell.plugin.support.DefaultPromptProvider;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+
 /**
  * aliyun OSS prompt provider
  *
@@ -19,7 +21,11 @@ public class OssCliPromptProvider extends DefaultPromptProvider implements Initi
     /**
      * prompt
      */
-    public static String prompt = "AliOSS>";
+    public static String prompt = "AliOSS";
+    /**
+     * symbol
+     */
+    public static String symbol = "#";
 
     /**
      * config service
@@ -46,6 +52,10 @@ public class OssCliPromptProvider extends DefaultPromptProvider implements Initi
         if (currentBucket != null) {
             prompt = "oss://" + currentBucket;
         }
+        //if Windows OS, adjust symbo to '>'
+        if (File.separator.equals("\\")) {
+            symbol = ">";
+        }
     }
 
     /**
@@ -55,7 +65,7 @@ public class OssCliPromptProvider extends DefaultPromptProvider implements Initi
      */
     @Override
     public String getPrompt() {
-        return "[" + prompt + "]$";
+        return "[" + prompt + "]" + symbol;
     }
 
     /**
