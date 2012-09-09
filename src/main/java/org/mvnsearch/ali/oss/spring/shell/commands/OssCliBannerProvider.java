@@ -48,7 +48,6 @@ public class OssCliBannerProvider extends DefaultBannerProvider implements Comma
         buf.append("*      Aliyun OSS Console             *" + StringUtils.LINE_SEPARATOR);
         buf.append("*                                     *" + StringUtils.LINE_SEPARATOR);
         buf.append("=======================================" + StringUtils.LINE_SEPARATOR);
-        buf.append("Version:" + this.getVersion());
         return buf.toString();
     }
 
@@ -78,7 +77,7 @@ public class OssCliBannerProvider extends DefaultBannerProvider implements Comma
      */
     public String getWelcomeMessage() {
         if (configService.available()) {
-            return "Welcome to Aliyun OSS Java CLI";
+            return "Welcome to Aliyun OSS Console! Version: "+getVersion();
         } else {
             return "Please use config command to set access info!";
         }
