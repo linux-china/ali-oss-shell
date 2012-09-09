@@ -88,7 +88,7 @@ public class OssOperationCommands implements CommandMarker {
             localRepository = new File(repository);
         }
         //bucket常量注入，用于提示
-        if (configService.available()) {
+        /*if (configService.available()) {
             try {
                 List<Bucket> buckets = aliyunOssService.getBuckets();
                 for (Bucket bucket : buckets) {
@@ -97,7 +97,7 @@ public class OssOperationCommands implements CommandMarker {
             } catch (Exception ignore) {
 
             }
-        }
+        }*/
     }
 
     /**
@@ -431,7 +431,11 @@ public class OssOperationCommands implements CommandMarker {
                 }
                 buf.append(objectListing.getObjectSummaries().size() + " objects found");
             }
-            return buf.toString().trim();
+            String content = buf.toString().trim();
+            if (content.isEmpty()) {
+                return "No object found for " + dirObject.toString();
+            }
+            return content;
         } catch (Exception e) {
             log.error("ls", e);
             return wrappedAsRed(e.getMessage());
