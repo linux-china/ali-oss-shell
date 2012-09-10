@@ -39,6 +39,7 @@ OSS Console运行在terminal中，当然你也可以在IDEA中直接以debug方�
 
 * 分片上传
 * bucket name自动提示：当@CliOption的key为空时，也能自动提示
+* 允许设置一次显示最多的object数量
 * 统计支持：dump bucket下的所有object的基本信息，然后进行Lucene索引，支持自定义查询。
 
 ### Issues
