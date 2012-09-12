@@ -688,11 +688,4 @@ public class OssOperationCommands implements CommandMarker {
         return Ansi.ansi().fg(Ansi.Color.YELLOW).a(text).toString();
     }
 
-    @CliCommand(value = "enum", help = "Print a simple hello world message from an enumerated value")
-    public String eenum(
-            @CliOption(key = {""}, mandatory = true, help = "The hello world message") final BucketEnum bucket) {
-
-        return "Hello.  Your special enumerated message is " + bucket;
-    }
-
 }
