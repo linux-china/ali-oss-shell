@@ -421,7 +421,7 @@ public class OssOperationCommands implements CommandMarker {
                 objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
             }
             for (String commonPrefix : objectListing.getCommonPrefixes()) {
-                buf.append(StringUtils.repeat("-", 29) + " " + commonPrefix + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.repeat("-.", 14) + "- " + commonPrefix + StringUtils.LINE_SEPARATOR);
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
