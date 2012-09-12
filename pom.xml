@@ -7,7 +7,7 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Aliyun OSS Java CLI</name>
+    <name>Aliyun OSS Console</name>
     <url>https://github.com/linux-china/ali-oss-java-cli</url>
 
     <properties>
@@ -23,8 +23,7 @@
             <email>libing.chen@gmail.com</email>
             <url>http://weibo.com/linux2china</url>
             <roles>
-                <role>系统分析师</role>
-                <role>开发人员</role>
+                <role>Developer</role>
             </roles>
         </developer>
     </developers>
