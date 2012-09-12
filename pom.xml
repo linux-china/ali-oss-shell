@@ -9,6 +9,9 @@
     <packaging>jar</packaging>
 
     <name>Aliyun OSS Console</name>
+    <description>
+        Use console to operate bucket and objects in Aliyun OSS
+    </description>
     <url>https://github.com/linux-china/ali-oss-java-cli</url>
 
     <properties>
