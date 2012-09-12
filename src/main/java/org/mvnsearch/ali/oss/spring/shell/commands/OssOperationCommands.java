@@ -88,7 +88,7 @@ public class OssOperationCommands implements CommandMarker {
             localRepository = new File(repository);
         }
         //bucket常量注入，用于提示
-        /*if (configService.available()) {
+        if (configService.available()) {
             try {
                 List<Bucket> buckets = aliyunOssService.getBuckets();
                 for (Bucket bucket : buckets) {
@@ -97,7 +97,7 @@ public class OssOperationCommands implements CommandMarker {
             } catch (Exception ignore) {
 
             }
-        }*/
+        }
     }
 
     /**
@@ -689,7 +689,7 @@ public class OssOperationCommands implements CommandMarker {
 
     @CliCommand(value = "enum", help = "Print a simple hello world message from an enumerated value")
     public String eenum(
-            @CliOption(key = {"file"}, mandatory = true, help = "The hello world message") final File bucket) {
+            @CliOption(key = {""}, mandatory = true, help = "The hello world message") final BucketEnum bucket) {
 
         return "Hello.  Your special enumerated message is " + bucket;
     }
