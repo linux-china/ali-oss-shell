@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.shell.version>1.0.0-rc1</spring.shell.version>
-        <slf4j.version>1.6.6</slf4j.version>
+        <slf4j.version>1.7.0</slf4j.version>
     </properties>
 
     <developers>
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.6</version>
+            <version>1.0.7</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
