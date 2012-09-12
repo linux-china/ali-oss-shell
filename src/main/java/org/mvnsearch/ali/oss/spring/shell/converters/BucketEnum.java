@@ -43,12 +43,21 @@ public class BucketEnum {
     }
 
     /**
-     * set name
+     * set bucket name
      *
-     * @param name name
+     * @param name bucket name
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * get bucket name
+     *
+     * @return bucket name
+     */
+    public String getName() {
+        return this.name;
     }
 
     /**
