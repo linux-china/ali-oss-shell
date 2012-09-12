@@ -771,9 +771,17 @@ public class SimpleParser implements Parser {
 				candidates.addAll(results);
 				return 0;
 			}
-
+            //todo edit by linux_china
+            // only one empty parameter with empty key
+             boolean onlyOneEmptyKey = false;
+             if (cliOptions.size() == 1) {
+                 CliOption cliOption = cliOptions.get(0);
+                 if (cliOption.key().length == 1 && cliOption.key()[0].isEmpty()) {
+                     onlyOneEmptyKey = true;
+                 }
+             }
 			// To be here, we are NOT typing an option key (or we might be, and there are no further option keys left)
-			if (lastOptionKey != null && !"".equals(lastOptionKey)) {
+			if (onlyOneEmptyKey ||(lastOptionKey != null && !"".equals(lastOptionKey))) {
 				// Lookup the relevant CliOption that applies to this lastOptionKey
 				// We do this via the parameter type
 				Class<?>[] parameterTypes = methodTarget.getMethod().getParameterTypes();
@@ -782,7 +790,8 @@ public class SimpleParser implements Parser {
 					Class<?> parameterType = parameterTypes[i];
 
 					for (String key : option.key()) {
-						if (key.equals(lastOptionKey)) {
+                        //todo edit by linux_china
+						if (key.isEmpty() || key.equals(lastOptionKey)) {
 							List<Completion> allValues = new ArrayList<Completion>();
 							String suffix = " ";
 
@@ -848,7 +857,8 @@ public class SimpleParser implements Parser {
 									}
 								}
 							}
-
+                            //todo edit by linux_china
+                            if(!onlyOneEmptyKey) {
 							// ROO-389: give inline options given there's multiple choices available and we want to help the user
 							StringBuilder help = new StringBuilder();
 							help.append(StringUtils.LINE_SEPARATOR);
@@ -880,7 +890,7 @@ public class SimpleParser implements Parser {
 								}
 							}
 							LOGGER.info(help.toString());
-
+                            }
 							if (results.size() == 1) {
 								String suggestion = results.iterator().next().getValue().trim();
 								if (suggestion.equals(lastOptionValue)) {
