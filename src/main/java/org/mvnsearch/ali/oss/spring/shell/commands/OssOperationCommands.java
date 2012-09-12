@@ -508,8 +508,9 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "use", help = "Switch bucket")
-    public String use(@CliOption(key = {""}, mandatory = true, help = "bucket name") final String bucketName) {
+    public String use(@CliOption(key = {""}, mandatory = true, help = "bucket name") final BucketEnum bucketEnum) {
         try {
+            String bucketName = bucketEnum.getName();
             Bucket bucket = aliyunOssService.getBucket(bucketName);
             if (bucket == null) {
                 return wrappedAsRed("The bucket not found");
