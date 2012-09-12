@@ -7,8 +7,10 @@
 关于OSS Console的手册，请访问： https://github.com/linux-china/ali-oss-java-cli/wiki
 
 ### 开发步骤
-首先git clone出代码，然后执行
+Check out代码，编译，最后执行。步骤如下：
 
+    git clone git://github.com/linux-china/ali-oss-java-cli.git
+    cd ali-oss-java-cli
     mvn -DskipTests clean package
 
 接下来执行
