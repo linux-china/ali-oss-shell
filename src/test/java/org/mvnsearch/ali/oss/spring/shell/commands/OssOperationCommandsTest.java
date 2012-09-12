@@ -2,6 +2,7 @@ package org.mvnsearch.ali.oss.spring.shell.commands;
 
 import junit.framework.TestCase;
 import org.mvnsearch.ali.oss.spring.services.impl.AliyunOssServiceImpl;
+import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
 
 /**
  * oss operation commands test
@@ -30,7 +31,9 @@ public class OssOperationCommandsTest extends TestCase {
      * test to list buckets
      */
     public void testDf() {
-        commands.use("faxianla_temp");
+        BucketEnum bucketEnum = new BucketEnum();
+        bucketEnum.setName("linux_china");
+        commands.use(bucketEnum);
         System.out.println(commands.df());
     }
 
@@ -39,7 +42,7 @@ public class OssOperationCommandsTest extends TestCase {
      */
     public void testCreate() {
         String bucketName = "abc123";
-        System.out.println(commands.create(bucketName,"R-"));
+        System.out.println(commands.create(bucketName, "R-"));
         assertTrue("Failed to create bucket", commands.df().contains(bucketName));
     }
 }
