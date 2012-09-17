@@ -374,8 +374,8 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return message
      */
-    @CliCommand(value = "sync", help = "Sync the local bucket or directory with OSS")
-    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "Bucket name or local directorys") File sourceFile,
+    @CliCommand(value = "sync", help = "Sync directory with OSS")
+    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "local directory") File sourceFile,
                        @CliOption(key = {""}, mandatory = false, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
