@@ -477,6 +477,9 @@ public class OssOperationCommands implements CommandMarker {
         if (dir == null || dir.isEmpty() || dir.equals("/")) {
             currentBucket.setFilePath("");
         } else {
+            if (dir.endsWith(".")) {
+                return currentBucket.toString();
+            }
             if (!dir.endsWith("/")) {
                 dir = dir + "/";
             }
