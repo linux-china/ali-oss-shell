@@ -12,6 +12,7 @@ import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
 import org.mvnsearch.ali.oss.spring.shell.converters.HttpHeader;
+import org.mvnsearch.ali.oss.spring.shell.converters.ObjectKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * current bucket
      */
-    private OSSUri currentBucket = null;
+    public static OSSUri currentBucket = null;
     /**
      * local repository
      */
@@ -84,7 +85,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @PostConstruct
     public void init() {
-        this.currentBucket = new OSSUri(configService.getProperty("BUCKET"), null);
+        currentBucket = new OSSUri(configService.getProperty("BUCKET"), null);
         String repository = configService.getRepository();
         if (repository != null && !repository.isEmpty()) {
             localRepository = new File(repository);
@@ -517,7 +518,7 @@ public class OssOperationCommands implements CommandMarker {
             if (bucket == null) {
                 return wrappedAsRed("The bucket not found");
             }
-            this.currentBucket = new OSSUri(bucketName, null);
+            currentBucket = new OSSUri(bucketName, null);
             configService.setProperty("BUCKET", bucketName);
             OssCliPromptProvider.prompt = currentBucket.toString();
             return "Switched to " + currentBucket.toString();
@@ -533,10 +534,10 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "file", help = "Get OSS object detail information")
-    public String file(@CliOption(key = {""}, mandatory = true, help = "Oss object uri or key") final String filePath) {
+    public String file(@CliOption(key = {""}, mandatory = true, help = "Oss object uri or key") final ObjectKey objectKey) {
         StringBuilder buf = new StringBuilder();
         try {
-            OSSUri objectUri = currentBucket.getChildObjectUri(filePath);
+            OSSUri objectUri = currentBucket.getChildObjectUri(objectKey.getKey());
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
             if (objectMetadata != null) {
                 buf.append(StringUtils.padRight("Bucket", 20, ' ') + " : " + objectUri.getBucket() + StringUtils.LINE_SEPARATOR);
@@ -681,7 +682,7 @@ public class OssOperationCommands implements CommandMarker {
             log.error("set", e);
             return e.getMessage();
         }
-        return file(filePath);
+        return file(new ObjectKey(filePath));
     }
 
     /**
