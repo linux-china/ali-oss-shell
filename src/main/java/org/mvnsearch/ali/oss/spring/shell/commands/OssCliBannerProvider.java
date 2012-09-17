@@ -47,7 +47,7 @@ public class OssCliBannerProvider extends DefaultBannerProvider implements Comma
         buf.append("*                                     *" + StringUtils.LINE_SEPARATOR);
         buf.append("*      Aliyun OSS Console             *" + StringUtils.LINE_SEPARATOR);
         buf.append("*                                     *" + StringUtils.LINE_SEPARATOR);
-        buf.append("=======================================" + StringUtils.LINE_SEPARATOR);
+        buf.append("=======================================");
         return buf.toString();
     }
 
