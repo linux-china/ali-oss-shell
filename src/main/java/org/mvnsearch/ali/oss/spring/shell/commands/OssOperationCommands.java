@@ -11,6 +11,7 @@ import org.mvnsearch.ali.oss.spring.services.BucketAclType;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
+import org.mvnsearch.ali.oss.spring.shell.converters.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,7 +201,7 @@ public class OssOperationCommands implements CommandMarker {
             if (currentBucket == null) {
                 return wrappedAsYellow("Please select a bucket!");
             }
-            if (acl != null) {
+            if (acl != null && acl.getType() != null) {
                 aliyunOssService.setBucketACL(currentBucket.getBucket(), acl.getShortCode());
             } else {
                 return wrappedAsRed("ACL value should be 'Private', 'ReadOnly' or 'ReadWrite'.");
@@ -649,7 +650,7 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return content
      */
-    @CliCommand(value = "mv", help = "Move OSS project")
+    @CliCommand(value = "mv", help = "Move OSS Object")
     public String mv(@CliOption(key = {"source"}, mandatory = true, help = "Source object key") final String sourceFilePath,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Dest object key") final String destFilePath) {
         try {
@@ -670,10 +671,11 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "set", help = "Set object metadata")
-    public String set(@CliOption(key = {"key"}, mandatory = true, help = "Metadata key") final String key,
+    public String set(@CliOption(key = {"key"}, mandatory = true, help = "Metadata key") final HttpHeader httpHeader,
                       @CliOption(key = {"value"}, mandatory = true, help = "Metadata value") final String value,
                       @CliOption(key = {""}, mandatory = true, help = "Object key") final String filePath) {
         try {
+            String key = httpHeader.getName();
             aliyunOssService.setObjectMetadata(currentBucket.getChildObjectUri(filePath), key, value);
         } catch (Exception e) {
             log.error("set", e);
