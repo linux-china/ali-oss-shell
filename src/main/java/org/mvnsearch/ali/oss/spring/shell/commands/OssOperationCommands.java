@@ -601,8 +601,9 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "rm", help = "Delete OSS object")
-    public String rm(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key: support suffix wild match") final String filePath) {
+    public String rm(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key: support suffix wild match") final ObjectKey objectKey) {
         try {
+            String filePath = objectKey.getKey();
             if (filePath.endsWith("*")) {
                 ObjectListing list = aliyunOssService.list(currentBucket.getBucket(), filePath.replace("*", ""));
                 int size = list.getObjectSummaries().size();
@@ -633,10 +634,10 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "cp", help = "Copy OSS object")
-    public String cp(@CliOption(key = {"source"}, mandatory = true, help = "Source object key") final String sourceFilePath,
+    public String cp(@CliOption(key = {"source"}, mandatory = true, help = "Source object key") final ObjectKey sourceObjectKey,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Dest object key") final String destFilePath) {
         try {
-            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
+            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceObjectKey.getKey());
             OSSUri destUri = currentBucket.getChildObjectUri(destFilePath);
             aliyunOssService.copy(sourceUri, destUri);
             return MessageFormat.format("''{0}'' has been copied to ''{1}''", sourceUri.toString(), destUri.toString());
@@ -652,10 +653,10 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "mv", help = "Move OSS Object")
-    public String mv(@CliOption(key = {"source"}, mandatory = true, help = "Source object key") final String sourceFilePath,
+    public String mv(@CliOption(key = {"source"}, mandatory = true, help = "Source object key") final ObjectKey sourceObjectKey,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Dest object key") final String destFilePath) {
         try {
-            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
+            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceObjectKey.getKey());
             OSSUri destUri = currentBucket.getChildObjectUri(destFilePath);
             aliyunOssService.copy(sourceUri, destUri);
             aliyunOssService.delete(sourceUri);
