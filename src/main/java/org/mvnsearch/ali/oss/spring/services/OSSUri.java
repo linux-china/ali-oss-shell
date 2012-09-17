@@ -174,6 +174,18 @@ public class OSSUri {
                 tempFilePath = filePath + StringUtils.defaultIfEmpty(childFilePath, "");
             }
         }
+        //处理相对目录
+        if (tempFilePath != null && tempFilePath.endsWith("../")) {
+            tempFilePath = tempFilePath.replace("../", "");
+            if (tempFilePath.endsWith("/")) {
+                tempFilePath = tempFilePath.substring(0, tempFilePath.length() - 1);
+            }
+            if (tempFilePath.contains("/")) {
+                tempFilePath = tempFilePath.substring(0, tempFilePath.lastIndexOf("/")) + "/";
+            } else {
+                tempFilePath = "";
+            }
+        }
         return new OSSUri(this.bucket, tempFilePath);
     }
 
