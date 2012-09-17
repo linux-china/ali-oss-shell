@@ -7,6 +7,7 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.http.impl.cookie.DateUtils;
 import org.fusesource.jansi.Ansi;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
+import org.mvnsearch.ali.oss.spring.services.BucketAclType;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
@@ -194,18 +195,15 @@ public class OssOperationCommands implements CommandMarker {
      * @return result
      */
     @CliCommand(value = "chmod", help = "Change current bucket's Access Control Lists")
-    public String chmod(@CliOption(key = {""}, mandatory = true, help = "Access Control List: Private, R- or RW") String acl) {
+    public String chmod(@CliOption(key = {""}, mandatory = true, help = "Access Control List: Private, ReadOnly or ReadWrite") BucketAclType acl) {
         try {
             if (currentBucket == null) {
                 return wrappedAsYellow("Please select a bucket!");
             }
-            if (acl != null && acl.equalsIgnoreCase("private")) {
-                acl = "--";
-            }
-            if (acl != null && (acl.equalsIgnoreCase("--") || acl.equals("R-") || acl.equals("RW"))) {
-                aliyunOssService.setBucketACL(currentBucket.getBucket(), acl);
+            if (acl != null) {
+                aliyunOssService.setBucketACL(currentBucket.getBucket(), acl.getShortCode());
             } else {
-                return wrappedAsRed("ACL value should be 'Private', 'R-' or 'RW'.");
+                return wrappedAsRed("ACL value should be 'Private', 'ReadOnly' or 'ReadWrite'.");
             }
             return MessageFormat.format("{0} {1}", acl, currentBucket.toString());
         } catch (Exception e) {
