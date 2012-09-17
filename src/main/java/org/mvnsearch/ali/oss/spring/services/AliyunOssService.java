@@ -123,6 +123,16 @@ public interface AliyunOssService {
     public ObjectListing listChildren(String bucketName, String path) throws Exception;
 
     /**
+     * list children only
+     *
+     * @param bucketName bucket name
+     * @param path       path
+     * @return object listing
+     * @throws Exception exception
+     */
+    public ObjectListing listChildren(String bucketName, String path, int maxResults) throws Exception;
+
+    /**
      * put local file to OSS
      *
      * @param sourceFilePath source file path on local disk
