@@ -102,6 +102,17 @@ public interface AliyunOssService {
     public ObjectListing list(String bucketName, String path) throws Exception;
 
     /**
+     * list children recurly
+     *
+     * @param bucketName bucket name
+     * @param path       path
+     * @param maxResults max results
+     * @return object listing
+     * @throws Exception exception
+     */
+    public ObjectListing list(String bucketName, String path, int maxResults) throws Exception;
+
+    /**
      * list children only
      *
      * @param bucketName bucket name

@@ -191,6 +191,19 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      */
     @Override
     public ObjectListing list(String bucketName, String path) throws Exception {
+        return list(bucketName, path, MAX_OBJECTS);
+    }
+
+    /**
+     * list children recurly
+     *
+     * @param bucketName bucket name
+     * @param path       path
+     * @param maxResults max results
+     * @return object listing
+     * @throws Exception exception
+     */
+    public ObjectListing list(String bucketName, String path, int maxResults) throws Exception {
         if (path == null) {
             path = "";
         }
@@ -201,7 +214,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         ListObjectsRequest request = new ListObjectsRequest();
         request.setBucketName(bucketName);
         request.setPrefix(path);
-        request.setMaxKeys(MAX_OBJECTS);
+        request.setMaxKeys(maxResults);
         return oss.listObjects(request);
     }
 
