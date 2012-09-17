@@ -547,8 +547,8 @@ public class OssOperationCommands implements CommandMarker {
                 buf.append(StringUtils.padRight("Date", 20, ' ') + " : " + rawMetadata.get("Date") + StringUtils.LINE_SEPARATOR);
                 buf.append(StringUtils.padRight("Last-Modified", 20, ' ') + " : " + rawMetadata.get("Date") + StringUtils.LINE_SEPARATOR);
                 if (objectMetadata.getExpirationTime() != null) {
-                    buf.append(StringUtils.padRight("Expiry-Date", 20, ' ') + " : " +
-                            DateUtils.formatDate(objectMetadata.getExpirationTime(), "EEE, d MMM yyyy HH:mm:ss z") + StringUtils.LINE_SEPARATOR);
+                    buf.append(StringUtils.padRight("Expires", 20, ' ') + " : " +
+                            rawMetadata.get("Expires") + StringUtils.LINE_SEPARATOR);
                 }
                 //content
                 buf.append(StringUtils.padRight("Content-Type", 20, ' ') + " : " + rawMetadata.get("Content-Type") + StringUtils.LINE_SEPARATOR);
