@@ -7,4 +7,5 @@
 
     <context:component-scan base-package="org.mvnsearch.ali.oss.spring"/>
     <bean class="org.mvnsearch.ali.oss.spring.shell.converters.BucketEnumConverter"/>
+    <bean class="org.mvnsearch.ali.oss.spring.shell.converters.HttpHeaderConverter"/>
 </beans>
