@@ -535,10 +535,24 @@ public class OssOperationCommands implements CommandMarker {
     public String file(@CliOption(key = {""}, mandatory = true, help = "Oss object uri or key") final String filePath) {
         StringBuilder buf = new StringBuilder();
         try {
-            ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(currentBucket.getChildObjectUri(filePath));
+            OSSUri objectUri = currentBucket.getChildObjectUri(filePath);
+            ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
             if (objectMetadata != null) {
+                buf.append(StringUtils.padRight("Bucket", 20, ' ') + " : " + objectUri.getBucket() + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.padRight("Folder", 20, ' ') + " : " + objectUri.getPath() + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.padRight("Name", 20, ' ') + " : " + objectUri.getFileName() + StringUtils.LINE_SEPARATOR);
                 Map<String, Object> rawMetadata = objectMetadata.getRawMetadata();
-                List<String> reservedKeys = Arrays.asList("Connection", "Server", "x-oss-request-id");
+                //date
+                buf.append(StringUtils.padRight("Date", 20, ' ') + " : " + rawMetadata.get("Date") + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.padRight("Last-Modified", 20, ' ') + " : " + rawMetadata.get("Date") + StringUtils.LINE_SEPARATOR);
+                if (objectMetadata.getExpirationTime() != null) {
+                    buf.append(StringUtils.padRight("Expiry-Date", 20, ' ') + " : " +
+                            DateUtils.formatDate(objectMetadata.getExpirationTime(), "EEE, d MMM yyyy HH:mm:ss z") + StringUtils.LINE_SEPARATOR);
+                }
+                //content
+                buf.append(StringUtils.padRight("Content-Type", 20, ' ') + " : " + rawMetadata.get("Content-Type") + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.padRight("Content-Length", 20, ' ') + " : " + rawMetadata.get("Content-Length") + StringUtils.LINE_SEPARATOR);
+                List<String> reservedKeys = Arrays.asList("Connection", "Server", "x-oss-request-id", "Date", "Last-Modified", "Content-Type", "Content-Length");
                 for (Map.Entry<String, Object> entry : rawMetadata.entrySet()) {
                     if (!reservedKeys.contains(entry.getKey())) {
                         buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
