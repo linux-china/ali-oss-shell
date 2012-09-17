@@ -799,6 +799,9 @@ public class SimpleParser implements Parser {
 							for (Converter<?> candidate : converters) {
 								if (candidate.supports(parameterType, option.optionContext())) {
 									// Found a usable converter
+                                    if(lastOptionValue==null) {
+                                        lastOptionValue ="";
+                                    }
 									boolean addSpace = candidate.getAllPossibleValues(allValues, parameterType,
 											lastOptionValue, option.optionContext(), methodTarget);
 									if (!addSpace) {
