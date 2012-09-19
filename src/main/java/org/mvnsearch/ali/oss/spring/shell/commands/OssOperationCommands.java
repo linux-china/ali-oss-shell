@@ -115,12 +115,24 @@ public class OssOperationCommands implements CommandMarker {
         try {
             configService.setAccessInfo(accessId, accessKey);
             aliyunOssService.refreshToken();
-            //local repository
-            if (!reposity.exists()) {
-                FileUtils.forceMkdir(reposity);
+            try {
+                List<Bucket> buckets = aliyunOssService.getBuckets();
+                //local repository
+                if (!reposity.exists()) {
+                    FileUtils.forceMkdir(reposity);
+                    //create bucket directory
+                    if (buckets != null) {
+                        for (Bucket bucket : buckets) {
+                            FileUtils.forceMkdir(new File(reposity, bucket.getName()));
+                        }
+                    }
+                }
+                localRepository = reposity;
+                configService.setRepository(reposity.getAbsolutePath());
+            } catch (Exception e) {
+                System.out.println(wrappedAsRed("Failed to set access info!"));
+                return null;
             }
-            localRepository = reposity;
-            configService.setRepository(reposity.getAbsolutePath());
         } catch (Exception e) {
             log.error("config", e);
             return wrappedAsRed(e.getMessage());
