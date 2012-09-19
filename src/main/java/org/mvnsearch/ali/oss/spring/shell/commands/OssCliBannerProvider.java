@@ -40,7 +40,6 @@ public class OssCliBannerProvider extends DefaultBannerProvider implements Comma
      * @return banner text
      */
     @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
-    @CliCommand(value = {"version"}, help = "Displays current CLI version")
     public String getBanner() {
         StringBuilder buf = new StringBuilder();
         buf.append("=======================================" + StringUtils.LINE_SEPARATOR);
