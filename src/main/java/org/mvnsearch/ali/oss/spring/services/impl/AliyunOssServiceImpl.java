@@ -17,12 +17,10 @@ import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 /**
  * aliyun OSS service implementation
@@ -323,7 +321,13 @@ public class AliyunOssServiceImpl implements AliyunOssService {
                 FileUtils.forceMkdir(destFile.getParentFile());
             }
             FileOutputStream fos = new FileOutputStream(destFilePath);
-            IOUtils.copy(ossObject.getObjectContent(), fos);
+            InputStream content = ossObject.getObjectContent();
+            //处理解压缩
+            if ("gzip".equalsIgnoreCase(ossObject.getObjectMetadata().getContentEncoding())) {
+                IOUtils.copy(new GZIPInputStream(content), fos);
+            } else {
+                IOUtils.copy(content, fos);
+            }
             fos.close();
         }
         return destFile.getAbsolutePath();
