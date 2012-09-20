@@ -1,5 +1,7 @@
 package org.mvnsearch.ali.oss.spring.services;
 
+import java.util.List;
+
 /**
  * search manager
  *
@@ -7,11 +9,11 @@ package org.mvnsearch.ali.oss.spring.services;
  */
 public interface SearchManager {
     /**
-     * index document
-     *
-     * @param document document
-     */
-    public void index(OssObjectDocument document);
+      * index document
+      *
+      * @param objectDocuments document
+      */
+     public void index(List<OssObjectDocument> objectDocuments);
 
     /**
      * find by object key with path
