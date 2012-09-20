@@ -278,7 +278,10 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      * @param destObject     dest object
      * @return oss file path
      */
-    public ObjectMetadata putWithZip(String sourceFilePath, OSSUri destObject) throws Exception {
+    public ObjectMetadata put(String sourceFilePath, OSSUri destObject, Boolean zip) throws Exception {
+        if (zip == null || !zip) {
+            return put(sourceFilePath, destObject);
+        }
         byte[] zipContent = ZipUtils.compress(IOUtils.toByteArray(new FileInputStream(sourceFilePath)));
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(mimeTypes.getContentType(sourceFilePath));
