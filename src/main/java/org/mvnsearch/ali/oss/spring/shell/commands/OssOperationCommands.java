@@ -314,7 +314,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "put", help = "Upload the local file or directory to OSS")
     public String put(@CliOption(key = {"source"}, mandatory = true, help = "Local file or directory path") File sourceFile,
-                      @CliOption(key = {"zip"}, mandatory = false, help = "Zip the file") Boolean zip,
+                      @CliOption(key = {"zip"}, mandatory = false, help = "Zip the file", specifiedDefaultValue = "true") Boolean zip,
                       @CliOption(key = {""}, mandatory = false, help = "Destination OSS object uri, key or path") String objectKey) {
         if (!sourceFile.exists()) {
             return wrappedAsRed(MessageFormat.format("The file ''{0}'' not exits. ", sourceFile.getAbsolutePath()));
@@ -398,7 +398,7 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "sync", help = "Sync bucket or directory with OSS")
     public String sync(@CliOption(key = {"source"}, mandatory = false, help = "local directory") @Nullable File sourceFile,
                        @CliOption(key = {"bucket"}, mandatory = false, help = "bucket name") @Nullable BucketEnum bucketEnum,
-                       @CliOption(key = {"zip"}, mandatory = false, help = "Zip the file") Boolean zip,
+                       @CliOption(key = {"zip"}, mandatory = false, help = "Zip the file", specifiedDefaultValue = "true") Boolean zip,
                        @CliOption(key = {""}, mandatory = false, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
             return wrappedAsYellow("Please select a bucket!");
