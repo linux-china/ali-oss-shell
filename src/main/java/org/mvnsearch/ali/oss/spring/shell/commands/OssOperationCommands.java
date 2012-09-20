@@ -394,14 +394,16 @@ public class OssOperationCommands implements CommandMarker {
                        @CliOption(key = {"bucket"}, mandatory = false, help = "bucket name") @Nullable BucketEnum bucketEnum,
                        @CliOption(key = {""}, mandatory = false, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
-            return "Please select a bucket!";
+            return wrappedAsYellow("Please select a bucket!");
         }
+        String bucketName = currentBucket.getBucket();
         if (sourceFile == null && bucketEnum == null) {
-            return wrappedAsRed("Please use --bucket or --source for sync");
+            return wrappedAsYellow("Please use --bucket or --source for sync");
         }
         //如果source file为空，进行bucket同步，同时忽略object path
         if (sourceFile == null) {
             sourceFile = new File(localRepository, bucketEnum.getName());
+            bucketName = bucketEnum.getName();
             objectPath = "";
         }
         if (!sourceFile.exists()) {
@@ -409,7 +411,7 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                int count = uploadDirectory(currentBucket.getBucket(), StringUtils.defaultIfEmpty(objectPath, ""), sourceFile, true);
+                int count = uploadDirectory(bucketName, StringUtils.defaultIfEmpty(objectPath, ""), sourceFile, true);
                 return count + " files uploaded!";
             } else {
                 OSSUri objectUri = currentBucket.getChildObjectUri(objectPath);
