@@ -432,11 +432,13 @@ public class OssOperationCommands implements CommandMarker {
             } else {
                 objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
             }
+            int dirCount = 0;
+            int objectCount = 0;
             if (!objectListing.getCommonPrefixes().isEmpty()) {
                 for (String commonPrefix : objectListing.getCommonPrefixes()) {
                     buf.append(StringUtils.repeat("-.", 14) + "- " + commonPrefix + StringUtils.LINE_SEPARATOR);
                 }
-                buf.append(objectListing.getCommonPrefixes().size() + " virtual directories found!");
+                dirCount += 1;
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
@@ -444,7 +446,13 @@ public class OssOperationCommands implements CommandMarker {
                             StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
                             objectSummary.getKey() + StringUtils.LINE_SEPARATOR);
                 }
-                buf.append(objectListing.getObjectSummaries().size() + " objects found!");
+                objectCount += 1;
+            }
+            if (dirCount > 0) {
+                buf.append(dirCount + " virtual directories found!");
+            }
+            if (objectCount > 0) {
+                buf.append(objectCount + " objects found!");
             }
             String content = buf.toString().trim();
             if (content.isEmpty()) {
