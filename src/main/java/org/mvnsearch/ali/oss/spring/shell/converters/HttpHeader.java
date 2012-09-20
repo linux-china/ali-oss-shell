@@ -22,7 +22,14 @@ public class HttpHeader {
         this.name = name;
     }
 
+    /**
+     * get default http header names
+     *
+     * @return http header names
+     */
     public static List<String> getDefaultNames() {
-        return Arrays.asList("Cache-Control", "Content-Type", "Expires");
+        return Arrays.asList("Cache-Control", "Content-Type", "Expires",
+                "Access-Control-Allow-Origin", "Content-MD5", "Content-Disposition",
+                "Pragma", "Content-Encoding", "Set-Cookie");
     }
 }
