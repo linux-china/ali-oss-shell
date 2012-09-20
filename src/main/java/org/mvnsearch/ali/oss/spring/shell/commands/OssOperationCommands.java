@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.http.impl.cookie.DateUtils;
 import org.fusesource.jansi.Ansi;
+import org.jetbrains.annotations.Nullable;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.BucketAclType;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
@@ -388,11 +389,20 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return message
      */
-    @CliCommand(value = "sync", help = "Sync directory with OSS")
-    public String sync(@CliOption(key = {"source"}, mandatory = true, help = "local directory") File sourceFile,
+    @CliCommand(value = "sync", help = "Sync bucket or directory with OSS")
+    public String sync(@CliOption(key = {"source"}, mandatory = false, help = "local directory") @Nullable File sourceFile,
+                       @CliOption(key = {"bucket"}, mandatory = false, help = "bucket name") @Nullable BucketEnum bucketEnum,
                        @CliOption(key = {""}, mandatory = false, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
             return "Please select a bucket!";
+        }
+        if (sourceFile == null && bucketEnum == null) {
+            return wrappedAsRed("Please use --bucket or --source for sync");
+        }
+        //如果source file为空，进行bucket同步，同时忽略object path
+        if (sourceFile == null) {
+            sourceFile = new File(localRepository, bucketEnum.getName());
+            objectPath = "";
         }
         if (!sourceFile.exists()) {
             return wrappedAsRed(MessageFormat.format("File ''{0}'' not exits: ", sourceFile.getAbsolutePath()));
