@@ -771,17 +771,8 @@ public class SimpleParser implements Parser {
 				candidates.addAll(results);
 				return 0;
 			}
-            //todo edit by linux_china
-            // only one empty parameter with empty key
-             boolean onlyOneEmptyKey = false;
-             if (cliOptions.size() == 1) {
-                 CliOption cliOption = cliOptions.get(0);
-                 if (cliOption.key().length == 1 && cliOption.key()[0].isEmpty()) {
-                     onlyOneEmptyKey = true;
-                 }
-             }
 			// To be here, we are NOT typing an option key (or we might be, and there are no further option keys left)
-			if (onlyOneEmptyKey ||(lastOptionKey != null && !"".equals(lastOptionKey))) {
+    			if (lastOptionKey != null && !"".equals(lastOptionKey) && (lastOptionValue.isEmpty() || buffer.endsWith(lastOptionValue))) {
 				// Lookup the relevant CliOption that applies to this lastOptionKey
 				// We do this via the parameter type
 				Class<?>[] parameterTypes = methodTarget.getMethod().getParameterTypes();
@@ -790,8 +781,7 @@ public class SimpleParser implements Parser {
 					Class<?> parameterType = parameterTypes[i];
 
 					for (String key : option.key()) {
-                        //todo edit by linux_china
-						if (key.isEmpty() || key.equals(lastOptionKey)) {
+						if (key.equals(lastOptionKey)) {
 							List<Completion> allValues = new ArrayList<Completion>();
 							String suffix = " ";
 
@@ -799,9 +789,6 @@ public class SimpleParser implements Parser {
 							for (Converter<?> candidate : converters) {
 								if (candidate.supports(parameterType, option.optionContext())) {
 									// Found a usable converter
-                                    if(lastOptionValue==null) {
-                                        lastOptionValue ="";
-                                    }
 									boolean addSpace = candidate.getAllPossibleValues(allValues, parameterType,
 											lastOptionValue, option.optionContext(), methodTarget);
 									if (!addSpace) {
@@ -860,8 +847,7 @@ public class SimpleParser implements Parser {
 									}
 								}
 							}
-                            //todo edit by linux_china
-                            if(!onlyOneEmptyKey) {
+
 							// ROO-389: give inline options given there's multiple choices available and we want to help the user
 							StringBuilder help = new StringBuilder();
 							help.append(StringUtils.LINE_SEPARATOR);
@@ -893,7 +879,7 @@ public class SimpleParser implements Parser {
 								}
 							}
 							LOGGER.info(help.toString());
-                            }
+
 							if (results.size() == 1) {
 								String suggestion = results.iterator().next().getValue().trim();
 								if (suggestion.equals(lastOptionValue)) {
@@ -915,8 +901,133 @@ public class SimpleParser implements Parser {
 					}
 				}
 			}
+            //todo edit by linux_china
+            // has CliOption with empty key
+            boolean hasEmptyKey = false;
+            CliOption option = null;
+            Class<?> parameterType = null;
+            Class<?>[] parameterTypes = methodTarget.getMethod().getParameterTypes();
+            for (int i = 0; i < parameterTypes.length; i++) {
+                CliOption cliOption = cliOptions.get(i);
+                if (cliOption.key().length == 1 && cliOption.key()[0].isEmpty()) {
+                    hasEmptyKey = true;
+                    option = cliOption;
+                    parameterType = parameterTypes[i];
+                    break;
+                }
 
-			return 0;
+            }
+            if (hasEmptyKey) {
+                if (buffer.endsWith(" ")) {
+                    lastOptionValue = "";
+                }
+                List<Completion> allValues = new ArrayList<Completion>();
+                String suffix = " ";
+
+                // Let's use a Converter if one is available
+                for (Converter<?> candidate : converters) {
+                    if (candidate.supports(parameterType, option.optionContext())) {
+                        // Found a usable converter
+                        boolean addSpace = candidate.getAllPossibleValues(allValues, parameterType,
+                                "", option.optionContext(), methodTarget);
+
+                        break;
+                    }
+                }
+
+                if (allValues.isEmpty()) {
+                    // Doesn't appear to be a custom Converter, so let's go and provide defaults for simple types
+
+                    // Provide some simple options for common types
+                    if (Boolean.class.isAssignableFrom(parameterType)
+                            || Boolean.TYPE.isAssignableFrom(parameterType)) {
+                        allValues.add(new Completion("true"));
+                        allValues.add(new Completion("false"));
+                    }
+
+                    if (Number.class.isAssignableFrom(parameterType)) {
+                        allValues.add(new Completion("0"));
+                        allValues.add(new Completion("1"));
+                        allValues.add(new Completion("2"));
+                        allValues.add(new Completion("3"));
+                        allValues.add(new Completion("4"));
+                        allValues.add(new Completion("5"));
+                        allValues.add(new Completion("6"));
+                        allValues.add(new Completion("7"));
+                        allValues.add(new Completion("8"));
+                        allValues.add(new Completion("9"));
+                    }
+                }
+                String prefix = " ";
+                // Only include in the candidates those results which are compatible with the present buffer
+                for (Completion currentValue : allValues) {
+                    // We only provide a suggestion if the lastOptionValue == ""
+                    if (StringUtils.isBlank(lastOptionValue)) {
+                        // We should add the result, as they haven't typed anything yet
+                        results.add(new Completion(prefix + currentValue.getValue() + suffix,
+                                currentValue.getFormattedValue(), currentValue.getHeading(),
+                                currentValue.getOrder()));
+                    } else {
+                        // Only add the result **if** what they've typed is compatible *AND* they haven't already typed it in full
+                        if (currentValue.getValue().toLowerCase().startsWith(lastOptionValue.toLowerCase())
+                                && !lastOptionValue.equalsIgnoreCase(currentValue.getValue())
+                                && lastOptionValue.length() < currentValue.getValue().length()) {
+                            results.add(new Completion(prefix + currentValue.getValue() + suffix,
+                                    currentValue.getFormattedValue(), currentValue.getHeading(),
+                                    currentValue.getOrder()));
+                        }
+                    }
+                }
+
+                // ROO-389: give inline options given there's multiple choices available and we want to help the user
+                StringBuilder help = new StringBuilder();
+                help.append(StringUtils.LINE_SEPARATOR);
+                help.append(option.mandatory() ? "required --" : "optional --");
+                if ("".equals(option.help())) {
+                    help.append(lastOptionKey).append(": ").append("No help available");
+                } else {
+                    help.append(lastOptionKey).append(": ").append(option.help());
+                }
+                if (option.specifiedDefaultValue().equals(option.unspecifiedDefaultValue())) {
+                    if (option.specifiedDefaultValue().equals("__NULL__")) {
+                        help.append("; no default value");
+                    } else {
+                        help.append("; default: '").append(option.specifiedDefaultValue()).append("'");
+                    }
+                } else {
+                    if (!"".equals(option.specifiedDefaultValue())
+                            && !"__NULL__".equals(option.specifiedDefaultValue())) {
+                        help.append("; default if option present: '").append(option.specifiedDefaultValue()).append(
+                                "'");
+                    }
+                    if (!"".equals(option.unspecifiedDefaultValue())
+                            && !"__NULL__".equals(option.unspecifiedDefaultValue())) {
+                        help.append("; default if option not present: '").append(
+                                option.unspecifiedDefaultValue()).append("'");
+                    }
+                }
+                LOGGER.info(help.toString());
+
+                if (results.size() == 1) {
+                    String suggestion = results.iterator().next().getValue().trim();
+                    if (suggestion.equals(lastOptionValue)) {
+                        // They have pressed TAB in the default value, and the default value has already been provided as an explicit option
+                        return 0;
+                    }
+                }
+
+                if (results.size() > 0) {
+                    candidates.addAll(results);
+                    // Values presented from the last space onwards
+                    if (translated.endsWith(" ")) {
+                        return translated.lastIndexOf(" ") + 1;
+                    }
+                    return translated.trim().lastIndexOf(" ");
+                }
+                return 0;
+            }
+            //todo end by linux_china
+            return 0;
 		}
 	}
 
