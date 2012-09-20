@@ -437,16 +437,16 @@ public class OssOperationCommands implements CommandMarker {
             if (!objectListing.getCommonPrefixes().isEmpty()) {
                 for (String commonPrefix : objectListing.getCommonPrefixes()) {
                     buf.append(StringUtils.repeat("-.", 14) + "- " + commonPrefix + StringUtils.LINE_SEPARATOR);
+                    dirCount += 1;
                 }
-                dirCount += 1;
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                     buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
                             StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
                             objectSummary.getKey() + StringUtils.LINE_SEPARATOR);
+                    objectCount += 1;
                 }
-                objectCount += 1;
             }
             if (dirCount > 0 && objectCount > 0) {
                 buf.append(dirCount + " virtual directories and " + objectCount + " objects found!");
