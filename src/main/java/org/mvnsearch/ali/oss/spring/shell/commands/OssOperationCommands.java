@@ -695,7 +695,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "mv", help = "Move OSS Object")
     public String mv(@CliOption(key = {"object"}, mandatory = true, help = "Source object key") final ObjectKey sourceObjectKey,
-                     @CliOption(key = {"dest"}, mandatory = true, help = "Dest object key") final String destFilePath) {
+                     @CliOption(key = {""}, mandatory = true, help = "Dest object key") final String destFilePath) {
         try {
             OSSUri sourceUri = currentBucket.getChildObjectUri(sourceObjectKey.getKey());
             OSSUri destUri = currentBucket.getChildObjectUri(destFilePath);
