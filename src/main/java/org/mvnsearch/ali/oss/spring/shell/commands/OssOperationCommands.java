@@ -313,19 +313,22 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "put", help = "Upload the local file or directory to OSS")
     public String put(@CliOption(key = {"source"}, mandatory = true, help = "Local file or directory path") File sourceFile,
-                      @CliOption(key = {""}, mandatory = false, help = "Destination OSS object uri, key or path") String destFilePath) {
+                      @CliOption(key = {""}, mandatory = false, help = "Destination OSS object uri, key or path") String objectKey) {
         if (!sourceFile.exists()) {
             return wrappedAsRed(MessageFormat.format("The file ''{0}'' not exits. ", sourceFile.getAbsolutePath()));
         }
         try {
             if (sourceFile.isDirectory()) {
-                int count = uploadDirectory(currentBucket.getBucket(), StringUtils.defaultIfEmpty(destFilePath, ""), sourceFile, false);
+                int count = uploadDirectory(currentBucket.getBucket(), StringUtils.defaultIfEmpty(objectKey, ""), sourceFile, false);
                 return count + " files uploaded";
             } else {
-                if (destFilePath.endsWith("/")) {
-                    destFilePath = destFilePath + sourceFile.getName();
+                if (objectKey == null || objectKey.isEmpty()) {
+                    objectKey = sourceFile.getName();
                 }
-                OSSUri destObjectUri = currentBucket.getChildObjectUri(destFilePath);
+                if (objectKey.endsWith("/")) {
+                    objectKey = objectKey + sourceFile.getName();
+                }
+                OSSUri destObjectUri = currentBucket.getChildObjectUri(objectKey);
                 ObjectMetadata metadata = aliyunOssService.put(sourceFile.getAbsolutePath(), destObjectUri);
                 return MessageFormat.format("File ''{0}'' stored as {1} ({2} bytes)",
                         sourceFile.getAbsolutePath(), destObjectUri.toString(), metadata.getContentLength());
