@@ -616,8 +616,8 @@ public class OssOperationCommands implements CommandMarker {
     public String rm(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key: support suffix wild match") final ObjectKey objectKey) {
         try {
             String filePath = objectKey.getKey();
-            if (filePath.endsWith("*")) {
-                ObjectListing list = aliyunOssService.list(currentBucket.getBucket(), filePath.replace("*", ""));
+            if (filePath.endsWith("*") || filePath.endsWith("/")) {
+                ObjectListing list = aliyunOssService.list(currentBucket.getBucket(), filePath.replace("[\\*/]", ""));
                 int size = list.getObjectSummaries().size();
                 for (OSSObjectSummary objectSummary : list.getObjectSummaries()) {
                     OSSUri objectToDeleted = currentBucket.getChildObjectUri(objectSummary.getKey());
