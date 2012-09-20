@@ -448,10 +448,11 @@ public class OssOperationCommands implements CommandMarker {
                 }
                 objectCount += 1;
             }
-            if (dirCount > 0) {
+            if (dirCount > 0 && objectCount > 0) {
+                buf.append(dirCount + " virtual directories and " + objectCount + " objects found!");
+            } else if (dirCount > 0) {
                 buf.append(dirCount + " virtual directories found!");
-            }
-            if (objectCount > 0) {
+            } else if (objectCount > 0) {
                 buf.append(objectCount + " objects found!");
             }
             String content = buf.toString().trim();
