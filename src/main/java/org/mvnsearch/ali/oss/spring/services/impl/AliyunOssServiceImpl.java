@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
+import org.mvnsearch.ali.oss.spring.services.ZipUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,6 +272,23 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     }
 
     /**
+     * put local file to OSS with zip
+     *
+     * @param sourceFilePath source file path on local disk
+     * @param destObject     dest object
+     * @return oss file path
+     */
+    public ObjectMetadata putWithZip(String sourceFilePath, OSSUri destObject) throws Exception {
+        byte[] zipContent = ZipUtils.compress(IOUtils.toByteArray(new FileInputStream(sourceFilePath)));
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(mimeTypes.getContentType(sourceFilePath));
+        objectMetadata.setContentEncoding("gzip");
+        objectMetadata.setContentLength(zipContent.length);
+        oss.putObject(destObject.getBucket(), destObject.getFilePath(), new ByteArrayInputStream(zipContent), objectMetadata);
+        return objectMetadata;
+    }
+
+    /**
      * copy object
      *
      * @param sourceObjectUri source object uri
@@ -362,6 +380,10 @@ public class AliyunOssServiceImpl implements AliyunOssService {
             objectMetadata.setContentType(value);
         } else if (key.equalsIgnoreCase("Expires")) {
             objectMetadata.setExpirationTime(DateUtils.parseDate(value, new String[]{"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"}));
+        } else if (key.equalsIgnoreCase("Content-Encoding")) {
+            objectMetadata.setContentEncoding(value);
+        } else if (key.equalsIgnoreCase("Content-Disposition")) {
+            objectMetadata.setContentDisposition(value);
         } else {
             if (objectMetadata.getUserMetadata() == null || objectMetadata.getUserMetadata().isEmpty()) {
                 objectMetadata.setUserMetadata(new HashMap<String, String>());
