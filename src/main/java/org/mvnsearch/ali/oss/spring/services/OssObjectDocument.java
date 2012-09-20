@@ -1,5 +1,9 @@
 package org.mvnsearch.ali.oss.spring.services;
 
+import com.aliyun.openservices.oss.model.OSSObjectSummary;
+import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
+import org.springframework.shell.support.util.StringUtils;
+
 import java.util.Date;
 
 /**
@@ -8,6 +12,7 @@ import java.util.Date;
  * @author linux_china
  */
 public class OssObjectDocument {
+    private static ConfigurableMimeFileTypeMap mimeTypes = new ConfigurableMimeFileTypeMap();
     /**
      * bucket
      */
@@ -46,7 +51,7 @@ public class OssObjectDocument {
     }
 
     public void setPath(String path) {
-        this.path = path;
+        this.path = path == null ? "" : path;
     }
 
     public String getName() {
@@ -79,5 +84,37 @@ public class OssObjectDocument {
 
     public void setContentLength(Integer contentLength) {
         this.contentLength = contentLength;
+    }
+
+    /**
+     * get object uri
+     *
+     * @return object uri
+     */
+    public String getObjectUri() {
+        String objectKey = StringUtils.defaultIfEmpty(path, "") + "/" + name;
+        return new OSSUri(bucket, objectKey).toString();
+    }
+
+    /**
+     * construct from object summary
+     *
+     * @param objectSummary object summary
+     * @return object document
+     */
+    public static OssObjectDocument constructFromObjectSummary(OSSObjectSummary objectSummary) {
+        OssObjectDocument document = new OssObjectDocument();
+        document.setBucket(objectSummary.getBucketName());
+        String objectKey = objectSummary.getKey();
+        if (objectKey.contains("/")) {
+            document.setPath(objectKey.substring(0, objectKey.lastIndexOf("/")));
+            document.setName(objectKey.substring(objectKey.lastIndexOf("/") + 1));
+        } else {
+            document.setName(objectKey);
+        }
+        document.setContentType(mimeTypes.getContentType(document.getName()));
+        document.setContentLength((int) objectSummary.getSize());
+        document.setDate(objectSummary.getLastModified());
+        return document;
     }
 }
