@@ -34,6 +34,10 @@ public class AliyunOssServiceImplTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         aliyunOssService = new AliyunOssServiceImpl();
+        ConfigServiceImpl configService = new ConfigServiceImpl();
+        configService.init();
+        aliyunOssService.setConfigService(configService);
+        aliyunOssService.refreshToken();
     }
 
     /**
@@ -54,10 +58,13 @@ public class AliyunOssServiceImplTest extends TestCase {
      * @throws Exception exception
      */
     public void testList() throws Exception {
-        ObjectListing objectListing = aliyunOssService.list(bucketName, "");
+        long start = System.currentTimeMillis();
+        ObjectListing objectListing = aliyunOssService.list(bucketName, "", 1000);
         for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-            System.out.println(objectSummary.getKey());
+            //System.out.println(objectSummary.getKey());
         }
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
     }
 
     /**
