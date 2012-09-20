@@ -313,6 +313,7 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "put", help = "Upload the local file or directory to OSS")
     public String put(@CliOption(key = {"source"}, mandatory = true, help = "Local file or directory path") File sourceFile,
+                      @CliOption(key = {"zip"}, mandatory = false, help = "zip") boolean zip,
                       @CliOption(key = {""}, mandatory = false, help = "Destination OSS object uri, key or path") String objectKey) {
         if (!sourceFile.exists()) {
             return wrappedAsRed(MessageFormat.format("The file ''{0}'' not exits. ", sourceFile.getAbsolutePath()));
@@ -329,7 +330,7 @@ public class OssOperationCommands implements CommandMarker {
                     objectKey = objectKey + sourceFile.getName();
                 }
                 OSSUri destObjectUri = currentBucket.getChildObjectUri(objectKey);
-                ObjectMetadata metadata = aliyunOssService.put(sourceFile.getAbsolutePath(), destObjectUri);
+                ObjectMetadata metadata = aliyunOssService.put(sourceFile.getAbsolutePath(), destObjectUri, zip);
                 return MessageFormat.format("File ''{0}'' stored as {1} ({2} bytes)",
                         sourceFile.getAbsolutePath(), destObjectUri.toString(), metadata.getContentLength());
             }
