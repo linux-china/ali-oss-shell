@@ -7,10 +7,7 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.http.impl.cookie.DateUtils;
 import org.fusesource.jansi.Ansi;
 import org.jetbrains.annotations.Nullable;
-import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
-import org.mvnsearch.ali.oss.spring.services.BucketAclType;
-import org.mvnsearch.ali.oss.spring.services.ConfigService;
-import org.mvnsearch.ali.oss.spring.services.OSSUri;
+import org.mvnsearch.ali.oss.spring.services.*;
 import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
 import org.mvnsearch.ali.oss.spring.shell.converters.HttpHeader;
 import org.mvnsearch.ali.oss.spring.shell.converters.ObjectKey;
@@ -266,7 +263,11 @@ public class OssOperationCommands implements CommandMarker {
             OSSUri objectUri = currentBucket.getChildObjectUri(objectKey.getKey());
             OSSObject ossObject = aliyunOssService.getOssObject(objectUri);
             if (ossObject != null) {
-                System.out.println(IOUtils.toString(ossObject.getObjectContent()));
+                byte[] content = IOUtils.toByteArray(ossObject.getObjectContent());
+                if ("gzip".equalsIgnoreCase(ossObject.getObjectMetadata().getContentEncoding())) {
+                    content = ZipUtils.uncompress(content);
+                }
+                System.out.println(new String(content));
             } else {
                 return wrappedAsRed("The object not found!");
             }
@@ -313,14 +314,14 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "put", help = "Upload the local file or directory to OSS")
     public String put(@CliOption(key = {"source"}, mandatory = true, help = "Local file or directory path") File sourceFile,
-                      @CliOption(key = {"zip"}, mandatory = false, help = "zip") boolean zip,
+                      @CliOption(key = {"zip"}, mandatory = false, help = "Zip the file") Boolean zip,
                       @CliOption(key = {""}, mandatory = false, help = "Destination OSS object uri, key or path") String objectKey) {
         if (!sourceFile.exists()) {
             return wrappedAsRed(MessageFormat.format("The file ''{0}'' not exits. ", sourceFile.getAbsolutePath()));
         }
         try {
             if (sourceFile.isDirectory()) {
-                int count = uploadDirectory(currentBucket.getBucket(), StringUtils.defaultIfEmpty(objectKey, ""), sourceFile, false);
+                int count = uploadDirectory(currentBucket.getBucket(), StringUtils.defaultIfEmpty(objectKey, ""), sourceFile, false, zip);
                 return count + " files uploaded";
             } else {
                 if (objectKey == null || objectKey.isEmpty()) {
@@ -349,7 +350,7 @@ public class OssOperationCommands implements CommandMarker {
      * @param synced       synced mark
      * @throws Exception exception
      */
-    private int uploadDirectory(String bucket, String destFilePath, File sourceDir, boolean synced) throws Exception {
+    private int uploadDirectory(String bucket, String destFilePath, File sourceDir, boolean synced, Boolean zip) throws Exception {
         Collection<File> files = FileUtils.listFiles(sourceDir, new AbstractFileFilter() {
                     public boolean accept(File file) {
                         return !file.getName().startsWith(".");
@@ -379,7 +380,7 @@ public class OssOperationCommands implements CommandMarker {
                 }
             }
             if (overwrite) {
-                aliyunOssService.put(file.getAbsolutePath(), objectUri);
+                aliyunOssService.put(file.getAbsolutePath(), objectUri, zip);
                 System.out.println("Uploaded: " + objectUri);
             } else {
                 System.out.println("Skipped: " + objectUri);
@@ -397,6 +398,7 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "sync", help = "Sync bucket or directory with OSS")
     public String sync(@CliOption(key = {"source"}, mandatory = false, help = "local directory") @Nullable File sourceFile,
                        @CliOption(key = {"bucket"}, mandatory = false, help = "bucket name") @Nullable BucketEnum bucketEnum,
+                       @CliOption(key = {"zip"}, mandatory = false, help = "Zip the file") Boolean zip,
                        @CliOption(key = {""}, mandatory = false, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
             return wrappedAsYellow("Please select a bucket!");
@@ -416,7 +418,7 @@ public class OssOperationCommands implements CommandMarker {
         }
         try {
             if (sourceFile.isDirectory()) {
-                int count = uploadDirectory(bucketName, StringUtils.defaultIfEmpty(objectPath, ""), sourceFile, true);
+                int count = uploadDirectory(bucketName, StringUtils.defaultIfEmpty(objectPath, ""), sourceFile, true, zip);
                 return count + " files uploaded!";
             } else {
                 OSSUri objectUri = currentBucket.getChildObjectUri(objectPath);
