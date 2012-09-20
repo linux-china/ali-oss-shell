@@ -432,8 +432,11 @@ public class OssOperationCommands implements CommandMarker {
             } else {
                 objectListing = aliyunOssService.listChildren(currentBucket.getBucket(), dirObject.getFilePath());
             }
-            for (String commonPrefix : objectListing.getCommonPrefixes()) {
-                buf.append(StringUtils.repeat("-.", 14) + "- " + commonPrefix + StringUtils.LINE_SEPARATOR);
+            if (!objectListing.getCommonPrefixes().isEmpty()) {
+                for (String commonPrefix : objectListing.getCommonPrefixes()) {
+                    buf.append(StringUtils.repeat("-.", 14) + "- " + commonPrefix + StringUtils.LINE_SEPARATOR);
+                }
+                buf.append(objectListing.getCommonPrefixes().size() + " virtual directories found!");
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
@@ -441,7 +444,7 @@ public class OssOperationCommands implements CommandMarker {
                             StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
                             objectSummary.getKey() + StringUtils.LINE_SEPARATOR);
                 }
-                buf.append(objectListing.getObjectSummaries().size() + " objects found");
+                buf.append(objectListing.getObjectSummaries().size() + " objects found!");
             }
             String content = buf.toString().trim();
             if (content.isEmpty()) {
@@ -617,7 +620,7 @@ public class OssOperationCommands implements CommandMarker {
         try {
             String filePath = objectKey.getKey();
             if (filePath.endsWith("*") || filePath.endsWith("/")) {
-                ObjectListing list = aliyunOssService.list(currentBucket.getBucket(), filePath.replace("[\\*/]", ""));
+                ObjectListing list = aliyunOssService.list(currentBucket.getBucket(), filePath);
                 int size = list.getObjectSummaries().size();
                 for (OSSObjectSummary objectSummary : list.getObjectSummaries()) {
                     OSSUri objectToDeleted = currentBucket.getChildObjectUri(objectSummary.getKey());
