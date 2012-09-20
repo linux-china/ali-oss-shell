@@ -235,7 +235,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return message
      */
     @CliCommand(value = "get", help = "Retrieve OSS object and save it to local file system")
-    public String get(@CliOption(key = {"dest"}, mandatory = false, help = "Local file path") File localFilePath,
+    public String get(@CliOption(key = {"o"}, mandatory = false, help = "Local file or directory path") File localFilePath,
                       @CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") String objectKey) {
         if (currentBucket == null) {
             return wrappedAsYellow("Please select a bucket!");
@@ -668,7 +668,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "cp", help = "Copy OSS object")
-    public String cp(@CliOption(key = {"source"}, mandatory = true, help = "Source object key") final ObjectKey sourceObjectKey,
+    public String cp(@CliOption(key = {"object"}, mandatory = true, help = "Source object key or uri") final ObjectKey sourceObjectKey,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Dest object key") final String destFilePath) {
         try {
             OSSUri sourceUri = currentBucket.getChildObjectUri(sourceObjectKey.getKey());
@@ -687,7 +687,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "mv", help = "Move OSS Object")
-    public String mv(@CliOption(key = {"source"}, mandatory = true, help = "Source object key") final ObjectKey sourceObjectKey,
+    public String mv(@CliOption(key = {"object"}, mandatory = true, help = "Source object key") final ObjectKey sourceObjectKey,
                      @CliOption(key = {"dest"}, mandatory = true, help = "Dest object key") final String destFilePath) {
         try {
             OSSUri sourceUri = currentBucket.getChildObjectUri(sourceObjectKey.getKey());
