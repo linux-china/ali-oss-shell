@@ -142,6 +142,15 @@ public interface AliyunOssService {
     public ObjectMetadata put(String sourceFilePath, OSSUri destObject) throws Exception;
 
     /**
+     * put local file to OSS with zip
+     *
+     * @param sourceFilePath source file path on local disk
+     * @param destObject     dest object
+     * @return oss file path
+     */
+    public ObjectMetadata putWithZip(String sourceFilePath, OSSUri destObject) throws Exception;
+
+    /**
      * copy object
      *
      * @param sourceObjectUri source object uri
