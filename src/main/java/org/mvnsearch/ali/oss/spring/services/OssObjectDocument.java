@@ -17,9 +17,9 @@ public class OssObjectDocument {
      */
     private String path;
     /**
-     * key
+     * name
      */
-    private String key;
+    private String name;
     /**
      * created timestamp
      */
@@ -49,12 +49,12 @@ public class OssObjectDocument {
         this.path = path;
     }
 
-    public String getKey() {
-        return key;
+    public String getName() {
+        return name;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Date getDate() {
