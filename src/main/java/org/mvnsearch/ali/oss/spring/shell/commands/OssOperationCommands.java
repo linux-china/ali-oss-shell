@@ -178,12 +178,13 @@ public class OssOperationCommands implements CommandMarker {
     /**
      * drop bucket
      *
-     * @param bucketName bucket
+     * @param bucketEnum bucket enum
      * @return result
      */
     @CliCommand(value = "drop", help = "Drop bucket")
-    public String drop(@CliOption(key = {""}, mandatory = true, help = "Bucket name") String bucketName) {
+    public String drop(@CliOption(key = {""}, mandatory = true, help = "Bucket name") BucketEnum bucketEnum) {
         try {
+            String bucketName = bucketEnum.getName();
             Bucket bucket = aliyunOssService.getBucket(bucketName);
             if (bucket != null) {
                 return wrappedAsRed(MessageFormat.format("Bucket ''{0}'' not found!", bucketName));
@@ -260,10 +261,10 @@ public class OssOperationCommands implements CommandMarker {
      * @return message
      */
     @CliCommand(value = "cat", help = "concatenate and print OSS object's content")
-    public String cat(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") final String sourceFilePath) {
+    public String cat(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") final ObjectKey objectKey) {
         try {
-            OSSUri sourceUri = currentBucket.getChildObjectUri(sourceFilePath);
-            OSSObject ossObject = aliyunOssService.getOssObject(sourceUri);
+            OSSUri objectUri = currentBucket.getChildObjectUri(objectKey.getKey());
+            OSSObject ossObject = aliyunOssService.getOssObject(objectUri);
             if (ossObject != null) {
                 System.out.println(IOUtils.toString(ossObject.getObjectContent()));
             } else {
@@ -283,20 +284,20 @@ public class OssOperationCommands implements CommandMarker {
      * @return message
      */
     @CliCommand(value = "open", help = "Open OSS object in browser")
-    public String open(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") final String objectKey) {
+    public String open(@CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") final ObjectKey objectKey) {
         try {
-            OSSUri sourceUri = currentBucket.getChildObjectUri(objectKey);
+            OSSUri objectUri = currentBucket.getChildObjectUri(objectKey.getKey());
             //判断是否支持打开浏览器
             if (Desktop.isDesktopSupported()) {
-                ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(sourceUri);
+                ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
                 if (objectMetadata != null) {
                     Desktop desktop = Desktop.getDesktop();
-                    desktop.browse(new URI(sourceUri.getHttpUrl()));
+                    desktop.browse(new URI(objectUri.getHttpUrl()));
                 } else {
                     return wrappedAsRed("The object not found!");
                 }
             } else {
-                return wrappedAsRed("Luanch Brower not support, please copy url to browser address: " + sourceUri.getBucket());
+                return wrappedAsRed("Luanch Brower not support, please copy url to browser address: " + objectUri.getBucket());
             }
         } catch (Exception e) {
             log.error("open", e);
