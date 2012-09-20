@@ -4,8 +4,11 @@ import com.aliyun.openservices.oss.OSSClient;
 import com.aliyun.openservices.oss.model.*;
 import junit.framework.TestCase;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
+import org.mvnsearch.ali.oss.spring.services.OssObjectDocument;
+import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.shell.support.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,8 @@ public class AliyunOssServiceImplTest extends TestCase {
      * bucket name
      */
     private String bucketName = "faxianla_temp";
+    private static ConfigurableMimeFileTypeMap mimeTypes = new ConfigurableMimeFileTypeMap();
+
 
     /**
      * setup logic, please create .aliyunoss.cfg in user home directory and fill access info
@@ -58,12 +63,20 @@ public class AliyunOssServiceImplTest extends TestCase {
      * @throws Exception exception
      */
     public void testList() throws Exception {
+        SearchManagerImpl searchManager = new SearchManagerImpl();
         long start = System.currentTimeMillis();
         ObjectListing objectListing = aliyunOssService.list(bucketName, "", 1000);
+       long   end = System.currentTimeMillis();
+        System.out.println(end - start);
+        List<OssObjectDocument> documents = new ArrayList<OssObjectDocument>();
         for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-            //System.out.println(objectSummary.getKey());
+            objectSummary.setBucketName(bucketName);
+            documents.add(OssObjectDocument.constructFromObjectSummary(objectSummary));
         }
-        long end = System.currentTimeMillis();
+         end = System.currentTimeMillis();
+        System.out.println(end - start);
+        searchManager.index(documents);
+        end = System.currentTimeMillis();
         System.out.println(end - start);
     }
 
