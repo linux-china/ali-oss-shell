@@ -4,6 +4,7 @@ import com.aliyun.openservices.oss.model.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.cookie.DateUtils;
 import org.fusesource.jansi.Ansi;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.shell.support.util.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +41,10 @@ public class OssOperationCommands implements CommandMarker {
      * log
      */
     private Logger log = LoggerFactory.getLogger(OssOperationCommands.class);
+    /**
+     * The platform-specific line separator.
+     */
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     /**
      * current bucket
      */
@@ -455,15 +459,15 @@ public class OssOperationCommands implements CommandMarker {
             int objectCount = 0;
             if (!objectListing.getCommonPrefixes().isEmpty()) {
                 for (String commonPrefix : objectListing.getCommonPrefixes()) {
-                    buf.append(StringUtils.repeat("-.", 14) + "- " + commonPrefix + StringUtils.LINE_SEPARATOR);
+                    buf.append(StringUtils.repeat("-.", 14) + "- " + commonPrefix + LINE_SEPARATOR);
                     dirCount += 1;
                 }
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                     buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
-                            StringUtils.padLeft(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
-                            objectSummary.getKey() + StringUtils.LINE_SEPARATOR);
+                            StringUtils.leftPad(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
+                            objectSummary.getKey() + LINE_SEPARATOR);
                     objectCount += 1;
                 }
             }
@@ -491,7 +495,7 @@ public class OssOperationCommands implements CommandMarker {
     private String listBuckets() {
         StringBuilder buf = new StringBuilder();
         try {
-            buf.append("Buckets:" + StringUtils.LINE_SEPARATOR);
+            buf.append("Buckets:" + LINE_SEPARATOR);
             List<Bucket> buckets = aliyunOssService.getBuckets();
             for (Bucket bucket : buckets) {
                 //acl
@@ -501,7 +505,7 @@ public class OssOperationCommands implements CommandMarker {
                 //pad
                 buf.append((bucket.getName().equals(currentBucket.getBucket())) ? " => " : "    ");
                 //apend url
-                buf.append("oss://" + bucket.getName() + StringUtils.LINE_SEPARATOR);
+                buf.append("oss://" + bucket.getName() + LINE_SEPARATOR);
             }
         } catch (Exception e) {
             log.error("listbuckets", e);
@@ -581,31 +585,31 @@ public class OssOperationCommands implements CommandMarker {
             OSSUri objectUri = currentBucket.getChildObjectUri(objectKey.getKey());
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
             if (objectMetadata != null) {
-                buf.append(StringUtils.padRight("Bucket", 20, ' ') + " : " + objectUri.getBucket() + StringUtils.LINE_SEPARATOR);
-                buf.append(StringUtils.padRight("Folder", 20, ' ') + " : " + objectUri.getPath() + StringUtils.LINE_SEPARATOR);
-                buf.append(StringUtils.padRight("Name", 20, ' ') + " : " + objectUri.getFileName() + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.rightPad("Bucket", 20, ' ') + " : " + objectUri.getBucket() + LINE_SEPARATOR);
+                buf.append(StringUtils.rightPad("Folder", 20, ' ') + " : " + objectUri.getPath() + LINE_SEPARATOR);
+                buf.append(StringUtils.rightPad("Name", 20, ' ') + " : " + objectUri.getFileName() + LINE_SEPARATOR);
                 Map<String, Object> rawMetadata = objectMetadata.getRawMetadata();
                 //date
-                buf.append(StringUtils.padRight("Date", 20, ' ') + " : " + rawMetadata.get("Date") + StringUtils.LINE_SEPARATOR);
-                buf.append(StringUtils.padRight("Last-Modified", 20, ' ') + " : " + rawMetadata.get("Date") + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.rightPad("Date", 20, ' ') + " : " + rawMetadata.get("Date") + LINE_SEPARATOR);
+                buf.append(StringUtils.rightPad("Last-Modified", 20, ' ') + " : " + rawMetadata.get("Date") + LINE_SEPARATOR);
                 if (rawMetadata.get("Expires") != null) {
-                    buf.append(StringUtils.padRight("Expires", 20, ' ') + " : " +
-                            rawMetadata.get("Expires") + StringUtils.LINE_SEPARATOR);
+                    buf.append(StringUtils.rightPad("Expires", 20, ' ') + " : " +
+                            rawMetadata.get("Expires") + LINE_SEPARATOR);
                 }
                 //content
-                buf.append(StringUtils.padRight("Content-Type", 20, ' ') + " : " + rawMetadata.get("Content-Type") + StringUtils.LINE_SEPARATOR);
-                buf.append(StringUtils.padRight("Content-Length", 20, ' ') + " : " + rawMetadata.get("Content-Length") + StringUtils.LINE_SEPARATOR);
+                buf.append(StringUtils.rightPad("Content-Type", 20, ' ') + " : " + rawMetadata.get("Content-Type") + LINE_SEPARATOR);
+                buf.append(StringUtils.rightPad("Content-Length", 20, ' ') + " : " + rawMetadata.get("Content-Length") + LINE_SEPARATOR);
                 List<String> reservedKeys = Arrays.asList("Connection", "Server", "x-oss-request-id", "Date", "Last-Modified", "Content-Type", "Content-Length");
                 for (Map.Entry<String, Object> entry : rawMetadata.entrySet()) {
                     if (!reservedKeys.contains(entry.getKey())) {
-                        buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+                        buf.append(StringUtils.rightPad(entry.getKey(), 20, ' ') + " : " + entry.getValue() + LINE_SEPARATOR);
                     }
                 }
                 Map<String, String> userMetadata = objectMetadata.getUserMetadata();
                 if (userMetadata != null && !userMetadata.isEmpty()) {
-                    buf.append("================ User Metadata ========================" + StringUtils.LINE_SEPARATOR);
+                    buf.append("================ User Metadata ========================" + LINE_SEPARATOR);
                     for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
-                        buf.append(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue() + StringUtils.LINE_SEPARATOR);
+                        buf.append(StringUtils.rightPad(entry.getKey(), 20, ' ') + " : " + entry.getValue() + LINE_SEPARATOR);
                     }
                 }
             } else {
@@ -725,6 +729,17 @@ public class OssOperationCommands implements CommandMarker {
             return e.getMessage();
         }
         return file(new ObjectKey(filePath));
+    }
+
+    /**
+     * set object meta data
+     *
+     * @return content
+     */
+    @CliCommand(value = "demo", help = "Set object metadata")
+    public String demo(@CliOption(key = {"key"}, mandatory = true, help = "Metadata key") final HttpHeader httpHeader,
+                       @CliOption(key = {""}, mandatory = true, help = "bucket name") final BucketEnum bucketEnum) {
+        return null;
     }
 
     /**
