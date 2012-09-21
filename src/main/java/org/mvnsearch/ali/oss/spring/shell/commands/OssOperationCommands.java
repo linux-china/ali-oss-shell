@@ -170,6 +170,7 @@ public class OssOperationCommands implements CommandMarker {
             }
             aliyunOssService.createBucket(bucket);
             aliyunOssService.setBucketACL(bucket, acl);
+            BucketEnum.addBucketName(bucket);
             return MessageFormat.format("Bucket ''{0}'' has been created!", bucket);
         } catch (Exception e) {
             log.error("create", e);
