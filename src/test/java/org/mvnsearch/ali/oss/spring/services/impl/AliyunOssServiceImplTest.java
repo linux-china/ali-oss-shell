@@ -5,7 +5,6 @@ import com.aliyun.openservices.oss.model.*;
 import junit.framework.TestCase;
 import org.apache.commons.lang3.StringUtils;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
-import org.mvnsearch.ali.oss.spring.services.OssObjectDocument;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 
 import java.util.ArrayList;
@@ -63,19 +62,13 @@ public class AliyunOssServiceImplTest extends TestCase {
      * @throws Exception exception
      */
     public void testList() throws Exception {
-        SearchManagerImpl searchManager = new SearchManagerImpl();
         long start = System.currentTimeMillis();
         ObjectListing objectListing = aliyunOssService.list(bucketName, "", 1000);
-       long   end = System.currentTimeMillis();
+        long end = System.currentTimeMillis();
         System.out.println(end - start);
-        List<OssObjectDocument> documents = new ArrayList<OssObjectDocument>();
         for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
             objectSummary.setBucketName(bucketName);
-            documents.add(OssObjectDocument.constructFromObjectSummary(objectSummary));
         }
-         end = System.currentTimeMillis();
-        System.out.println(end - start);
-        searchManager.index(documents);
         end = System.currentTimeMillis();
         System.out.println(end - start);
     }
