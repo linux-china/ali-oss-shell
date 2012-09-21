@@ -16,7 +16,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.shell.version>1.0.0-rc1</spring.shell.version>
+        <spring.shell.version>1.0.0.RC1</spring.shell.version>
         <slf4j.version>1.7.0</slf4j.version>
     </properties>
 
