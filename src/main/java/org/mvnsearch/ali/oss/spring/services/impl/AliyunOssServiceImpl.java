@@ -10,6 +10,7 @@ import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.mvnsearch.ali.oss.spring.services.ZipUtils;
+import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +120,9 @@ public class AliyunOssServiceImpl implements AliyunOssService {
      * @throws Exception exception
      */
     public List<Bucket> getBuckets() throws Exception {
-        return oss.listBuckets();
+        List<Bucket> buckets = oss.listBuckets();
+        BucketEnum.reset(buckets);
+        return buckets;
     }
 
     /**
