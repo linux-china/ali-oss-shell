@@ -3,10 +3,10 @@ package org.mvnsearch.ali.oss.spring.services.impl;
 import com.aliyun.openservices.oss.OSSClient;
 import com.aliyun.openservices.oss.model.*;
 import junit.framework.TestCase;
+import org.apache.commons.lang3.StringUtils;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.mvnsearch.ali.oss.spring.services.OssObjectDocument;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
-import org.springframework.shell.support.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,11 +98,11 @@ public class AliyunOssServiceImplTest extends TestCase {
     private void printMetaData(ObjectMetadata objectMetadata) {
         System.out.println("---raw metadata-----");
         for (Map.Entry<String, Object> entry : objectMetadata.getRawMetadata().entrySet()) {
-            System.out.println(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue());
+            System.out.println(StringUtils.rightPad(entry.getKey(), 20, ' ') + " : " + entry.getValue());
         }
         System.out.println("---user metadata-----");
         for (Map.Entry<String, String> entry : objectMetadata.getUserMetadata().entrySet()) {
-            System.out.println(StringUtils.padRight(entry.getKey(), 20, ' ') + " : " + entry.getValue());
+            System.out.println(StringUtils.rightPad(entry.getKey(), 20, ' ') + " : " + entry.getValue());
         }
     }
 
