@@ -239,12 +239,12 @@ public class OssOperationCommands implements CommandMarker {
      */
     @CliCommand(value = "get", help = "Retrieve OSS object and save it to local file system")
     public String get(@CliOption(key = {"o"}, mandatory = false, help = "Local file or directory path") File localFilePath,
-                      @CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") String objectKey) {
+                      @CliOption(key = {""}, mandatory = true, help = "OSS object uri or key") ObjectKey objectKey) {
         if (currentBucket == null) {
             return wrappedAsYellow("Please select a bucket!");
         }
         try {
-            OSSUri objectUri = currentBucket.getChildObjectUri(objectKey);
+            OSSUri objectUri = currentBucket.getChildObjectUri(objectKey.getKey());
             ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(objectUri);
             if (objectMetadata == null) {
                 return wrappedAsRed("The object not found!");
@@ -443,12 +443,12 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "ls", help = "List object or virtual directory in Bucket")
-    public String ls(@CliOption(key = {""}, mandatory = false, help = "Object key or path: support suffix wild match") final String filename) {
+    public String ls(@CliOption(key = {""}, mandatory = false, help = "Object key or path: support suffix wild match") final String objectPath) {
         if (currentBucket == null) {
             return listBuckets();
         }
         StringBuilder buf = new StringBuilder();
-        OSSUri dirObject = currentBucket.getChildObjectUri(filename);
+        OSSUri dirObject = currentBucket.getChildObjectUri(objectPath);
         try {
             ObjectListing objectListing;
             if (dirObject.getFilePath().endsWith("*")) {
@@ -629,8 +629,8 @@ public class OssOperationCommands implements CommandMarker {
      * @return content
      */
     @CliCommand(value = "share", help = "Generate signed url for OSS object.")
-    public String share(@CliOption(key = {""}, mandatory = true, help = "Object uri or key") final String filePath) {
-        OSSUri destObject = currentBucket.getChildObjectUri(filePath);
+    public String share(@CliOption(key = {""}, mandatory = true, help = "Object uri or key") final ObjectKey objectKey) {
+        OSSUri destObject = currentBucket.getChildObjectUri(objectKey.getKey());
         try {
             URL url = aliyunOssService.getOssClient().generatePresignedUrl(destObject.getBucket(), destObject.getFilePath(),
                     new Date(System.currentTimeMillis() + 1000 * 60 * 60));
@@ -721,26 +721,15 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "set", help = "Set object metadata")
     public String set(@CliOption(key = {"key"}, mandatory = true, help = "Metadata key") final HttpHeader httpHeader,
                       @CliOption(key = {"value"}, mandatory = true, help = "Metadata value") final String value,
-                      @CliOption(key = {""}, mandatory = true, help = "Object key") final String filePath) {
+                      @CliOption(key = {""}, mandatory = true, help = "Object key") final ObjectKey objectKey) {
         try {
             String key = httpHeader.getName();
-            aliyunOssService.setObjectMetadata(currentBucket.getChildObjectUri(filePath), key, value);
+            aliyunOssService.setObjectMetadata(currentBucket.getChildObjectUri(objectKey.getKey()), key, value);
         } catch (Exception e) {
             log.error("set", e);
             return e.getMessage();
         }
-        return file(new ObjectKey(filePath));
-    }
-
-    /**
-     * set object meta data
-     *
-     * @return content
-     */
-    @CliCommand(value = "demo", help = "Set object metadata")
-    public String demo(@CliOption(key = {"key"}, mandatory = true, help = "Metadata key") final HttpHeader httpHeader,
-                       @CliOption(key = {""}, mandatory = true, help = "bucket name") final BucketEnum bucketEnum) {
-        return null;
+        return file(new ObjectKey(objectKey.getKey()));
     }
 
     /**
