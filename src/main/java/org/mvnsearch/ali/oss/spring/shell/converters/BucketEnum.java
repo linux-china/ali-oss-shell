@@ -76,7 +76,7 @@ public class BucketEnum {
      *
      * @param buckets oss bucket list
      */
-    public void reset(List<Bucket> buckets) {
+    public static void reset(List<Bucket> buckets) {
         if (buckets != null) {
             clear();
             for (Bucket bucket : buckets) {
