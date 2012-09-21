@@ -249,6 +249,9 @@ public class OssOperationCommands implements CommandMarker {
             if (objectMetadata == null) {
                 return wrappedAsRed("The object not found!");
             }
+            if (localFilePath == null) {
+                localFilePath = objectUri.getPathInRepository(localRepository);
+            }
             String destFilePath = aliyunOssService.get(objectUri, localFilePath.getAbsolutePath());
             return MessageFormat.format("Object {0} saved to {1} ({3} bytes)", objectUri.toString(), destFilePath, objectMetadata.getContentLength());
         } catch (Exception e) {
