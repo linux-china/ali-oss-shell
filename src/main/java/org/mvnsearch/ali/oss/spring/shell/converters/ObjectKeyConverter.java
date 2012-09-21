@@ -8,7 +8,6 @@ import org.mvnsearch.ali.oss.spring.shell.commands.OssOperationCommands;
 import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
-import org.springframework.shell.support.util.StringUtils;
 
 import java.util.List;
 
@@ -84,7 +83,7 @@ public class ObjectKeyConverter implements Converter<ObjectKey> {
      *                      {@link org.springframework.shell.core.annotation.CliCommand}; the contents will have special meaning to this
      *                      converter (e.g. be a comma-separated list of keywords known to this
      *                      converter)
-     * @param target
+     * @param target target method
      * @return <code>true</code> if all the added completions are complete
      *         values, or <code>false</code> if the user can press TAB to add further
      *         information to some or all of them
