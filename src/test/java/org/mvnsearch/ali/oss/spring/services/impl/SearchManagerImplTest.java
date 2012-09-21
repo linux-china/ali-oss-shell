@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.mvnsearch.ali.oss.spring.services.OssObjectDocument;
 import org.mvnsearch.ali.oss.spring.services.SearchManager;
 
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -34,6 +35,6 @@ public class SearchManagerImplTest extends TestCase {
         document.setContentType("image/png");
         document.setContentLength(130000);
         document.setDate(new Date());
-        searchManager.index(document);
+        searchManager.index(Arrays.asList(document));
     }
 }
