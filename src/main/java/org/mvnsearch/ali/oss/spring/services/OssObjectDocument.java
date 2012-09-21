@@ -1,8 +1,8 @@
 package org.mvnsearch.ali.oss.spring.services;
 
 import com.aliyun.openservices.oss.model.OSSObjectSummary;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
-import org.springframework.shell.support.util.StringUtils;
 
 import java.util.Date;
 
