@@ -1,5 +1,7 @@
 package org.mvnsearch.ali.oss.spring.shell.converters;
 
+import com.aliyun.openservices.oss.model.Bucket;
+
 import java.util.*;
 
 /**
@@ -67,6 +69,20 @@ public class BucketEnum {
      */
     public String toString() {
         return name;
+    }
+
+    /**
+     * reset bucket name
+     *
+     * @param buckets oss bucket list
+     */
+    public void reset(List<Bucket> buckets) {
+        if (buckets != null) {
+            clear();
+            for (Bucket bucket : buckets) {
+                addBucketName(bucket.getName());
+            }
+        }
     }
 
 }
