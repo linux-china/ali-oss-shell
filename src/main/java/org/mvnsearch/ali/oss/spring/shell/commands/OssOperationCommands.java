@@ -111,7 +111,7 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return result
      */
-    @CliCommand(value = "config", help = "Config the Aliyun OSS access settings")
+    @CliCommand(value = "config", help = "Config the Aliyun OSS access info")
     public String config(@CliOption(key = {"id"}, mandatory = true, help = "Aliyun Access ID") final String accessId,
                          @CliOption(key = {"key"}, mandatory = true, help = "Aliyun Access Key") final String accessKey,
                          @CliOption(key = {"repository"}, mandatory = true, help = "local repository directory") final File reposity) {
@@ -407,7 +407,7 @@ public class OssOperationCommands implements CommandMarker {
     @CliCommand(value = "sync", help = "Sync bucket or directory with OSS")
     public String sync(@CliOption(key = {"source"}, mandatory = false, help = "local directory") @Nullable File sourceFile,
                        @CliOption(key = {"bucket"}, mandatory = false, help = "bucket name") @Nullable BucketEnum bucketEnum,
-                       @CliOption(key = {"zip"}, mandatory = false, help = "Zip the file", specifiedDefaultValue = "true") Boolean zip,
+                       @CliOption(key = {"zip"}, mandatory = false, help = "GZip the file", specifiedDefaultValue = "true") Boolean zip,
                        @CliOption(key = {""}, mandatory = false, help = "OSS object path") String objectPath) {
         if (currentBucket == null) {
             return wrappedAsYellow("Please select a bucket!");
