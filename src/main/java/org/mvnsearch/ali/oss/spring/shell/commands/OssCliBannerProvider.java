@@ -1,11 +1,11 @@
 package org.mvnsearch.ali.oss.spring.shell.commands;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.shell.support.util.StringUtils;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.plugin.support.DefaultBannerProvider;
@@ -42,10 +42,10 @@ public class OssCliBannerProvider extends DefaultBannerProvider implements Comma
     @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
     public String getBanner() {
         StringBuilder buf = new StringBuilder();
-        buf.append("=======================================" + StringUtils.LINE_SEPARATOR);
-        buf.append("*                                     *" + StringUtils.LINE_SEPARATOR);
-        buf.append("*      Aliyun OSS Console             *" + StringUtils.LINE_SEPARATOR);
-        buf.append("*                                     *" + StringUtils.LINE_SEPARATOR);
+        buf.append("=======================================" + SystemUtils.LINE_SEPARATOR);
+        buf.append("*                                     *" + SystemUtils.LINE_SEPARATOR);
+        buf.append("*      Aliyun OSS Console             *" + SystemUtils.LINE_SEPARATOR);
+        buf.append("*                                     *" + SystemUtils.LINE_SEPARATOR);
         buf.append("=======================================");
         return buf.toString();
     }
