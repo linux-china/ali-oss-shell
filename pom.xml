@@ -200,10 +200,5 @@
             <name>mvnsearch Maven Repository</name>
             <url>http://team.mvnsearch.org/nexus/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>spring-roo-repository</id>
-            <name>Spring Roo Maven Repository</name>
-            <url>http://spring-roo-repository.springsource.org/release</url>
-        </repository>
     </repositories>
 </project>
