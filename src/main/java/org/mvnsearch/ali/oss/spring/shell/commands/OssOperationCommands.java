@@ -158,18 +158,15 @@ public class OssOperationCommands implements CommandMarker {
      *
      * @return new bucket
      */
-    @CliCommand(value = "create", help = "Create a bucket")
-    public String create(@CliOption(key = {"acl"}, mandatory = false, help = "Bucket's acl, such as: Private, R- or RW") String acl,
+    @CliCommand(value = "create", help = "Create a new bucket")
+    public String create(@CliOption(key = {"acl"}, mandatory = false, help = "Bucket's acl, such as: Private, ReadOnly or ReadWrite") BucketAclType acl,
                          @CliOption(key = {""}, mandatory = true, help = "Bucket name: pattern as [a-z][a-z0-9\\-_]{5,15}") final String bucket) {
         try {
-            if (acl == null || acl.isEmpty() || acl.equalsIgnoreCase("private")) {
-                acl = "--";
-            }
-            if (!(acl.equalsIgnoreCase("--") || acl.equals("R-") || acl.equals("RW"))) {
-                return wrappedAsRed("ACL's value should be 'Private', 'R-' or 'RW'");
-            }
+
             aliyunOssService.createBucket(bucket);
-            aliyunOssService.setBucketACL(bucket, acl);
+            if (acl != null && acl.getType() != null) {
+                aliyunOssService.setBucketACL(bucket, acl.getShortCode());
+            }
             BucketEnum.addBucketName(bucket);
             if (localRepository != null) {
                 FileUtils.forceMkdir(new File(localRepository, bucket));
