@@ -61,7 +61,7 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-openservices</artifactId>
-            <version>1.0.0-20120705</version>
+            <version>1.0.8</version>
         </dependency>
         <!--logging-->
         <dependency>
