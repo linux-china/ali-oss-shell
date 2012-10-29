@@ -185,7 +185,7 @@ public class OssOperationCommands implements CommandMarker {
      * @return result
      */
     @CliCommand(value = "drop", help = "Drop bucket")
-    public String drop(@CliOption(key = {""}, mandatory = true, help = "Bucket name") BucketEnum bucketEnum) {
+    public String drop(@CliOption(key = {""}, mandatory = true, help = "Bucket's name") BucketEnum bucketEnum) {
         try {
             String bucketName = bucketEnum.getName();
             Bucket bucket = aliyunOssService.getBucket(bucketName);
@@ -276,7 +276,7 @@ public class OssOperationCommands implements CommandMarker {
                 if ("gzip".equalsIgnoreCase(ossObject.getObjectMetadata().getContentEncoding())) {
                     content = ZipUtils.uncompress(content);
                 }
-                System.out.println(new String(content));
+                System.out.println(new String(content,"utf-8"));
             } else {
                 return wrappedAsRed("The object not found!");
             }
