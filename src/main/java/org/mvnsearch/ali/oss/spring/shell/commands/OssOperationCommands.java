@@ -641,7 +641,7 @@ public class OssOperationCommands implements CommandMarker {
             return url.toString();
         } catch (Exception e) {
             log.error("share", e);
-            return e.getMessage();
+            return wrappedAsRed(e.getMessage());
         }
     }
 
