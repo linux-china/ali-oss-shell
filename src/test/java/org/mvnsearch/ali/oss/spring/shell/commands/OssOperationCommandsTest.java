@@ -1,6 +1,7 @@
 package org.mvnsearch.ali.oss.spring.shell.commands;
 
 import junit.framework.TestCase;
+import org.mvnsearch.ali.oss.spring.services.BucketAclType;
 import org.mvnsearch.ali.oss.spring.services.impl.AliyunOssServiceImpl;
 import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
 
@@ -42,7 +43,7 @@ public class OssOperationCommandsTest extends TestCase {
      */
     public void testCreate() {
         String bucketName = "abc123";
-        System.out.println(commands.create(bucketName, "R-"));
+        System.out.println(commands.create(BucketAclType.Private, bucketName));
         assertTrue("Failed to create bucket", commands.df().contains(bucketName));
     }
 }
