@@ -962,36 +962,36 @@ public class SimpleParser implements Parser {
                         }
                     }
                 }
-
-                // ROO-389: give inline options given there's multiple choices available and we want to help the user
-                StringBuilder help = new StringBuilder();
-                help.append(OsUtils.LINE_SEPARATOR);
-                help.append(option.mandatory() ? "required --" : "optional --");
-                if ("".equals(option.help())) {
-                    help.append(lastOptionKey).append(": ").append("No help available");
-                } else {
-                    help.append(lastOptionKey).append(": ").append(option.help());
-                }
-                if (option.specifiedDefaultValue().equals(option.unspecifiedDefaultValue())) {
-                    if (option.specifiedDefaultValue().equals("__NULL__")) {
-                        help.append("; no default value");
+                if(results.isEmpty()) {
+                    // ROO-389: give inline options given there's multiple choices available and we want to help the user
+                    StringBuilder help = new StringBuilder();
+                    help.append(OsUtils.LINE_SEPARATOR);
+                    help.append(option.mandatory() ? "required --" : "optional --");
+                    if ("".equals(option.help())) {
+                        help.append(lastOptionKey).append(": ").append("No help available");
                     } else {
-                        help.append("; default: '").append(option.specifiedDefaultValue()).append("'");
+                        help.append(lastOptionKey).append(": ").append(option.help());
                     }
-                } else {
-                    if (!"".equals(option.specifiedDefaultValue())
-                            && !"__NULL__".equals(option.specifiedDefaultValue())) {
-                        help.append("; default if option present: '").append(option.specifiedDefaultValue()).append(
-                                "'");
+                    if (option.specifiedDefaultValue().equals(option.unspecifiedDefaultValue())) {
+                        if (option.specifiedDefaultValue().equals("__NULL__")) {
+                            help.append("; no default value");
+                        } else {
+                            help.append("; default: '").append(option.specifiedDefaultValue()).append("'");
+                        }
+                    } else {
+                        if (!"".equals(option.specifiedDefaultValue())
+                                && !"__NULL__".equals(option.specifiedDefaultValue())) {
+                            help.append("; default if option present: '").append(option.specifiedDefaultValue()).append(
+                                    "'");
+                        }
+                        if (!"".equals(option.unspecifiedDefaultValue())
+                                && !"__NULL__".equals(option.unspecifiedDefaultValue())) {
+                            help.append("; default if option not present: '").append(
+                                    option.unspecifiedDefaultValue()).append("'");
+                        }
                     }
-                    if (!"".equals(option.unspecifiedDefaultValue())
-                            && !"__NULL__".equals(option.unspecifiedDefaultValue())) {
-                        help.append("; default if option not present: '").append(
-                                option.unspecifiedDefaultValue()).append("'");
-                    }
+                    LOGGER.info(help.toString());
                 }
-                LOGGER.info(help.toString());
-
                 if (results.size() == 1) {
                     String suggestion = results.iterator().next().getValue().trim();
                     if (suggestion.equals(lastOptionValue)) {
