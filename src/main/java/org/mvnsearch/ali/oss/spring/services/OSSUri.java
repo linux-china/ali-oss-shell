@@ -54,6 +54,11 @@ public class OSSUri {
             relativePath = uri.replace(PROTOCOL, "");
         } else if (uri.startsWith("http://storage.aliyun.com/")) {
             relativePath = uri.replace("http://storage.aliyun.com/", "");
+        } else if (uri.contains(".oss.aliyuncs.com/")) { // aliyuncs.com domain
+            uri = uri.replace("http://","");
+            String bucketName = uri.substring(0,uri.indexOf(".oss.aliyuncs"));
+            String objectKey =  uri.substring(uri.indexOf("/")+1);
+            relativePath = bucketName+"/"+objectKey;
         }
         if (relativePath.startsWith("/")) {
             relativePath = relativePath.substring(1);
