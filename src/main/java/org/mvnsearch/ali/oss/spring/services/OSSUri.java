@@ -154,7 +154,7 @@ public class OSSUri {
      * @return http url
      */
     public String getHttpUrl() {
-        return toString().replaceAll("oss://", "http://storage.aliyun.com/");
+        return "http://" + bucket + ".oss.aliyuncs.com/" + StringUtils.defaultIfEmpty(filePath, "");
     }
 
     /**
