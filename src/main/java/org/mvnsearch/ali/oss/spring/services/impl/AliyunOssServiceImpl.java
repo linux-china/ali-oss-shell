@@ -37,7 +37,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     /**
      * end point
      */
-    private String endpoint = "http://storage.aliyun.com";
+    private String endpoint = "http://oss.aliyuncs.com";
     /**
      * config service
      */
