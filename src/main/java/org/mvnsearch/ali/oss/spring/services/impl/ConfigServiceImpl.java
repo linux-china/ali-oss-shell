@@ -24,6 +24,10 @@ public class ConfigServiceImpl implements ConfigService {
      */
     private Logger log = LoggerFactory.getLogger(ConfigServiceImpl.class);
     /**
+     * configuration file name
+     */
+    private String cfgFileName = ".aliyunoss.cfg";
+    /**
      * global properties
      */
     private Properties properties;
@@ -35,7 +39,7 @@ public class ConfigServiceImpl implements ConfigService {
     public void init() {
         try {
             properties = new Properties();
-            File cfgFile = new File(new File(System.getProperty("user.home")), ".aliyunoss.cfg");
+            File cfgFile = new File(new File(System.getProperty("user.home")), cfgFileName);
             if (cfgFile.exists()) {
                 properties.load(new FileInputStream(cfgFile));
             }
@@ -74,7 +78,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public void setProperty(String key, @Nullable String value) {
         try {
-            File cfgFile = new File(new File(System.getProperty("user.home")), ".aliyunoss.cfg");
+            File cfgFile = new File(new File(System.getProperty("user.home")), cfgFileName);
             if (value == null) {
                 properties.remove(key);
             } else {
@@ -96,7 +100,7 @@ public class ConfigServiceImpl implements ConfigService {
         try {
             properties.setProperty("ACCESS_ID", accessId);
             properties.setProperty("ACCESS_KEY", accessKey);
-            File cfgFile = new File(new File(System.getProperty("user.home")), ".aliyunoss.cfg");
+            File cfgFile = new File(new File(System.getProperty("user.home")), cfgFileName);
             properties.store(new FileOutputStream(cfgFile), null);
         } catch (Exception ignore) {
 
