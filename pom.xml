@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.shell.version>1.0.0.RELEASE</spring.shell.version>
-        <slf4j.version>1.7.1</slf4j.version>
+        <slf4j.version>1.7.5</slf4j.version>
     </properties>
 
     <developers>
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>annotations</artifactId>
-            <version>9.0.4</version>
+            <version>12.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.shell</groupId>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-openservices</artifactId>
-            <version>1.0.8</version>
+            <version>1.0.10</version>
         </dependency>
         <!--logging-->
         <dependency>
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.11</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
