@@ -1,8 +1,11 @@
 package org.mvnsearch.ali.oss.spring.shell.converters;
 
-import com.aliyun.openservices.oss.model.Bucket;
 
-import java.util.*;
+import com.aliyun.oss.model.Bucket;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * bucket enum
@@ -17,7 +20,7 @@ public class BucketEnum {
     /**
      * bucket name list
      */
-    private static Set<String> bucketNames = new HashSet<String>();
+    private static final Set<String> bucketNames = new HashSet<String>();
 
     /**
      * get bucket names
