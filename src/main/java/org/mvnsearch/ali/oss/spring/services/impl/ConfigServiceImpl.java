@@ -2,8 +2,6 @@ package org.mvnsearch.ali.oss.spring.services.impl;
 
 import org.jetbrains.annotations.Nullable;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -20,13 +18,9 @@ import java.util.Properties;
 @Component("configService")
 public class ConfigServiceImpl implements ConfigService {
     /**
-     * log
-     */
-    private Logger log = LoggerFactory.getLogger(ConfigServiceImpl.class);
-    /**
      * configuration file name
      */
-    private String cfgFileName = ".aliyunoss.cfg";
+    private final String cfgFileName = ".aliyunoss.cfg";
     /**
      * global properties
      */
@@ -51,7 +45,7 @@ public class ConfigServiceImpl implements ConfigService {
     /**
      * available info
      *
-     * @return available infor
+     * @return available info
      */
     @Override
     public boolean available() {
