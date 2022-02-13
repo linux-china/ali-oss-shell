@@ -1,18 +1,17 @@
 package org.mvnsearch.ali.oss.spring.services.impl;
 
-import com.aliyun.openservices.oss.OSSClient;
-import com.aliyun.openservices.oss.model.*;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.auth.DefaultCredentialProvider;
+import com.aliyun.oss.model.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.impl.cookie.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.mvnsearch.ali.oss.spring.services.ZipUtils;
 import org.mvnsearch.ali.oss.spring.shell.converters.BucketEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.stereotype.Component;
@@ -28,16 +27,13 @@ import java.util.zip.GZIPInputStream;
  *
  * @author linux_china
  */
+@SuppressWarnings("RedundantThrows")
 @Component("aliyunOssService")
 public class AliyunOssServiceImpl implements AliyunOssService {
     /**
-     * log
-     */
-    private Logger log = LoggerFactory.getLogger(AliyunOssServiceImpl.class);
-    /**
      * end point
      */
-    private String endpoint = "http://oss.aliyuncs.com";
+    private static final String DEFAULT_ENDPOINT = "oss-cn-hangzhou.aliyuncs.com";
     /**
      * config service
      */
@@ -50,7 +46,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     /**
      * mime types
      */
-    private static ConfigurableMimeFileTypeMap mimeTypes = new ConfigurableMimeFileTypeMap();
+    private static final ConfigurableMimeFileTypeMap mimeTypes = new ConfigurableMimeFileTypeMap();
 
     /**
      * inject config service
@@ -69,8 +65,12 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     public void refreshToken() {
         String accessId = configService.getProperty("ACCESS_ID");
         String accessKey = configService.getProperty("ACCESS_KEY");
+        String endpoint = configService.getProperty("ENDPOINT");
+        if (endpoint == null) {
+            endpoint = DEFAULT_ENDPOINT;
+        }
         if (accessId != null) {
-            oss = new OSSClient(endpoint, accessId, accessKey);
+            oss = new OSSClient(endpoint, new DefaultCredentialProvider(accessId, accessKey), null);
         }
     }
 
@@ -153,6 +153,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
     public String getBucketACL(String bucket) throws Exception {
         String aclStr = "--";
         AccessControlList acl = oss.getBucketAcl(bucket);
+        //noinspection deprecation
         for (Grant grant : acl.getGrants()) {
             if (grant.getGrantee() == GroupGrantee.AllUsers) {
                 if (grant.getPermission() == Permission.Read) {
@@ -317,7 +318,7 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         OSSObject ossObject = oss.getObject(objectUri.getBucket(), objectUri.getFilePath());
         File destFile = new File(destFilePath);
         if (ossObject != null) {
-            if (destFile.isDirectory()) {
+            if (destFile.isDirectory() && objectUri.getFileName() != null) {
                 destFile = new File(destFile, objectUri.getFileName());
             }
             if (!destFile.getParentFile().exists()) {
@@ -389,14 +390,14 @@ public class AliyunOssServiceImpl implements AliyunOssService {
         } else if (key.equals("Content-Type")) {
             objectMetadata.setContentType(value);
         } else if (key.equalsIgnoreCase("Expires")) {
-            objectMetadata.setExpirationTime(DateUtils.parseDate(value, new String[]{"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"}));
+            objectMetadata.setExpirationTime(DateUtils.parseDate(value, "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"));
         } else if (key.equalsIgnoreCase("Content-Encoding")) {
             objectMetadata.setContentEncoding(value);
         } else if (key.equalsIgnoreCase("Content-Disposition")) {
             objectMetadata.setContentDisposition(value);
         } else {
             if (objectMetadata.getUserMetadata() == null || objectMetadata.getUserMetadata().isEmpty()) {
-                objectMetadata.setUserMetadata(new HashMap<String, String>());
+                objectMetadata.setUserMetadata(new HashMap<>());
             }
             objectMetadata.getUserMetadata().put(key, value);
         }
