@@ -1,15 +1,14 @@
 package org.mvnsearch.ali.oss.spring.shell.commands;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.jline.utils.AttributedString;
 import org.mvnsearch.ali.oss.spring.services.ConfigService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.shell.plugin.support.DefaultPromptProvider;
-import org.springframework.shell.support.util.OsUtils;
+import org.springframework.shell.jline.PromptProvider;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
 
 /**
  * aliyun OSS prompt provider
@@ -18,7 +17,7 @@ import java.io.File;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class OssCliPromptProvider extends DefaultPromptProvider implements InitializingBean {
+public class OssCliPromptProvider implements PromptProvider, InitializingBean {
     /**
      * prompt
      */
@@ -48,13 +47,13 @@ public class OssCliPromptProvider extends DefaultPromptProvider implements Initi
      *
      * @throws Exception exception
      */
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         String currentBucket = configService.getProperty("BUCKET");
         if (currentBucket != null) {
             prompt = "oss://" + currentBucket;
         }
-        //if Windows OS, adjust symbo to '>'
-        if ((OsUtils.isWindows())) {
+        //if Windows OS, adjust symbol to '>'
+        if ((SystemUtils.IS_OS_WINDOWS)) {
             symbol = ">";
         }
     }
@@ -65,18 +64,8 @@ public class OssCliPromptProvider extends DefaultPromptProvider implements Initi
      * @return prompt
      */
     @Override
-    public String getPrompt() {
-        return "[" + prompt + "]" + symbol;
-    }
-
-    /**
-     * name
-     *
-     * @return name
-     */
-    @Override
-    public String name() {
-        return "aliyun-oss-java-cli-prompt-provider";
+    public AttributedString getPrompt() {
+        return new AttributedString("[" + prompt + "]" + symbol);
     }
 
 }
