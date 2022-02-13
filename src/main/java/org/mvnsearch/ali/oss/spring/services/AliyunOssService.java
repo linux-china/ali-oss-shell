@@ -1,10 +1,10 @@
 package org.mvnsearch.ali.oss.spring.services;
 
-import com.aliyun.openservices.oss.OSSClient;
-import com.aliyun.openservices.oss.model.Bucket;
-import com.aliyun.openservices.oss.model.OSSObject;
-import com.aliyun.openservices.oss.model.ObjectListing;
-import com.aliyun.openservices.oss.model.ObjectMetadata;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.Bucket;
+import com.aliyun.oss.model.OSSObject;
+import com.aliyun.oss.model.ObjectListing;
+import com.aliyun.oss.model.ObjectMetadata;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -18,19 +18,19 @@ public interface AliyunOssService {
     /**
      * max object count for listing
      */
-    public Integer MAX_OBJECTS = 500;
+    Integer MAX_OBJECTS = 500;
 
     /**
      * refresh token
      */
-    public void refreshToken();
+    void refreshToken();
 
     /**
      * get OSS client
      *
      * @return oss client
      */
-    public OSSClient getOssClient();
+    OSSClient getOssClient();
 
     /**
      * create bucket
@@ -38,7 +38,7 @@ public interface AliyunOssService {
      * @param bucket bucket name
      * @throws Exception exception
      */
-    public void createBucket(String bucket) throws Exception;
+    void createBucket(String bucket) throws Exception;
 
     /**
      * drop bucket
@@ -46,7 +46,7 @@ public interface AliyunOssService {
      * @param bucket bucket
      * @throws Exception exception
      */
-    public void dropBucket(String bucket) throws Exception;
+    void dropBucket(String bucket) throws Exception;
 
     /**
      * delete bucket
@@ -54,7 +54,7 @@ public interface AliyunOssService {
      * @param bucket bucket
      * @throws Exception exception
      */
-    public void deleteBucket(String bucket) throws Exception;
+    void deleteBucket(String bucket) throws Exception;
 
     /**
      * list buckets
@@ -62,7 +62,7 @@ public interface AliyunOssService {
      * @return bucket list
      * @throws Exception exception
      */
-    public List<Bucket> getBuckets() throws Exception;
+    List<Bucket> getBuckets() throws Exception;
 
     /**
      * get bucket by name
@@ -72,7 +72,7 @@ public interface AliyunOssService {
      * @throws Exception exception
      */
     @Nullable
-    public Bucket getBucket(String name) throws Exception;
+    Bucket getBucket(String name) throws Exception;
 
     /**
      * get bucket ACL
@@ -81,7 +81,7 @@ public interface AliyunOssService {
      * @return ACL String, such --, RW, R-
      * @throws Exception exception
      */
-    public String getBucketACL(String bucket) throws Exception;
+    String getBucketACL(String bucket) throws Exception;
 
     /**
      * 设置ACL
@@ -90,16 +90,16 @@ public interface AliyunOssService {
      * @param acl    acl value, such --, R- or RW
      * @throws Exception exception
      */
-    public void setBucketACL(String bucket, String acl) throws Exception;
+    void setBucketACL(String bucket, String acl) throws Exception;
 
     /**
-     * list children recursly
+     * list children recursively
      *
      * @param bucketName bucket name
      * @param path       path
      * @return object metadata list
      */
-    public ObjectListing list(String bucketName, String path) throws Exception;
+    ObjectListing list(String bucketName, String path) throws Exception;
 
     /**
      * list children recurly
@@ -110,7 +110,7 @@ public interface AliyunOssService {
      * @return object listing
      * @throws Exception exception
      */
-    public ObjectListing list(String bucketName, String path, int maxResults) throws Exception;
+    ObjectListing list(String bucketName, String path, int maxResults) throws Exception;
 
     /**
      * list children only
@@ -120,7 +120,7 @@ public interface AliyunOssService {
      * @return object listing
      * @throws Exception exception
      */
-    public ObjectListing listChildren(String bucketName, String path) throws Exception;
+    ObjectListing listChildren(String bucketName, String path) throws Exception;
 
     /**
      * list children only
@@ -130,7 +130,7 @@ public interface AliyunOssService {
      * @return object listing
      * @throws Exception exception
      */
-    public ObjectListing listChildren(String bucketName, String path, int maxResults) throws Exception;
+    ObjectListing listChildren(String bucketName, String path, int maxResults) throws Exception;
 
     /**
      * put local file to OSS
@@ -139,7 +139,7 @@ public interface AliyunOssService {
      * @param destObject     dest object
      * @return oss file path
      */
-    public ObjectMetadata put(String sourceFilePath, OSSUri destObject) throws Exception;
+    ObjectMetadata put(String sourceFilePath, OSSUri destObject) throws Exception;
 
     /**
      * put local file to OSS with zip
@@ -148,7 +148,7 @@ public interface AliyunOssService {
      * @param destObject     dest object
      * @return oss file path
      */
-    public ObjectMetadata put(String sourceFilePath, OSSUri destObject, Boolean zip) throws Exception;
+    ObjectMetadata put(String sourceFilePath, OSSUri destObject, Boolean zip) throws Exception;
 
     /**
      * copy object
@@ -158,7 +158,7 @@ public interface AliyunOssService {
      * @return new file path
      * @throws Exception exception
      */
-    public String copy(OSSUri sourceObjectUri, OSSUri destObjectUri) throws Exception;
+    String copy(OSSUri sourceObjectUri, OSSUri destObjectUri) throws Exception;
 
     /**
      * get file and save into local disk
@@ -167,7 +167,7 @@ public interface AliyunOssService {
      * @param destFilePath dest file path
      * @return local file path
      */
-    public String get(OSSUri objectUri, String destFilePath) throws Exception;
+    String get(OSSUri objectUri, String destFilePath) throws Exception;
 
     /**
      * delete object
@@ -175,7 +175,7 @@ public interface AliyunOssService {
      * @param objectUri bucket uri
      * @throws Exception exception
      */
-    public void delete(OSSUri objectUri) throws Exception;
+    void delete(OSSUri objectUri) throws Exception;
 
     /**
      * get oss object
@@ -184,7 +184,7 @@ public interface AliyunOssService {
      * @return oss object
      */
     @Nullable
-    public ObjectMetadata getObjectMetadata(OSSUri objectUri) throws Exception;
+    ObjectMetadata getObjectMetadata(OSSUri objectUri) throws Exception;
 
     /**
      * get OSS object
@@ -194,7 +194,7 @@ public interface AliyunOssService {
      * @throws Exception exception
      */
     @Nullable
-    public OSSObject getOssObject(OSSUri objectUri) throws Exception;
+    OSSObject getOssObject(OSSUri objectUri) throws Exception;
 
     /**
      * set object meta data
@@ -203,5 +203,5 @@ public interface AliyunOssService {
      * @param key       key
      * @param value     value
      */
-    public void setObjectMetadata(OSSUri objectUri, String key, String value) throws Exception;
+    void setObjectMetadata(OSSUri objectUri, String key, String value) throws Exception;
 }
