@@ -22,7 +22,7 @@ public class AliOssCliMessages {
     /**
      * resource bundle
      */
-    private static ResourceBundle ourBundle = ResourceBundle.getBundle(BUNDLE_FQN);
+    private static final ResourceBundle ourBundle = ResourceBundle.getBundle(BUNDLE_FQN);
 
     /**
      * 私有构造函数，禁止进行创建对象操作
