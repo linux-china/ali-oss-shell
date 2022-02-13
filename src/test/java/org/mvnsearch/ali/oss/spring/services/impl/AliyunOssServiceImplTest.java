@@ -1,32 +1,35 @@
 package org.mvnsearch.ali.oss.spring.services.impl;
 
-import com.aliyun.openservices.oss.OSSClient;
-import com.aliyun.openservices.oss.model.*;
-import junit.framework.TestCase;
+import com.aliyun.oss.model.Bucket;
+import com.aliyun.oss.model.OSSObjectSummary;
+import com.aliyun.oss.model.ObjectListing;
+import com.aliyun.oss.model.ObjectMetadata;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * aliyun oss service implementation test case
  *
  * @author linux_china
  */
-public class AliyunOssServiceImplTest extends TestCase {
+public class AliyunOssServiceImplTest {
     /**
      * aliyun oss service
      */
-    private AliyunOssServiceImpl aliyunOssService;
+    private static AliyunOssServiceImpl aliyunOssService;
     /**
      * bucket name
      */
-    private String bucketName = "faxianla_temp";
-    private static ConfigurableMimeFileTypeMap mimeTypes = new ConfigurableMimeFileTypeMap();
+    private String bucketName = "example-bucket";
+
+    private static final ConfigurableMimeFileTypeMap mimeTypes = new ConfigurableMimeFileTypeMap();
 
 
     /**
@@ -34,9 +37,8 @@ public class AliyunOssServiceImplTest extends TestCase {
      *
      * @throws Exception exception
      */
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeAll
+    public static void setUp() throws Exception {
         aliyunOssService = new AliyunOssServiceImpl();
         ConfigServiceImpl configService = new ConfigServiceImpl();
         configService.init();
@@ -49,6 +51,7 @@ public class AliyunOssServiceImplTest extends TestCase {
      *
      * @throws Exception exception
      */
+    @Test
     public void testListBuckets() throws Exception {
         List<Bucket> buckets = aliyunOssService.getBuckets();
         for (Bucket bucket : buckets) {
@@ -61,6 +64,7 @@ public class AliyunOssServiceImplTest extends TestCase {
      *
      * @throws Exception exception
      */
+    @Test
     public void testList() throws Exception {
         long start = System.currentTimeMillis();
         ObjectListing objectListing = aliyunOssService.list(bucketName, "", 1000);
@@ -78,6 +82,7 @@ public class AliyunOssServiceImplTest extends TestCase {
      *
      * @throws Exception exception
      */
+    @Test
     public void testGetObjectMetadata() throws Exception {
         ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(new OSSUri(bucketName, "demo.jpg"));
         printMetaData(objectMetadata);
@@ -104,9 +109,10 @@ public class AliyunOssServiceImplTest extends TestCase {
      *
      * @throws Exception exception
      */
+    @Test
     public void testPutObject() throws Exception {
         String destFile = "demo.jpg";
-        String sourceFile = "/Users/linux_china/demo.jpg";
+        String sourceFile = "/tmp/demo.jpg";
         aliyunOssService.put(sourceFile, new OSSUri(bucketName, destFile));
         ObjectMetadata objectMetadata = aliyunOssService.getObjectMetadata(new OSSUri(bucketName, destFile));
         printMetaData(objectMetadata);
