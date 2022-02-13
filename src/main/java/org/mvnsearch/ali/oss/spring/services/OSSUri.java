@@ -52,13 +52,11 @@ public class OSSUri {
         String relativePath = uri;
         if (uri.startsWith(PROTOCOL)) {
             relativePath = uri.replace(PROTOCOL, "");
-        } else if (uri.startsWith("http://storage.aliyun.com/")) {
-            relativePath = uri.replace("http://storage.aliyun.com/", "");
         } else if (uri.contains(".oss.aliyuncs.com/")) { // aliyuncs.com domain
-            uri = uri.replace("http://","");
-            String bucketName = uri.substring(0,uri.indexOf(".oss.aliyuncs"));
-            String objectKey =  uri.substring(uri.indexOf("/")+1);
-            relativePath = bucketName+"/"+objectKey;
+            uri = uri.replace("https://", "");
+            String bucketName = uri.substring(0, uri.indexOf(".oss.aliyuncs"));
+            String objectKey = uri.substring(uri.indexOf("/") + 1);
+            relativePath = bucketName + "/" + objectKey;
         }
         if (relativePath.startsWith("/")) {
             relativePath = relativePath.substring(1);
@@ -87,7 +85,7 @@ public class OSSUri {
     public void setFilePath(@Nullable String filePath) {
         this.filePath = filePath == null ? "" : filePath;
         if (this.filePath.startsWith("/")) {
-            this.filePath = this.filePath.substring(1, this.filePath.length());
+            this.filePath = this.filePath.substring(1);
         }
     }
 
@@ -159,7 +157,7 @@ public class OSSUri {
      * @return http url
      */
     public String getHttpUrl() {
-        return "http://" + bucket + ".oss.aliyuncs.com/" + StringUtils.defaultIfEmpty(filePath, "");
+        return "https://" + bucket + ".oss.aliyuncs.com/" + StringUtils.defaultIfEmpty(filePath, "");
     }
 
     /**
