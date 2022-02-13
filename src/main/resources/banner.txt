@@ -1,0 +1,4 @@
+=======================================
+*      Aliyun OSS Console             *
+=======================================
+Welcome to Aliyun OSS Console: ${application.version}
