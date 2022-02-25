@@ -471,8 +471,10 @@ public class OssOperationCommands {
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                    final String objectKey = objectSummary.getKey();
-
+                    String objectKey = objectSummary.getKey();
+                    if (currentBucket.getFilePath() != null && objectKey.startsWith(currentBucket.getFilePath())) {
+                        objectKey = objectKey.substring(currentBucket.getFilePath().length());
+                    }
                     buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
                             StringUtils.leftPad(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
                             objectKey + LINE_SEPARATOR);
