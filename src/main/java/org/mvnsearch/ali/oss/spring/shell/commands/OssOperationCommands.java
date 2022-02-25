@@ -471,9 +471,11 @@ public class OssOperationCommands {
             }
             if (!objectListing.getObjectSummaries().isEmpty()) {
                 for (OSSObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+                    final String objectKey = objectSummary.getKey();
+
                     buf.append(DateUtils.formatDate(objectSummary.getLastModified(), "yyyy-MM-dd HH:mm:ss") +
                             StringUtils.leftPad(String.valueOf(objectSummary.getSize()), 10, ' ') + " " +
-                            objectSummary.getKey() + LINE_SEPARATOR);
+                            objectKey + LINE_SEPARATOR);
                     objectCount += 1;
                 }
             }
@@ -528,7 +530,7 @@ public class OssOperationCommands {
         if (dir == null || dir.isEmpty() || dir.equals("/")) {
             currentBucket.setFilePath("");
         } else {
-            if (dir.endsWith(".")) {
+            if (dir.equals(".")) {
                 return currentBucket.toString();
             }
             if (!dir.endsWith("/")) {
