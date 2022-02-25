@@ -5,7 +5,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.http.impl.cookie.DateUtils;
 import org.fusesource.jansi.Ansi;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +36,7 @@ import java.util.*;
  *
  * @author linux_china
  */
+@SuppressWarnings("StringConcatenationInsideStringBufferAppend")
 @ShellComponent
 public class OssOperationCommands {
     /**
@@ -46,7 +46,7 @@ public class OssOperationCommands {
     /**
      * The platform-specific line separator.
      */
-    public static final String LINE_SEPARATOR = SystemUtils.LINE_SEPARATOR;
+    public static final String LINE_SEPARATOR = System.lineSeparator();
     /**
      * current bucket
      */
