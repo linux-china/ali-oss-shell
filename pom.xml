@@ -19,8 +19,8 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>2.6.3</spring-boot.version>
-        <spring-shell.version>2.1.0-M2</spring-shell.version>
+        <spring-boot.version>2.6.4</spring-boot.version>
+        <spring-shell.version>2.1.0-M3</spring-shell.version>
         <aliyun-sdk-oss.version>3.14.0</aliyun-sdk-oss.version>
     </properties>
 
