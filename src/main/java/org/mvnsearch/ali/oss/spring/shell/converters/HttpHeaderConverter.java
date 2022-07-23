@@ -27,12 +27,7 @@ public class HttpHeaderConverter implements Converter<String, HttpHeader>, Value
     }
 
     @Override
-    public boolean supports(MethodParameter parameter, CompletionContext completionContext) {
-        return parameter.getParameterType() == HttpHeader.class;
-    }
-
-    @Override
-    public List<CompletionProposal> complete(MethodParameter parameter, CompletionContext completionContext, String[] hints) {
+    public List<CompletionProposal> complete(CompletionContext completionContext) {
         return HttpHeader.getDefaultNames().stream().map(CompletionProposal::new).toList();
     }
 }

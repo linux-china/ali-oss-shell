@@ -2,7 +2,6 @@ package org.mvnsearch.ali.oss.spring.shell.converters;
 
 
 import org.jetbrains.annotations.NotNull;
-import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.shell.CompletionContext;
 import org.springframework.shell.CompletionProposal;
@@ -29,12 +28,7 @@ public class BucketEnumConverter implements Converter<String, BucketEnum>, Value
     }
 
     @Override
-    public boolean supports(MethodParameter parameter, CompletionContext completionContext) {
-        return parameter.getParameterType() == BucketEnum.class;
-    }
-
-    @Override
-    public List<CompletionProposal> complete(MethodParameter parameter, CompletionContext completionContext, String[] hints) {
+    public List<CompletionProposal> complete(CompletionContext completionContext) {
         return BucketEnum.getBucketNames().stream().map(CompletionProposal::new).toList();
     }
 }

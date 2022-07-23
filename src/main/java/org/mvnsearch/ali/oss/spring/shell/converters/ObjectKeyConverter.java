@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.mvnsearch.ali.oss.spring.services.AliyunOssService;
 import org.mvnsearch.ali.oss.spring.services.OSSUri;
 import org.mvnsearch.ali.oss.spring.shell.commands.OssOperationCommands;
-import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.shell.CompletionContext;
 import org.springframework.shell.CompletionProposal;
@@ -44,12 +43,7 @@ public class ObjectKeyConverter implements Converter<String, ObjectKey>, ValuePr
     }
 
     @Override
-    public boolean supports(MethodParameter parameter, CompletionContext completionContext) {
-        return parameter.getParameterType() == ObjectKey.class;
-    }
-
-    @Override
-    public List<CompletionProposal> complete(MethodParameter parameter, CompletionContext completionContext, String[] hints) {
+    public List<CompletionProposal> complete(CompletionContext completionContext) {
         String existingData = completionContext.currentWord();
         OSSUri objectUri = OssOperationCommands.currentBucket;
         if (existingData != null && existingData.startsWith("oss://")) {
