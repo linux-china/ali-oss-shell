@@ -19,10 +19,10 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>2.7.2</spring-boot.version>
+        <spring-boot.version>2.7.11</spring-boot.version>
         <spring-shell.version>2.1.0</spring-shell.version>
-        <aliyun-sdk-oss.version>3.15.1</aliyun-sdk-oss.version>
-        <spring-native.version>0.12.1</spring-native.version>
+        <aliyun-sdk-oss.version>3.16.2</aliyun-sdk-oss.version>
+        <spring-native.version>0.12.2</spring-native.version>
         <main-class>org.mvnsearch.ali.oss.spring.OssShellApp</main-class>
     </properties>
 
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
+            <version>24.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.23.1</version>
+            <version>3.24.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -123,7 +123,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <parameters>true</parameters>
                 </configuration>
