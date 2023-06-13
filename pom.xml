@@ -19,9 +19,9 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>2.7.11</spring-boot.version>
-        <spring-shell.version>2.1.0</spring-shell.version>
-        <aliyun-sdk-oss.version>3.16.2</aliyun-sdk-oss.version>
+        <spring-boot.version>2.7.12</spring-boot.version>
+        <spring-shell.version>2.1.10</spring-shell.version>
+        <aliyun-sdk-oss.version>3.16.3</aliyun-sdk-oss.version>
         <spring-native.version>0.12.2</spring-native.version>
         <main-class>org.mvnsearch.ali.oss.spring.OssShellApp</main-class>
     </properties>
@@ -197,7 +197,7 @@
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
-                        <version>0.9.13</version>
+                        <version>0.9.22</version>
                         <extensions>true</extensions>
                         <executions>
                             <execution>
